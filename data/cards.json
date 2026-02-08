@@ -4,20 +4,18 @@
     "sport": "basketball",
     "title": "Panini Prizm Rookie",
     "player": "Victor Wembanyama",
-    "price": 120.0
+    "price": 120.0,
+    ""image": "/cards/card-001.jpg"
+"
   },
   {
     "id": "card-002",
     "sport": "soccer",
     "title": "Topps Chrome UEFA",
     "player": "Erling Haaland",
-    "price": 35.5
-  },
-  {
-    "id": "card-003",
-    "sport": "basketball",
-    "title": "Upper Deck Legends",
-    "player": "Michael Jordan",
-    "price": 500.0
+    "price": 35.5,
+    "image": ""image": "/cards/card-002.jpg"
+0"
   }
 ]
+

@@ -10,6 +10,7 @@ type Card = {
   title: string;
   player: string;
   price: number;
+  image?: string; // URL o /cards/archivo.jpg
 };
 
 function formatUSD(value: number) {
@@ -59,7 +60,9 @@ export default function Page() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
-      {/* Header */}
+      <TopBar />
+
+      {/* Hero */}
       <header className="border-b border-white/10 bg-gradient-to-b from-slate-900 to-slate-950">
         <div className="mx-auto max-w-6xl px-4 py-10">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -68,17 +71,13 @@ export default function Page() {
                 NB Sport Cards
               </h1>
               <p className="mt-2 text-slate-300">
-                Colección pública de basketball & soccer · precios en USD
+                Catálogo público de basketball & soccer · precios en USD
               </p>
             </div>
 
             <div className="flex items-center gap-2 text-sm text-slate-300">
-              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
-                Total: <b className="text-slate-50">{cards.length}</b>
-              </span>
-              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
-                Mostrando: <b className="text-slate-50">{filtered.length}</b>
-              </span>
+              <StatPill label="Total" value={cards.length} />
+              <StatPill label="Mostrando" value={filtered.length} />
             </div>
           </div>
 
@@ -122,32 +121,7 @@ export default function Page() {
       <main className="mx-auto max-w-6xl px-4 py-8">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {paged.map((c) => (
-            <article
-              key={c.id}
-              className="group rounded-3xl border border-white/10 bg-white/5 p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/10"
-            >
-              <div className="flex items-start justify-between gap-2">
-                <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-xs text-slate-200">
-                  {c.sport === "basketball" ? "BASKETBALL" : "SOCCER"}
-                </span>
-                <span className="text-xs text-slate-400">#{c.id}</span>
-              </div>
-
-              <h3 className="mt-3 line-clamp-2 text-base font-semibold text-slate-50">
-                {c.title}
-              </h3>
-
-              <p className="mt-2 text-sm text-slate-300">{c.player}</p>
-
-              <div className="mt-4 flex items-end justify-between">
-                <div className="text-lg font-semibold text-slate-50">
-                  {formatUSD(c.price)}
-                </div>
-                <div className="text-xs text-slate-400 opacity-0 transition group-hover:opacity-100">
-                  Ver detalle (próximo)
-                </div>
-              </div>
-            </article>
+            <CardTile key={c.id} c={c} />
           ))}
         </div>
 
@@ -176,7 +150,139 @@ export default function Page() {
           </div>
         </div>
       </main>
+
+      <Footer />
     </div>
+  );
+}
+
+function TopBar() {
+  return (
+    <div className="border-b border-white/10 bg-slate-950/70 backdrop-blur">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+        <div className="flex items-center gap-2">
+          <div className="grid h-9 w-9 place-items-center rounded-2xl bg-white/10">
+            <span className="text-lg">🃏</span>
+          </div>
+          <div className="leading-tight">
+            <div className="text-sm font-semibold text-slate-50">NB Sport Cards</div>
+            <div className="text-xs text-slate-400">Basketball & Soccer</div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 text-sm">
+          <a
+            className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-slate-200 hover:border-white/20 hover:bg-white/10"
+            href="https://github.com/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            GitHub
+          </a>
+          <a
+            className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-slate-200 hover:border-white/20 hover:bg-white/10"
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          >
+            Arriba ↑
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Footer() {
+  const year = new Date().getFullYear();
+  return (
+    <footer className="mt-8 border-t border-white/10 bg-slate-950">
+      <div className="mx-auto max-w-6xl px-4 py-10">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="text-sm text-slate-400">
+            © {year} NB Sport Cards · Hecho con Next.js + Tailwind
+          </div>
+
+          <div className="flex gap-2">
+            <a
+              className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-200 hover:border-white/20 hover:bg-white/10"
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                alert("Si querés, acá ponemos tus redes o un link de contacto 🙂");
+              }}
+            >
+              Contacto
+            </a>
+            <a
+              className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-200 hover:border-white/20 hover:bg-white/10"
+              href="https://vercel.com"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Deploy en Vercel
+            </a>
+          </div>
+        </div>
+
+        <p className="mt-4 text-xs text-slate-500">
+          Nota: los precios son informativos y pueden cambiar.
+        </p>
+      </div>
+    </footer>
+  );
+}
+
+function CardTile({ c }: { c: Card }) {
+  const fallback =
+    c.sport === "basketball"
+      ? "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=1200&q=80"
+      : "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=1200&q=80";
+
+  const img = c.image?.trim() ? c.image : fallback;
+
+  return (
+    <article className="group overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-sm transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/10">
+      {/* Image */}
+      <div className="relative aspect-[4/3] overflow-hidden">
+        {/* Usamos <img> para simplicidad. Después lo pasamos a next/image si querés */}
+        <img
+          src={img}
+          alt={c.title}
+          className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
+          loading="lazy"
+        />
+        <div className="absolute left-3 top-3 rounded-full border border-white/10 bg-black/30 px-3 py-1 text-xs text-slate-100 backdrop-blur">
+          {c.sport === "basketball" ? "🏀 Basketball" : "⚽ Soccer"}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="p-4">
+        <h3 className="line-clamp-2 text-base font-semibold text-slate-50">
+          {c.title}
+        </h3>
+
+        <p className="mt-2 text-sm text-slate-300">{c.player}</p>
+
+        <div className="mt-4 flex items-end justify-between">
+          <div className="text-lg font-semibold text-slate-50">
+            {formatUSD(c.price)}
+          </div>
+          <span className="text-xs text-slate-400">#{c.id}</span>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function StatPill({ label, value }: { label: string; value: number }) {
+  return (
+    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
+      {label}: <b className="text-slate-50">{value}</b>
+    </span>
   );
 }
 
