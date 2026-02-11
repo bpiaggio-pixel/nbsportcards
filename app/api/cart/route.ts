@@ -38,22 +38,34 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing userId/cardId" }, { status: 400 });
     }
 
-    const existing = await prisma.cartItem.findFirst({
-      where: { userId, cardId },
-    });
+    const existing = await prisma.cartItem.findFirst({ where: { userId, cardId } });
 
     const item = existing
-      ? await prisma.cartItem.update({
-          where: { id: existing.id },
-          data: { qty },
-        })
-      : await prisma.cartItem.create({
-          data: { userId, cardId, qty },
-        });
+      ? await prisma.cartItem.update({ where: { id: existing.id }, data: { qty } })
+      : await prisma.cartItem.create({ data: { userId, cardId, qty } });
 
     return NextResponse.json({ ok: true, item });
   } catch (e: any) {
     console.error("CART POST ERROR:", e);
+    return NextResponse.json({ error: e?.message ?? "Server error" }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const userId = String(searchParams.get("userId") ?? "").trim();
+    const cardId = normId(searchParams.get("cardId"));
+
+    if (!userId || !cardId) {
+      return NextResponse.json({ error: "Missing userId/cardId" }, { status: 400 });
+    }
+
+    await prisma.cartItem.deleteMany({ where: { userId, cardId } });
+
+    return NextResponse.json({ ok: true });
+  } catch (e: any) {
+    console.error("CART DELETE ERROR:", e);
     return NextResponse.json({ error: e?.message ?? "Server error" }, { status: 500 });
   }
 }
