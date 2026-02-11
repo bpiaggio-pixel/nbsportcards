@@ -1,0 +1,16 @@
+Opción A (simple): import manual desde tu PC
+
+Cada vez que editás el Excel:
+
+npx tsx scripts/seed-cards.ts
+
+
+Eso:
+
+agrega nuevas cards
+
+actualiza existentes (por id)
+
+y listo
+
+✅ Es lo más fácil para arrancar.

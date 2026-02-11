@@ -1,23 +1,7 @@
 import { NextResponse } from "next/server";
-import path from "path";
-import fs from "fs";
-import * as XLSX from "xlsx";
+import { prisma } from "@/lib/prisma";
 
 type Sport = "basketball" | "soccer" | "nfl";
-
-type Card = {
-  id: string;
-  sport: Sport;
-  title: string;
-  player: string;
-  price: number;
-  image?: string;
-
-  greatDeal?: string;
-
-  // ✅ NUEVO
-  stock?: number;
-};
 
 function normalizeYes(v: unknown) {
   return String(v ?? "")
@@ -27,44 +11,43 @@ function normalizeYes(v: unknown) {
     .replace(/[\u0300-\u036f]/g, "");
 }
 
+export const runtime = "nodejs"; // Prisma + node runtime
+
 export async function GET() {
   try {
-    const filePath = path.join(process.cwd(), "data", "cards.xlsx");
-    const buffer = fs.readFileSync(filePath);
+    const rows = await prisma.card.findMany({
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        sport: true,
+        title: true,
+        player: true,
+        priceCents: true,
+        image: true,
+greatDeal: true,
+        stock: true,
+        // si no existe en tu modelo, dejalo fuera:
+        // greatDeal: true,
+      },
+    });
 
-    const workbook = XLSX.read(buffer, { type: "buffer" });
-    const sheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[sheetName];
-
-    const rows = XLSX.utils.sheet_to_json<any>(sheet, { defval: "" });
-
-    const cards: Card[] = rows
-      .map((r) => {
-        const sportRaw = String(r.sport ?? "").trim().toLowerCase();
-        const sport =
-          sportRaw === "basketball" || sportRaw === "soccer" || sportRaw === "nfl"
-            ? (sportRaw as Sport)
-            : null;
-
-        const stockNum = Math.max(0, Math.floor(Number(r.stock ?? 0)));
-
-        return {
-          id: String(r.id ?? "").trim(),
-          sport: sport as Sport,
-          title: String(r.title ?? "").trim(),
-          player: String(r.player ?? "").trim(),
-          price: Number(r.price ?? 0),
-          image: String(r.image ?? "").trim() || undefined,
-          greatDeal: normalizeYes(r.greatDeal),
-          stock: stockNum, // ✅ viaja al front
-        };
-      })
-      .filter((c) => c.id && c.title && c.player && c.sport);
+    const cards = rows.map((c) => ({
+      id: c.id,
+      sport: c.sport as Sport,
+      title: c.title,
+      player: c.player,
+      price: Number((c.priceCents / 100).toFixed(2)),
+      image: c.image ?? undefined,
+greatDeal: normalizeYes(c.greatDeal),
+      stock: c.stock,
+      // si más adelante lo agregás a DB:
+      // greatDeal: normalizeYes(c.greatDeal),
+    }));
 
     return NextResponse.json({ cards });
   } catch (e: any) {
     return NextResponse.json(
-      { error: "Failed to read cards.xlsx", detail: String(e?.message ?? e) },
+      { error: "Failed to load cards from database", detail: String(e?.message ?? e) },
       { status: 500 }
     );
   }
