@@ -1,4 +1,7 @@
 "use client";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 import { useSearchParams } from "next/navigation";
 import React from "react";
 import { Heart, ShoppingCart, X } from "lucide-react";
@@ -191,7 +194,8 @@ export default function Page() {
   }, []);
 
   const searchParams = useSearchParams();
-const search = searchParams ? (searchParams.get("q") ?? "") : "";
+const search = (searchParams?.get("q") ?? "").toString();
+
 
 
 
