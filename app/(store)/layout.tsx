@@ -1,4 +1,4 @@
-import Header from "@/components/Header";
+import Header from "@/components/header";
 
 export default function StoreLayout({
   children,
@@ -6,7 +6,7 @@ export default function StoreLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="sticky top-0 z-50 border-b border-gray-600 bg-gray-50/90 backdrop-blur">
+    <div className="min-h-screen bg-white text-gray-900 flex flex-col">
       {/* TOP */}
       <Header />
 
