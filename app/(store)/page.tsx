@@ -191,7 +191,9 @@ export default function Page() {
   }, []);
 
   const searchParams = useSearchParams();
-  const search = (searchParams.get("q") ?? "").toString();
+const search = searchParams ? (searchParams.get("q") ?? "") : "";
+
+
 
   React.useEffect(() => {
     async function loadCards() {
