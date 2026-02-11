@@ -1,21 +1,26 @@
 [
   {
-    "id": "card-001",
+    "id": "Card-001",
     "sport": "basketball",
-    "title": "Panini Prizm Rookie",
-    "player": "Victor Wembanyama",
-    "price": 120.0,
-    ""image": "/cards/card-001.jpg"
-"
+    "title": "Panini 11",
+    "player": "campazzo",
+    "price": 320,
+    "image": "/cards/image1.jpg"
   },
   {
-    "id": "card-002",
+    "id": "Card-002",
     "sport": "soccer",
-    "title": "Topps Chrome UEFA",
-    "player": "Erling Haaland",
-    "price": 35.5,
-    "image": ""image": "/cards/card-002.jpg"
-0"
+    "title": "Panini 2",
+    "player": "ginobili 2",
+    "price": 200,
+    "image": "/cards/image2.jpg"
+  },
+  {
+    "id": "Card-003",
+    "sport": "basketball",
+    "title": "Panini 3",
+    "player": "jordan",
+    "price": 120,
+    "image": "/cards/image3.jpg"
   }
 ]
-
