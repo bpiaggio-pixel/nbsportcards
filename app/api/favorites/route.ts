@@ -6,11 +6,8 @@ export const runtime = "nodejs";
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const userId = searchParams.get("userId");
-
-    if (!userId) {
-      return NextResponse.json({ error: "userId requerido" }, { status: 400 });
-    }
+    const userId = String(searchParams.get("userId") ?? "").trim();
+    if (!userId) return NextResponse.json({ cardIds: [] });
 
     const favs = await prisma.favorite.findMany({
       where: { userId },
@@ -19,8 +16,8 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json({ cardIds: favs.map((f) => f.cardId) });
-  } catch (err: any) {
-    console.error("FAVORITES GET ERROR:", err);
-    return NextResponse.json({ error: err?.message ?? "Server error" }, { status: 500 });
+  } catch (e: any) {
+    console.error("FAV GET ERROR:", e);
+    return NextResponse.json({ error: e?.message ?? "Server error" }, { status: 500 });
   }
 }

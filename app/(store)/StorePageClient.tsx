@@ -314,21 +314,26 @@ export default function StorePageClient() {
 
   // ✅ cargar favoritos del user (NORMALIZADOS)
   React.useEffect(() => {
-    async function loadFavs() {
-      if (!user?.id) return;
+  async function loadFavs() {
+    if (!user?.id) return;
 
-      try {
-        const res = await fetch(`/api/favorites?userId=${encodeURIComponent(user.id)}`, {
-          cache: "no-store",
-        });
-        const data = await res.json();
-        const ids: string[] = Array.isArray(data.cardIds) ? data.cardIds : [];
-        const normalized = ids.map(normId);
-        setWishlist(Object.fromEntries(normalized.map((id) => [id, true])));
-      } catch {}
+    try {
+      const res = await fetch(`/api/favorites?userId=${encodeURIComponent(user.id)}`, {
+        cache: "no-store",
+      });
+      const data = await res.json();
+      const ids: string[] = Array.isArray(data.cardIds) ? data.cardIds : [];
+
+      const normalized = ids.map(normId).filter(Boolean);
+      setWishlist(Object.fromEntries(normalized.map((id) => [id, true])));
+    } catch {
+      // si falla, no rompas la UI
+      setWishlist({});
     }
-    loadFavs();
-  }, [user?.id, normId]);
+  }
+  loadFavs();
+}, [user?.id, normId]);
+
 
   // ✅ TOGGLE FAVORITO
   async function toggleWish(id: string) {
