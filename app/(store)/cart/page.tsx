@@ -183,11 +183,14 @@ export default function CartPage() {
       return;
     }
 
-    if (data?.mp?.initPoint) {
-      setMsg("Redirigiendo a Mercado Pago...");
-      window.location.href = data.mp.initPoint;
-      return;
-    }
+ const initPoint = data?.mp?.initPoint ?? data?.initPoint;
+
+if (initPoint) {
+  setMsg("Redirigiendo a Mercado Pago...");
+  window.location.href = initPoint;
+  return;
+}
+
 
     setMsg("✅ Orden creada!");
     router.push("/orders");
