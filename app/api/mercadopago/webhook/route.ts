@@ -69,7 +69,8 @@ export async function POST(req: Request) {
     // 2) A veces llega merchant_order => busco si alguna payment aprobó
     if (type === "merchant_order") {
       const moApi = new MerchantOrder(mp);
-      const mo = await moApi.get({ id: String(dataId) });
+      const mo = await (moApi as any).get({ id: String(dataId) });
+
 
       // Busca si hay pagos aprobados
       const payments = Array.isArray(mo.payments) ? mo.payments : [];
