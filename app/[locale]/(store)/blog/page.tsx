@@ -27,7 +27,8 @@ export default async function BlogPage() {
 
         <div className="mt-8 grid gap-6 sm:grid-cols-2">
           {posts.map((p) => {
-            const slug = encodeURIComponent(String(p.slug ?? "").trim());
+            const rawSlug = String(p.slug ?? "").trim();
+            const slug = encodeURIComponent(rawSlug);
 
             return (
               <Link
@@ -46,6 +47,9 @@ export default async function BlogPage() {
                 </div>
 
                 <div className="mt-1 text-lg font-semibold group-hover:underline">{p.title}</div>
+
+                {/* DEBUG: ver el slug real que viene de la DB */}
+                <div className="text-[11px] text-gray-400 mt-1 font-mono">slug DB: {rawSlug}</div>
 
                 {p.excerpt && <p className="mt-2 text-sm text-gray-600 line-clamp-3">{p.excerpt}</p>}
 

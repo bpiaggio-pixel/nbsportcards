@@ -6,19 +6,21 @@ export const dynamic = "force-dynamic";
 export default async function PostPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const raw = String(params?.slug ?? "");
-  const safeSlug = decodeURIComponent(raw).trim();
+  const { slug } = await params;
 
-  if (!safeSlug) return notFound();
+  const incoming = String(slug ?? "");
+  const decoded = decodeURIComponent(incoming).trim();
 
-  // 1) intento exacto por slug (lo ideal)
-  let post = await prisma.post.findUnique({
-    where: { slug: safeSlug },
+  if (!decoded) return notFound();
+
+  const post = await prisma.post.findFirst({
+    where: {
+      published: true,
+      slug: decoded,
+    },
     select: {
-      id: true,
-      slug: true,
       title: true,
       coverImage: true,
       excerpt: true,
@@ -29,33 +31,7 @@ export default async function PostPage({
     },
   });
 
-  // 2) fallback (por si la DB guardó el slug sin encoding o con diferencias)
-  if (!post) {
-    post = await prisma.post.findFirst({
-      where: {
-        published: true,
-        OR: [
-          { slug: safeSlug },
-          { slug: safeSlug.toLowerCase() },
-          { slug: safeSlug.replace(/-/g, " ") },
-          { slug: safeSlug.replace(/-/g, " ").toLowerCase() },
-        ],
-      },
-      select: {
-        id: true,
-        slug: true,
-        title: true,
-        coverImage: true,
-        excerpt: true,
-        contentHtml: true,
-        published: true,
-        publishedAt: true,
-        tags: { select: { tag: { select: { name: true, slug: true } } } },
-      },
-    });
-  }
-
-  if (!post || !post.published) return notFound();
+  if (!post) return notFound();
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
