@@ -1,8 +1,7 @@
 const isProd = process.env.NODE_ENV === "production";
 
-export const PAYPAL_BASE = isProd
-  ? "https://api-m.paypal.com"
-  : "https://api-m.sandbox.paypal.com";
+export const PAYPAL_BASE = "https://api-m.sandbox.paypal.com";
+
 
 async function getAccessToken() {
   const client = process.env.PAYPAL_CLIENT_ID!;
