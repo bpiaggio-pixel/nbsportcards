@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { createPortal } from "react-dom";
 import { Link } from "@/navigation";
 import { Heart, ShoppingCart, FileText, Receipt, Menu, X } from "lucide-react";
 import Image from "next/image";
@@ -29,6 +30,18 @@ const activeLocale = ((locale || pathLocale) === "es" ? "es" : "en") as "es" | "
 
   const [langOpen, setLangOpen] = React.useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+
+  // ✅ lock body scroll when the mobile menu is open (prevents weird layering + scroll)
+  React.useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [mobileMenuOpen]);
 
   // Cambiar idioma manteniendo la ruta actual (/en/lo-que-sea => /es/lo-que-sea)
   function switchLocale(nextLocale: "en" | "es") {
@@ -183,8 +196,7 @@ const activeLocale = ((locale || pathLocale) === "es" ? "es" : "en") as "es" | "
   const favCount = Object.values(wishlist).filter(Boolean).length;
 
 return (
-  <header className="sticky top-0 z-[500] border-b border-gray-200 bg-[#fcfcfd]/95 backdrop-blur">
-
+  <header className="sticky top-0 z-[2000] border-b border-gray-200 bg-[#fcfcfd]/95 backdrop-blur">
     <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 sm:py-4">
       {/* ✅ DESKTOP (sm+): como antes, en una fila */}
       <div className="hidden sm:flex items-center gap-6">
@@ -453,15 +465,16 @@ return (
       </div>
 
       {/* ✅ Drawer mobile */}
-      {mobileMenuOpen && (
-<div className="fixed inset-0 z-[1000] sm:hidden">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setMobileMenuOpen(false)} />
+      {mounted && mobileMenuOpen &&
+        createPortal(
+          <div className="fixed inset-0 z-[9999] sm:hidden">
+          <div className="absolute inset-0 bg-black/40" onPointerDown={() => setMobileMenuOpen(false)} />
           <div className="absolute right-0 top-0 h-full w-[86%] max-w-sm bg-white shadow-xl">
             <div className="flex items-center justify-between border-b border-gray-200 px-4 py-4">
               <div className="text-sm font-bold text-gray-900">Menu</div>
               <button
                 type="button"
-                onClick={() => setMobileMenuOpen(false)}
+                onPointerDown={() => setMobileMenuOpen(false)}
                 className="rounded-full border border-gray-200 bg-white p-2 hover:bg-gray-50"
                 aria-label="Close menu"
               >
@@ -472,7 +485,7 @@ return (
             <div className="px-4 py-4 space-y-2">
               <Link
                 href="/blog"
-                onClick={() => setMobileMenuOpen(false)}
+                onPointerDown={() => setMobileMenuOpen(false)}
                 className="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold hover:bg-gray-50"
               >
                 <FileText size={16} className="text-gray-600" />
@@ -483,7 +496,7 @@ return (
                 <>
                   <Link
                     href="/favorites"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onPointerDown={() => setMobileMenuOpen(false)}
                     className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold hover:bg-gray-50"
                   >
                     <div className="flex items-center gap-3">
@@ -499,7 +512,7 @@ return (
 
                   <Link
                     href="/orders"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onPointerDown={() => setMobileMenuOpen(false)}
                     className="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold hover:bg-gray-50"
                   >
                     <Receipt size={16} className="text-gray-600" />
@@ -508,7 +521,7 @@ return (
 
                   <Link
                     href="/cart"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onPointerDown={() => setMobileMenuOpen(false)}
                     className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold hover:bg-gray-50"
                   >
                     <div className="flex items-center gap-3">
@@ -538,7 +551,7 @@ return (
                 <>
                   <Link
                     href="/login"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onPointerDown={() => setMobileMenuOpen(false)}
                     className="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold hover:bg-gray-50"
                   >
                     {t("login")}
@@ -546,7 +559,7 @@ return (
 
                   <Link
                     href="/register"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onPointerDown={() => setMobileMenuOpen(false)}
                     className="flex items-center justify-center gap-3 rounded-xl bg-black px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900"
                   >
                     {t("register")}
@@ -555,8 +568,9 @@ return (
               )}
             </div>
           </div>
-        </div>
-      )}
+        </div>,
+          document.body
+        )}
     </div>
   </header>
 );

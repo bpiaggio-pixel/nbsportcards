@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { createPortal } from "react-dom";
 import { useSearchParams } from "next/navigation";
 import { Heart, X } from "lucide-react";
 import { motion } from "framer-motion";
@@ -368,6 +369,16 @@ export default function StorePageClient() {
 
   React.useEffect(() => {
     setActiveSide("front");
+  }, [selectedId]);
+
+  // ✅ allow closing the modal with ESC
+  React.useEffect(() => {
+    if (!selectedId) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedId(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, [selectedId]);
 
   const frontImg =
@@ -837,40 +848,40 @@ export default function StorePageClient() {
       <TopCardsShowcase items={topShowcaseItems} onSelect={(id) => setSelectedId(id)} />
 
       {/* MODAL */}
-      {selectedCard && (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4"
-onPointerDown={() => setSelectedId(null)}
-onMouseDown={() => setSelectedId(null)}
-        >
+      {mounted && selectedCard &&
+        createPortal(
           <div
-            className="w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-3xl bg-white shadow-xl flex flex-col"
-
-onPointerDown={(e) => e.stopPropagation()}
-onMouseDown={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4"
+            onPointerDown={() => setSelectedId(null)}
+            onMouseDown={() => setSelectedId(null)}
           >
-            <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4"
->
+          <div
+            className="relative w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-3xl bg-white shadow-xl flex flex-col"
+            onPointerDown={(e) => e.stopPropagation()}
+             onMouseDown={(e) => e.stopPropagation()}
+          >
+            {/* ✅ Close button that is ALWAYS reachable on mobile */}
+            <button
+              type="button"
+              onClick={() => setSelectedId(null)}
+              aria-label="Cerrar"
+              className="absolute right-3 z-[40] rounded-full border border-gray-200 bg-white/90 p-2 shadow-sm backdrop-blur hover:bg-gray-50"
+              style={{ top: "calc(env(safe-area-inset-top) + 12px)" }}
+            >
+              <X size={18} />
+            </button>
+
+            <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4 pr-14">
               <div className="text-sm text-gray-600">
                 <span className="font-semibold text-gray-900">{selectedCard.player}</span> ·{" "}
                 <span className="uppercase">{selectedCard.sport}</span> ·{" "}
                 <span className="font-mono">{selectedCard.id}</span>
               </div>
-
-              <button
-                type="button"
-                className="rounded-full border border-gray-200 p-2 hover:bg-gray-50"
-                onClick={() => setSelectedId(null)}
-              >
-                <X size={18} />
-              </button>
             </div>
 
-            <div className="grid flex-1 gap-0 overflow-y-auto md:grid-cols-[1.2fr_0.8fr]"
->
+            <div className="grid flex-1 gap-0 overflow-y-auto md:grid-cols-[1.2fr_0.8fr]">
               <div
                 className="relative h-[260px] sm:h-[360px] md:h-[420px] border-b border-gray-200 bg-[#f3f4f6] md:border-b-0 md:border-r"
-
                 onWheelCapture={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -1061,8 +1072,10 @@ onMouseDown={(e) => e.stopPropagation()}
               </div>
             </div>
           </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
+}
     </div>
   );
 }
