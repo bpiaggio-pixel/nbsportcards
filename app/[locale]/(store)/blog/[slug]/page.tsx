@@ -1,7 +1,74 @@
+import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale?: string; slug: string }>;
+}): Promise<Metadata> {
+  const { locale, slug } = await params;
+
+  const incoming = String(slug ?? "");
+  const decoded = decodeURIComponent(incoming).trim();
+
+  const loc = (locale === "es" ? "es" : "en") as "es" | "en";
+  const base = "https://nbcards.com";
+  const url = `${base}/${loc}/blog/${encodeURIComponent(decoded)}`;
+
+  if (!decoded) {
+    return {
+      title: "Post not found",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const post = await prisma.post.findFirst({
+    where: { published: true, slug: decoded },
+    select: {
+      title: true,
+      excerpt: true,
+      coverImage: true,
+      publishedAt: true,
+    },
+  });
+
+  if (!post) {
+    return {
+      title: "Post not found",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const description = post.excerpt ?? "Read the latest from NB Cards.";
+
+  return {
+    title: post.title,
+    description,
+    alternates: {
+      canonical: url,
+      languages: {
+        en: `${base}/en/blog/${encodeURIComponent(decoded)}`,
+        es: `${base}/es/blog/${encodeURIComponent(decoded)}`,
+      },
+    },
+    openGraph: {
+      type: "article",
+      title: post.title,
+      description,
+      url,
+      images: post.coverImage ? [{ url: post.coverImage }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description,
+      images: post.coverImage ? [post.coverImage] : undefined,
+    },
+  };
+}
 
 export default async function PostPage({
   params,

@@ -35,9 +35,11 @@ export async function POST(req: Request) {
     const userId = String(body?.userId ?? "").trim();
     const shipping = body?.shipping ?? null;
 
-    if (!userId) return NextResponse.json({ error: "Missing userId" }, { status: 400 });
+    if (!userId) {
+      return NextResponse.json({ error: "Missing userId" }, { status: 400 });
+    }
 
-    // shipping
+    // ✅ validar shipping
     const fullName = String(shipping?.fullName ?? "").trim();
     const phone = String(shipping?.phone ?? "").trim();
     const address1 = String(shipping?.address1 ?? "").trim();
@@ -58,7 +60,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Faltan datos de envío" }, { status: 400 });
     }
 
-    // carrito
+    // 1) Traigo carrito
     const cartItemsRaw = await prisma.cartItem.findMany({
       where: { userId },
       orderBy: { updatedAt: "desc" },
@@ -68,12 +70,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
     }
 
+    // ✅ normalizar ids del carrito
     const cartItems = cartItemsRaw.map((it) => ({
       ...it,
       cardId: normId(it.cardId),
       qty: Math.max(1, Number(it.qty ?? 1)),
     }));
 
+    // 2) Traigo las cards desde DB
     const cardIds = Array.from(new Set(cartItems.map((it) => it.cardId)));
     const cards = await prisma.card.findMany({
       where: { id: { in: cardIds } },
@@ -82,9 +86,12 @@ export async function POST(req: Request) {
 
     const byId = new Map(cards.map((c) => [c.id, c]));
 
+    // 3) Validación stock
     for (const it of cartItems) {
       const c = byId.get(it.cardId);
-      if (!c) return NextResponse.json({ error: `La card ${it.cardId} no existe` }, { status: 400 });
+      if (!c) {
+        return NextResponse.json({ error: `La card ${it.cardId} no existe en la DB` }, { status: 400 });
+      }
       if ((c.stock ?? 0) < it.qty) {
         return NextResponse.json(
           { error: `Sin stock suficiente para "${c.title}" (stock ${c.stock}, pediste ${it.qty})` },
@@ -93,23 +100,30 @@ export async function POST(req: Request) {
       }
     }
 
+    // 4) Armo items + total (USD)
     const orderItems = cartItems.map((it) => {
       const c = byId.get(it.cardId)!;
       const unitCents = Number(c.priceCents ?? 0);
-      return { cardId: c.id, title: c.title, unitCents, qty: it.qty };
+      return {
+        cardId: c.id,
+        title: c.title,
+        unitCents,
+        qty: it.qty,
+      };
     });
 
     const subtotalCents = orderItems.reduce((acc, it) => acc + it.unitCents * it.qty, 0);
     const shippingCents = SHIPPING_USD_CENTS[country];
     const totalCents = subtotalCents + shippingCents;
 
-    // crear order PENDING
+    // 5) Crear orden PENDING (NO tocar stock ni carrito acá)
     const order = await prisma.order.create({
       data: {
         userId,
         totalCents,
         currency: "USD",
-        status: "PENDING" as any, // ✅ si tu OrderStatus es enum, igual compila
+        status: "PENDING" as any,
+
         fullName,
         phone,
         address1,
@@ -118,6 +132,7 @@ export async function POST(req: Request) {
         state,
         zip,
         country,
+
         items: { create: orderItems },
       },
       include: { items: true },

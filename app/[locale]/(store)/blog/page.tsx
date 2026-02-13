@@ -1,7 +1,31 @@
+import type { Metadata } from "next";
 import { Link } from "@/navigation";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Blog",
+  description: "News, guides, and highlights from NB Cards.",
+  alternates: {
+    canonical: "https://nbcards.com/blog",
+    languages: {
+      en: "https://nbcards.com/en/blog",
+      es: "https://nbcards.com/es/blog",
+    },
+  },
+  openGraph: {
+    type: "website",
+    title: "Blog | NB Cards",
+    description: "News, guides, and highlights from NB Cards.",
+    url: "https://nbcards.com/blog",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Blog | NB Cards",
+    description: "News, guides, and highlights from NB Cards.",
+  },
+};
 
 export default async function BlogPage() {
   const posts = await prisma.post.findMany({
@@ -47,9 +71,6 @@ export default async function BlogPage() {
                 </div>
 
                 <div className="mt-1 text-lg font-semibold group-hover:underline">{p.title}</div>
-
-                {/* DEBUG: ver el slug real que viene de la DB */}
-                <div className="text-[11px] text-gray-400 mt-1 font-mono">slug DB: {rawSlug}</div>
 
                 {p.excerpt && <p className="mt-2 text-sm text-gray-600 line-clamp-3">{p.excerpt}</p>}
 

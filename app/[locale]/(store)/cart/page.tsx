@@ -3,6 +3,10 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { ShoppingCart } from "lucide-react";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import { usePathname } from "next/navigation";
+
+
 
 type Sport = "basketball" | "soccer" | "nfl";
 
@@ -38,6 +42,7 @@ function getFallback(sport: Sport) {
     return "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=1200&q=80";
   return "https://images.unsplash.com/photo-1508098682722-e99c643e7f0b?auto=format&fit=crop&w=1200&q=80";
 }
+
 
 // ✅ normaliza IDs: "Card-011" -> "11"
 const normId = (v: any) => {
@@ -90,6 +95,10 @@ export default function CartPage() {
   const [cards, setCards] = React.useState<Card[]>([]);
   const [items, setItems] = React.useState<{ cardId: string; qty: number }[]>([]);
   const [msg, setMsg] = React.useState("");
+const pathname = usePathname();
+const locale = pathname.split("/")[1] || "en"; // toma "es" o "en" del URL
+const ordersUrl = `/${locale}/orders`;
+
 
   const [shipping, setShipping] = React.useState<Shipping>({
     fullName: "",
@@ -248,49 +257,81 @@ if (handleUserNotFound(res, data, router)) return;
     return "";
   }
 
-  async function checkout() {
-    if (!user?.id) {
-      router.push("/login");
-      return;
-    }
+async function checkout() {
+  if (!user?.id) {
+    router.push("/login");
+    return;
+  }
 
-    if (enriched.length === 0) {
-      setMsg("Tu carrito está vacío.");
-      return;
-    }
+  if (enriched.length === 0) {
+    setMsg("Tu carrito está vacío.");
+    return;
+  }
 
-    const err = validateShipping(shipping);
-    if (err) {
-      setMsg("❌ " + err);
-      return;
-    }
+  const err = validateShipping(shipping);
+  if (err) {
+    setMsg("❌ " + err);
+    return;
+  }
 
-    setMsg("Procesando checkout...");
+  try {
+    setMsg("Creando orden...");
 
-    const res = await fetch("/api/checkout", {
+    const resCreate = await fetch("/api/orders/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId: user.id, shipping }),
     });
 
-    const data = await res.json();
+    const rawCreate = await resCreate.text();
+    let dataCreate: any = {};
+    try { dataCreate = rawCreate ? JSON.parse(rawCreate) : {}; } catch { dataCreate = { raw: rawCreate }; }
 
-    if (!res.ok) {
-      setMsg("❌ " + (data?.error ?? "Server error"));
+    console.log("orders/create status:", resCreate.status, dataCreate);
+
+    if (!resCreate.ok) {
+      setMsg("❌ /api/orders/create: " + (dataCreate?.error ?? dataCreate?.raw ?? "Error"));
       return;
     }
 
-    const initPoint = data?.mp?.initPoint ?? data?.initPoint;
+    const orderId = String(dataCreate?.orderId ?? "");
+    if (!orderId) {
+      setMsg("❌ /api/orders/create: orderId vacío");
+      return;
+    }
 
+    setMsg("Generando MercadoPago...");
+
+    const resMp = await fetch("/api/checkout/mp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderId, locale }),
+    });
+
+    const rawMp = await resMp.text();
+    let dataMp: any = {};
+    try { dataMp = rawMp ? JSON.parse(rawMp) : {}; } catch { dataMp = { raw: rawMp }; }
+
+    console.log("checkout/mp status:", resMp.status, dataMp);
+
+    if (!resMp.ok) {
+      setMsg("❌ /api/checkout/mp: " + (dataMp?.error ?? dataMp?.raw ?? "Error"));
+      return;
+    }
+
+    const initPoint = dataMp?.initPoint;
     if (initPoint) {
-      setMsg("Redirigiendo a Mercado Pago...");
       window.location.href = initPoint;
       return;
     }
 
-    setMsg("✅ Orden creada!");
-    router.push("/orders");
+    setMsg("❌ /api/checkout/mp: No initPoint");
+  } catch (e: any) {
+    console.error("CHECKOUT ERROR:", e);
+    setMsg("❌ " + (e?.message ?? "Server error"));
   }
+}
+
 
   if (!user?.id) {
     return (
@@ -479,26 +520,163 @@ if (handleUserNotFound(res, data, router)) return;
             })}
 
             {/* total + checkout */}
-<div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm flex items-center justify-between">
-  <div className="text-sm text-gray-700 space-y-1">
-    <div>
-      Subtotal: <span className="font-semibold text-gray-900">{formatUSD(subtotal)}</span>
+<div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+    {/* Totales */}
+    <div className="text-sm text-gray-700 space-y-1">
+      <div>
+        Subtotal: <span className="font-semibold text-gray-900">{formatUSD(subtotal)}</span>
+      </div>
+      <div>
+        Shipping (box): <span className="font-semibold text-gray-900">{formatUSD(shippingUsd)}</span>
+      </div>
+      <div>
+        Total: <span className="text-lg font-bold text-gray-900">{formatUSD(total)}</span>
+      </div>
     </div>
-    <div>
-      Shipping (box): <span className="font-semibold text-gray-900">{formatUSD(shippingUsd)}</span>
-    </div>
-    <div>
-      Total: <span className="text-lg font-bold text-gray-900">{formatUSD(total)}</span>
+
+    {/* Pagos */}
+    <div className="w-full md:w-[420px] grid grid-cols-1 gap-3">
+      {/* MercadoPago */}
+      <div className="rounded-2xl border border-gray-200 p-4">
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-sm font-semibold text-gray-900">MercadoPago</div>
+          <div className="text-xs text-gray-500">ARS</div>
+        </div>
+
+        <button
+          className="w-full rounded-full bg-black px-6 py-3 text-sm font-semibold text-white hover:bg-gray-900"
+          onClick={checkout}
+          type="button"
+        >
+          Pagar con MercadoPago
+        </button>
+
+        <div className="mt-2 text-xs text-gray-500">
+          Pago local (conversión fija en checkout)
+        </div>
+      </div>
+
+      {/* PayPal */}
+      <div className="rounded-2xl border border-gray-200 p-4">
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-sm font-semibold text-gray-900">PayPal</div>
+          <div className="text-xs text-gray-500">USD</div>
+        </div>
+
+        <PayPalScriptProvider
+          options={{
+            clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID as string,
+            currency: "USD",
+            intent: "capture",
+            components: "buttons",
+          }}
+        >
+          <PayPalButtons
+            style={{
+              layout: "horizontal",
+              height: 44,
+              tagline: false,
+            }}
+            createOrder={async () => {
+              try {
+                if (!user?.id) {
+                  router.push("/login");
+                  throw new Error("Tenés que iniciar sesión.");
+                }
+
+                const resCreate = await fetch("/api/orders/create", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ userId: user.id, shipping }),
+                });
+
+                const rawCreate = await resCreate.text();
+                let dataCreate: any = {};
+                try {
+                  dataCreate = rawCreate ? JSON.parse(rawCreate) : {};
+                } catch {
+                  dataCreate = { raw: rawCreate };
+                }
+
+                if (!resCreate.ok) {
+                  const m = String(
+                    dataCreate?.error ?? dataCreate?.raw ?? "No se pudo crear la orden"
+                  );
+                  setMsg("❌ " + m);
+                  throw new Error(m);
+                }
+
+                const orderId = String(dataCreate?.orderId ?? "");
+                if (!orderId) {
+                  const m = "No se generó orderId";
+                  setMsg("❌ " + m);
+                  throw new Error(m);
+                }
+
+                (window as any).__LAST_ORDER_ID__ = orderId;
+
+                const resPP = await fetch("/api/paypal/create-order", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ orderId }),
+                });
+
+                const rawPP = await resPP.text();
+                let dataPP: any = {};
+                try {
+                  dataPP = rawPP ? JSON.parse(rawPP) : {};
+                } catch {
+                  dataPP = { raw: rawPP };
+                }
+
+                if (!resPP.ok) {
+                  const m = String(
+                    dataPP?.error ?? dataPP?.raw ?? "PayPal create-order falló"
+                  );
+                  setMsg("❌ " + m);
+                  throw new Error(m);
+                }
+
+                return String(dataPP.paypalOrderId);
+              } catch (e: any) {
+                console.error("PAYPAL CREATE ERROR:", e);
+                throw e;
+              }
+            }}
+            onApprove={async (data) => {
+              try {
+                const orderId = (window as any).__LAST_ORDER_ID__;
+                if (!orderId) throw new Error("Falta orderId local");
+
+                const resCap = await fetch("/api/paypal/capture-order", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ orderId, paypalOrderId: data.orderID }),
+                });
+
+                const out = await resCap.json().catch(() => ({}));
+                if (!resCap.ok || !out.ok) throw new Error(out?.error ?? "PayPal capture falló");
+
+                setMsg("✅ Pago PayPal aprobado!");
+                router.push(ordersUrl);
+              } catch (e: any) {
+                setMsg("❌ " + (e?.message ?? "PayPal error"));
+              }
+            }}
+            onError={(err) => {
+              console.error("PAYPAL ERROR", err);
+              setMsg("❌ Error PayPal");
+            }}
+          />
+        </PayPalScriptProvider>
+
+        <div className="mt-2 text-xs text-gray-500">
+          Ideal para compras internacionales
+        </div>
+      </div>
     </div>
   </div>
-
-  <button
-    className="rounded-full bg-black px-6 py-3 text-sm font-semibold text-white hover:bg-gray-900"
-    onClick={checkout}
-    type="button"
-  >
-    Checkout
-  </button>
 </div>
 
 

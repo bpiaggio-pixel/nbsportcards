@@ -1,3 +1,18 @@
+Si querés, el próximo paso lógico sería:
+
+🔒 mejorar SEO (metadata dinámica en blog posts)
+
+⚡ cachear /api/cards
+
+📰 agregar i18n real al blog (posts por idioma)
+
+📦 optimizar imágenes con next/image
+
+
+
+
+----------------------------------------
+
 Si querés, los próximos pasos “pro” podrían ser:
 
 📧 Email automático cuando:
