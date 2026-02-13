@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 const nextConfig: NextConfig = {
   images: {
@@ -10,14 +13,12 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-
-  // En Next 16 serverActions está habilitado por defecto.
-  // Si lo querés explícito, ahora es un objeto (no boolean).
   experimental: {
     serverActions: {},
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);
+
 
 

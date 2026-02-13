@@ -28,3 +28,19 @@ body {
   color: var(--foreground);
   font-family: var(--font-inter), system-ui, sans-serif;
 }
+
+.ProseMirror {
+  font-size: 16px;
+  line-height: 1.7;
+  padding: 8px;
+}
+
+.ProseMirror img {
+  border-radius: 16px;
+  margin: 16px 0;
+}
+
+.ProseMirror p {
+  margin: 12px 0;
+}
+

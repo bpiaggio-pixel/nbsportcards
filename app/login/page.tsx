@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+
 
 export default function LoginPage() {
   const router = useRouter();
@@ -50,7 +52,19 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow">
-        <h1 className="text-2xl font-bold mb-6">Iniciar sesión</h1>
+        <div className="flex flex-col items-center mb-6">
+<Image
+  src="/nb-logo.png"
+  alt="NB"
+  width={200}
+  height={200}
+  className="w-32 h-32 object-contain"
+  priority
+/>
+
+  <h1 className="text-2xl font-bold">Login</h1>
+</div>
+
 
         <input
           className="w-full border p-3 rounded mb-3"

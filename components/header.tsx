@@ -1,8 +1,11 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { Heart, ShoppingCart } from "lucide-react";
+import { Link } from "@/navigation";
+import { Heart, ShoppingCart, FileText, Receipt } from "lucide-react";
+import Image from "next/image";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 
 type SessionUser = { id: string; email: string } | null;
 
@@ -12,6 +15,40 @@ export default function Header() {
   const [user, setUser] = React.useState<SessionUser>(null);
   const [wishlist, setWishlist] = React.useState<Record<string, boolean>>({});
   const [cartCount, setCartCount] = React.useState(0);
+
+  const router = useRouter();
+  const params = useSearchParams();
+  const pathname = usePathname();
+
+  const t = useTranslations("Header");
+  const locale = useLocale(); // "en" | "es"
+const pathLocale = (pathname?.split("/")?.[1] ?? "");
+
+const activeLocale = ((locale || pathLocale) === "es" ? "es" : "en") as "es" | "en";
+
+
+  const [langOpen, setLangOpen] = React.useState(false);
+
+  // Cambiar idioma manteniendo la ruta actual (/en/lo-que-sea => /es/lo-que-sea)
+  function switchLocale(nextLocale: "en" | "es") {
+    const segments = (pathname ?? "/").split("/");
+
+    const rest = "/" + segments.slice(2).join("/"); // todo lo que viene después del locale
+    const newPath = `/${nextLocale}${rest === "/" ? "" : rest}`;
+
+    setLangOpen(false);
+    router.push(newPath);
+  }
+
+  // ... el resto de tu componente sigue acá (effects, return, etc)
+
+  // inicializa el input desde la URL (por si recargás la página)
+  React.useEffect(() => {
+    setSearch(params?.get("q") ?? "");
+
+    // solo al montar
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // ✅ normaliza ids (por si DB trae "11" y UI usa "Card-011")
   const normId = React.useCallback((v: any) => {
@@ -147,94 +184,199 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-gray-200 bg-[#fcfcfd]/95 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center gap-6 px-6 py-4">
-        <Link href="/" className="text-xl font-bold tracking-tight">
-          🃏 NB SportCards
+        <Link href="/" className="group relative flex items-center gap-2 text-xl font-bold tracking-tight">
+          {/* glow azul detrás de TODO (logo + letras) */}
+          <span className="absolute -inset-3 rounded-full bg-gradient-to-r from-sky-200 via-cyan-200 to-blue-200 opacity-0 blur-xl transition group-hover:opacity-30 -z-10" />
+
+          <Image
+            src="/nb-logo3.png"
+            alt="NB"
+            width={40}
+            height={40}
+            className="h-10 w-10 object-contain"
+            priority
+          />
+
+          <span>
+            <span className="text-gray-700">Sport</span>
+            <span className="text-gray-400">Cards</span>
+          </span>
         </Link>
 
         <div className="flex-1">
           <input
-            placeholder="Search cards..."
+            placeholder={t("searchPlaceholder")}
+
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              const v = e.target.value;
+              setSearch(v);
+
+              const next = new URLSearchParams(params?.toString() ?? "");
+
+              const q = v.trim();
+
+              if (q) next.set("q", q);
+              else next.delete("q");
+
+              const qs = next.toString();
+              const safePath = pathname ?? "/";
+router.replace(qs ? `${safePath}?${qs}` : safePath);
+
+            }}
             className="w-full rounded-full border border-gray-200 bg-gray-100 px-5 py-2 text-sm outline-none focus:bg-white focus:ring-2 focus:ring-black/10"
           />
         </div>
 
-        {user ? (
-          <div className="flex items-center gap-2">
-            <Link
-              href="/cart"
-              className="group flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold hover:bg-gray-50 transition relative"
-            >
-              <span className="absolute inset-0 rounded-full bg-gradient-to-r from-sky-200 via-cyan-200 to-blue-200 opacity-0 blur-lg transition group-hover:opacity-60" />
-              <ShoppingCart size={16} className="relative z-10 text-gray-900" />
-              <span className="relative z-10">
-                Cart{" "}
-                {cartCount > 0 && (
-                  <span className="ml-1 text-xs font-bold text-gray-700">
-                    ({cartCount})
-                  </span>
-                )}
-              </span>
-            </Link>
 
-            <Link
-              href="/orders"
-              className="rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold hover:bg-gray-50"
-            >
-              🧾 Orders
-            </Link>
 
-            <Link
-              href="/favorites"
-              className="group flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold hover:bg-gray-50 transition relative"
-            >
-              <span className="absolute inset-0 rounded-full bg-gradient-to-r from-sky-200 via-cyan-200 to-blue-200 opacity-0 blur-lg transition group-hover:opacity-60" />
-              <Heart
-                size={16}
-                className={`relative z-10 ${favCount > 0 ? "text-pink-600" : "text-gray-500"}`}
-                fill={favCount > 0 ? "currentColor" : "none"}
-              />
-              <span className="relative z-10">
-                Favorites{" "}
-                {favCount > 0 && (
-                  <span className="ml-1 text-xs font-bold text-gray-700">
-                    ({favCount})
-                  </span>
-                )}
-              </span>
-            </Link>
 
-            <span className="hidden sm:block text-sm font-semibold text-gray-700">
-              👤 {user.email}
-            </span>
+       {user ? (
+  <div className="flex items-center gap-2">
+    {/* ✅ BLOG (1) */}
+    <Link
+      href="/blog"
+      className="group flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold hover:bg-gray-50 transition relative"
+    >
+      <span className="absolute inset-0 rounded-full bg-gradient-to-r from-sky-200 via-cyan-200 to-blue-200 opacity-0 blur-lg transition group-hover:opacity-60 -z-10" />
+      <FileText size={16} className="relative z-10 text-gray-600" />
+      <span className="relative z-10">{t("blog")}</span>
+    </Link>
 
-            <button
-              type="button"
-              onClick={logout}
-              className="rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold hover:bg-gray-50"
-            >
-              Logout
-            </button>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2">
-            <Link
-              href="/login"
-              className="rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold hover:bg-gray-50"
-            >
-              Login
-            </Link>
+    {/* ✅ FAVORITES (2) */}
+    <Link
+      href="/favorites"
+      className="group flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold hover:bg-gray-50 transition relative"
+    >
+      <span className="absolute inset-0 rounded-full bg-gradient-to-r from-sky-200 via-cyan-200 to-blue-200 opacity-0 blur-lg transition group-hover:opacity-60 -z-10" />
+      <Heart
+        size={16}
+        className={`relative z-10 ${favCount > 0 ? "text-pink-600" : "text-gray-500"}`}
+        fill={favCount > 0 ? "currentColor" : "none"}
+      />
+      <span className="relative z-10">
+        {t("favorites")}
+        {favCount > 0 && <span className="ml-1 text-xs font-bold text-gray-700">({favCount})</span>}
+      </span>
+    </Link>
 
-            <Link
-              href="/register"
-              className="rounded-full bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-900"
-            >
-              Register
-            </Link>
-          </div>
-        )}
+    {/* ✅ ORDERS (3) */}
+    <Link
+      href="/orders"
+      className="group flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold hover:bg-gray-50 transition relative"
+    >
+      <span className="absolute inset-0 rounded-full bg-gradient-to-r from-sky-200 via-cyan-200 to-blue-200 opacity-0 blur-lg transition group-hover:opacity-60 -z-10" />
+      <Receipt size={16} className="relative z-10 text-gray-600" />
+      <span className="relative z-10">{t("orders")}</span>
+    </Link>
+
+    {/* ✅ CART (4) */}
+    <Link
+      href="/cart"
+      className="group flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold hover:bg-gray-50 transition relative"
+    >
+      <span className="absolute inset-0 rounded-full bg-gradient-to-r from-sky-200 via-cyan-200 to-blue-200 opacity-0 blur-lg transition group-hover:opacity-60 -z-10" />
+      <ShoppingCart size={16} className="relative z-10 text-gray-900" />
+      <span className="relative z-10">
+        {t("cart")}{" "}
+        {cartCount > 0 && <span className="ml-1 text-xs font-bold text-gray-700">({cartCount})</span>}
+      </span>
+    </Link>
+
+    {/* 👤 usuario acortado */}
+    <span
+      title={user.email}
+      className="hidden sm:block text-sm font-semibold text-gray-700 max-w-[120px] truncate"
+    >
+      👤 {user.email.length > 10 ? `${user.email.slice(0, 10)}…` : user.email}
+    </span>
+
+    <button
+      type="button"
+      onClick={logout}
+      className="group relative rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold hover:bg-gray-50 transition"
+    >
+      <span className="absolute inset-0 rounded-full bg-gradient-to-r from-sky-200 via-cyan-200 to-blue-200 opacity-0 blur-lg transition group-hover:opacity-60 -z-10" />
+      <span className="relative z-10">{t("logout")}</span>
+    </button>
+  </div>
+) : (
+  <div className="flex items-center gap-2">
+    {/* ✅ BLOG (guest) */}
+    <Link
+      href="/blog"
+      className="rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold hover:bg-gray-50 flex items-center gap-2"
+    >
+      <FileText size={16} className="text-gray-600" />
+      {t("blog")}
+    </Link>
+
+    <Link
+      href="/login"
+      className="group relative rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold hover:bg-gray-50 transition"
+    >
+      <span className="absolute inset-0 rounded-full bg-gradient-to-r from-sky-200 via-cyan-200 to-blue-200 opacity-0 blur-lg transition group-hover:opacity-60 -z-10" />
+      <span className="relative z-10">{t("login")}</span>
+    </Link>
+
+    <Link
+      href="/register"
+      className="rounded-full bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-900"
+    >
+      {t("register")}
+    </Link>
+  </div>
+)}
+
+{/* ✅ LANGUAGE SWITCHER (UNA SOLA VEZ, AL FINAL) */}
+<div className="relative">
+  <button
+    type="button"
+    onClick={() => setLangOpen((v) => !v)}
+    className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-2 text-sm font-semibold hover:bg-gray-50 transition"
+  >
+<img
+  src={activeLocale === "es" ? "/flags/es.png" : "/flags/us.png"}
+  alt="flag"
+  width={18}
+  height={18}
+  className="rounded-sm"
+  draggable={false}
+/>
+
+    {/* Mobile: solo bandera | Desktop: bandera + ES/EN */}
+    <span key={`label-${activeLocale}`} className="hidden sm:inline">
+      {activeLocale === "es" ? "ES" : "EN"}
+    </span>
+
+    <span className="text-gray-500">▾</span>
+  </button>
+
+  {langOpen && (
+    <div className="absolute right-0 mt-2 w-40 rounded-xl border border-gray-200 bg-white shadow-lg">
+      <button
+        type="button"
+        onClick={() => switchLocale("en")}
+        className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50"
+      >
+        <Image src="/flags/us.png" alt="English" width={18} height={18} className="rounded-sm" />
+        <span>English</span>
+      </button>
+
+      <button
+        type="button"
+        onClick={() => switchLocale("es")}
+        className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50"
+      >
+        <Image src="/flags/es.png" alt="Español" width={18} height={18} className="rounded-sm" />
+        <span>Español</span>
+      </button>
+    </div>
+  )}
+</div>
+
       </div>
     </header>
   );
 }
+

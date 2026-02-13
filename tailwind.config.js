@@ -8,5 +8,7 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+
+  // ✅ Activar prose / blog styles
+  plugins: [require("@tailwindcss/typography")],
 };

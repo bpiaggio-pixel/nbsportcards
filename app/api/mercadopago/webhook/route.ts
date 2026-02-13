@@ -8,36 +8,9 @@ const mp = new MercadoPagoConfig({
   accessToken: process.env.MP_ACCESS_TOKEN!,
 });
 
-// ✅ helper: restock de una orden (solo una vez)
-async function restockOrder(orderId: string) {
-  const order = await prisma.order.findUnique({
-    where: { id: orderId },
-    include: { items: true },
-  });
+const BAD_STATUSES = new Set(["rejected", "cancelled", "refunded", "charged_back"]);
 
-  if (!order) return;
-
-  // ✅ idempotencia: si ya está CANCELLED o PAID, no tocar stock dos veces
-  // (si querés permitir cancelar una PAID, ahí es otro flujo)
-  if (order.status === "CANCELLED") return;
-  if (order.status === "PAID") return;
-
-  // devolver stock
-  for (const it of order.items) {
-    await prisma.card.update({
-      where: { id: it.cardId },
-      data: { stock: { increment: it.qty } },
-    });
-  }
-
-  await prisma.order.update({
-    where: { id: orderId },
-    data: { status: "CANCELLED" },
-  });
-}
-
-// ✅ helper: marcar paid (idempotente)
-async function markPaid(orderId: string, paymentId?: string | null, merchantOrderId?: string | null) {
+async function markCancelled(orderId: string, paymentId?: string | null, merchantOrderId?: string | null) {
   const order = await prisma.order.findUnique({
     where: { id: orderId },
     select: { status: true },
@@ -45,16 +18,76 @@ async function markPaid(orderId: string, paymentId?: string | null, merchantOrde
 
   if (!order) return;
 
-  // ya paid => no re-hacer nada
+  // idempotencia
   if (order.status === "PAID") return;
+  if (order.status === "CANCELLED") return;
 
   await prisma.order.update({
     where: { id: orderId },
     data: {
-      status: "PAID",
+      status: "CANCELLED",
       mpPaymentId: paymentId ?? null,
       mpMerchantOrderId: merchantOrderId ?? null,
     },
+  });
+}
+
+/**
+ * ✅ Marca PAID y aplica efectos del negocio:
+ * - descuenta stock (con guard)
+ * - vacía carrito
+ * - guarda ids MP
+ * Todo en una sola transacción e idempotente.
+ */
+async function markPaidAndFulfill(orderId: string, paymentId?: string | null, merchantOrderId?: string | null) {
+  await prisma.$transaction(async (tx) => {
+    const order = await tx.order.findUnique({
+      where: { id: orderId },
+      include: { items: true },
+    });
+
+    if (!order) return;
+
+    // idempotencia
+    if (order.status === "PAID") return;
+    if (order.status === "CANCELLED") return;
+
+    // ✅ descontar stock con guard (evita condiciones de carrera)
+    for (const it of order.items) {
+      const updated = await tx.card.updateMany({
+        where: { id: it.cardId, stock: { gte: it.qty } },
+        data: { stock: { decrement: it.qty } },
+      });
+
+      if (updated.count !== 1) {
+        // si no hay stock en el momento de aprobación, cancelamos orden y cortamos
+        await tx.order.update({
+          where: { id: orderId },
+          data: {
+            status: "CANCELLED",
+            mpPaymentId: paymentId ?? null,
+            mpMerchantOrderId: merchantOrderId ?? null,
+          },
+        });
+
+        throw new Error(`No hay stock al aprobar pago (card ${it.cardId}). Orden cancelada.`);
+      }
+    }
+
+    // ✅ marcar orden como PAID + guardar ids MP
+    await tx.order.update({
+      where: { id: orderId },
+      data: {
+        status: "PAID",
+        mpPaymentId: paymentId ?? null,
+        mpMerchantOrderId: merchantOrderId ?? null,
+      },
+    });
+
+    // ✅ vaciar carrito del user
+    await tx.cartItem.deleteMany({
+      where: { userId: order.userId },
+    });
   });
 }
 
@@ -69,6 +102,7 @@ export async function POST(req: Request) {
     const type = String(body?.type ?? "");
     const dataId = body?.data?.id ?? body?.id;
 
+    // MP a veces manda cosas raras -> respondemos ok para evitar reintentos infinitos
     if (!dataId) return NextResponse.json({ ok: true });
 
     // 1) payment
@@ -76,7 +110,7 @@ export async function POST(req: Request) {
       const paymentApi = new Payment(mp);
       const payment = await paymentApi.get({ id: String(dataId) });
 
-      const paymentId = String(payment.id ?? "");
+      const paymentId = payment.id ? String(payment.id) : null;
       const status = String(payment.status ?? "");
       const merchantOrderId = payment.order?.id ? String(payment.order.id) : null;
       const orderId = payment.external_reference ? String(payment.external_reference) : null;
@@ -84,27 +118,16 @@ export async function POST(req: Request) {
       if (!orderId) return NextResponse.json({ ok: true });
 
       if (status === "approved") {
-        await markPaid(orderId, paymentId || null, merchantOrderId || null);
+        await markPaidAndFulfill(orderId, paymentId, merchantOrderId);
+        return NextResponse.json({ ok: true });
       }
 
-      // cancelled / rejected / refunded / chargeback => devolver stock + cancelar si estaba pending
-      if (
-        status === "rejected" ||
-        status === "cancelled" ||
-        status === "refunded" ||
-        status === "charged_back"
-      ) {
-        await restockOrder(orderId);
-        // guardamos ids MP aunque cancelemos
-        await prisma.order.update({
-          where: { id: orderId },
-          data: {
-            mpPaymentId: paymentId || null,
-            mpMerchantOrderId: merchantOrderId || null,
-          },
-        }).catch(() => {});
+      if (BAD_STATUSES.has(status)) {
+        await markCancelled(orderId, paymentId, merchantOrderId);
+        return NextResponse.json({ ok: true });
       }
 
+      // otros estados: pending/in_process/etc -> no hacemos nada
       return NextResponse.json({ ok: true });
     }
 
@@ -115,28 +138,27 @@ export async function POST(req: Request) {
 
       const payments = Array.isArray(mo.payments) ? mo.payments : [];
       const approved = payments.find((p: any) => String(p.status) === "approved");
-      const rejected = payments.find((p: any) =>
-        ["rejected", "cancelled", "refunded", "charged_back"].includes(String(p.status))
-      );
+      const rejected = payments.find((p: any) => BAD_STATUSES.has(String(p.status)));
 
       const orderId = mo.external_reference ? String(mo.external_reference) : null;
       if (!orderId) return NextResponse.json({ ok: true });
 
       if (approved) {
-        await markPaid(
+        await markPaidAndFulfill(
           orderId,
           approved.id ? String(approved.id) : null,
           String(mo.id ?? "")
         );
-      } else if (rejected) {
-        await restockOrder(orderId);
-        await prisma.order.update({
-          where: { id: orderId },
-          data: {
-            mpMerchantOrderId: String(mo.id ?? ""),
-            mpPaymentId: rejected.id ? String(rejected.id) : null,
-          },
-        }).catch(() => {});
+        return NextResponse.json({ ok: true });
+      }
+
+      if (rejected) {
+        await markCancelled(
+          orderId,
+          rejected.id ? String(rejected.id) : null,
+          String(mo.id ?? "")
+        );
+        return NextResponse.json({ ok: true });
       }
 
       return NextResponse.json({ ok: true });
@@ -145,6 +167,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   } catch (e: any) {
     console.error("MP WEBHOOK ERROR:", e);
+    // Respondemos ok para que MP no reintente eternamente
     return NextResponse.json({ ok: true });
   }
 }

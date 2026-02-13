@@ -1,0 +1,99 @@
+Si querés, los próximos pasos “pro” podrían ser:
+
+📧 Email automático cuando:
+
+Se paga (PAID)
+
+Se envía (SHIPPED con tracking)
+
+Se entrega (DELIVERED)
+
+📦 Dashboard con métricas:
+
+Ventas totales
+
+Órdenes pendientes
+
+Top productos
+
+🌍 Multi-moneda real (USD + ARS dinámico)
+
+💳 Agregar Stripe y elegir método de pago
+
+🔐 Reemplazar ADMIN_SECRET por login real admin
+
+Decime cuál te entusiasma más y lo construimos bien armado, sin parches 😄
+
+
+------------------------------------------------------------
+
+Cómo lo vamos a hacer (plan corto)
+1) UI en /cart
+
+Agregar un selector simple: Pago: MercadoPago / Stripe.
+
+Por defecto:
+
+Si country === "AR" → sugerimos MercadoPago (porque vos convertís a ARS fijo).
+
+Si country !== "AR" → sugerimos Stripe.
+
+El botón “Checkout” llama al endpoint correcto según elección.
+
+2) Backend: dos endpoints separados (para no mezclar lógica)
+
+MercadoPago: dejás tu /api/checkout como está (ARS + conversión fija + shipping item).
+
+Stripe: creamos /api/checkout/stripe
+
+Calcula el mismo subtotal + shipping (en USD cents)
+
+Crea un Stripe Checkout Session
+
+Devuelve url para redirigir al checkout de Stripe
+
+Importante: el cálculo de totales (subtotal + shipping) lo hacemos en backend en ambos casos, así no hay “trampa” desde el frontend.
+
+3) Success / Cancel pages
+
+Stripe vuelve a:
+
+/orders?status=success&orderId=...
+
+/orders?status=cancel&orderId=...
+
+Igual que MP, “volver” no confirma: confirma el webhook.
+
+4) Webhooks
+
+MP webhook (ya lo tenés/lo hacemos) actualiza Order.status.
+
+Stripe webhook nuevo (/api/stripe/webhook) hace lo mismo:
+
+checkout.session.completed → APPROVED
+
+payment_intent.payment_failed/expired → FAILED / CANCELLED
+
+En local lo probás con Stripe CLI (fácil), igual que ngrok para MP.
+
+5) Modelo Order (mínimos cambios)
+
+Agregar paymentProvider: "MP" | "STRIPE"
+
+Guardar ids:
+
+MP: mpPreferenceId
+
+Stripe: stripeSessionId (o paymentIntentId)
+
+(Opcional) guardar shippingCents separado, pero no es obligatorio.
+
+Resultado final
+
+En el checkout el usuario elige:
+
+MercadoPago → ARS (tu conversión fija)
+
+Stripe → USD directo (ideal para US/EU)
+
+Cuando quieras, arrancamos por lo primero: selector en UI + endpoint /api/checkout/stripe (sin tocar lo demás).

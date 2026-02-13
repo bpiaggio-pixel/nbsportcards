@@ -9,11 +9,25 @@ const normId = (v: any) => {
   return m ? String(parseInt(m[0], 10)) : s;
 };
 
+async function ensureUserExists(userId: string) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true },
+  });
+  return !!user;
+}
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const userId = String(searchParams.get("userId") ?? "").trim();
     if (!userId) return NextResponse.json({ items: [] });
+
+    // ✅ avoid FK-related weirdness: if user doesn't exist, act as empty cart (or 401)
+    const okUser = await ensureUserExists(userId);
+    if (!okUser) {
+      return NextResponse.json({ error: "USER_NOT_FOUND" }, { status: 401 });
+    }
 
     const items = await prisma.cartItem.findMany({
       where: { userId },
@@ -38,6 +52,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing userId/cardId" }, { status: 400 });
     }
 
+    // ✅ prevent P2003 foreign key errors
+    const okUser = await ensureUserExists(userId);
+    if (!okUser) {
+      return NextResponse.json({ error: "USER_NOT_FOUND" }, { status: 401 });
+    }
+
     const existing = await prisma.cartItem.findFirst({ where: { userId, cardId } });
 
     const item = existing
@@ -59,6 +79,12 @@ export async function DELETE(req: Request) {
 
     if (!userId || !cardId) {
       return NextResponse.json({ error: "Missing userId/cardId" }, { status: 400 });
+    }
+
+    // ✅ consistent behavior
+    const okUser = await ensureUserExists(userId);
+    if (!okUser) {
+      return NextResponse.json({ error: "USER_NOT_FOUND" }, { status: 401 });
     }
 
     await prisma.cartItem.deleteMany({ where: { userId, cardId } });

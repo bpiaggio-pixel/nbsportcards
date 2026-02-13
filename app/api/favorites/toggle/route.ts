@@ -9,6 +9,14 @@ const normId = (v: any) => {
   return m ? String(parseInt(m[0], 10)) : s;
 };
 
+async function ensureUserExists(userId: string) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true },
+  });
+  return !!user;
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -19,7 +27,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing userId/cardId" }, { status: 400 });
     }
 
-    // OJO: asumo que tu modelo Prisma se llama `favorite` (tabla Favorite)
+    // ✅ prevent P2003 foreign key errors
+    const okUser = await ensureUserExists(userId);
+    if (!okUser) {
+      return NextResponse.json({ error: "USER_NOT_FOUND" }, { status: 401 });
+    }
+
     const existing = await prisma.favorite.findFirst({
       where: { userId, cardId },
       select: { id: true },

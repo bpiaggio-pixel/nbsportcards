@@ -2,7 +2,7 @@ Opción A (simple): import manual desde tu PC
 
 Cada vez que editás el Excel:
 
-npx tsx scripts/seed-cards.ts
+npx tsx scripts/import-cards.ts
 
 
 Eso:
