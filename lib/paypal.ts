@@ -1,6 +1,9 @@
 const isProd = process.env.NODE_ENV === "production";
 
-export const PAYPAL_BASE = "https://api-m.sandbox.paypal.com";
+export const PAYPAL_BASE =
+  env === "live"
+    ? "https://api-m.paypal.com"
+    : "https://api-m.sandbox.paypal.com";
 
 
 async function getAccessToken() {

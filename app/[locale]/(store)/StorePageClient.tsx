@@ -17,6 +17,9 @@ type Card = {
   image?: string;
   image2?: string;
 
+  // ✅ STOCK
+  stock?: number;
+
   great_deal?: string;
   greatDeal?: string;
 };
@@ -189,14 +192,13 @@ function TopCardsShowcase({
    STORE PAGE CLIENT (REAL)
 -------------------------- */
 export default function StorePageClient() {
-const t = useTranslations("Store");
-const locale = useLocale();
+  const t = useTranslations("Store");
+  const locale = useLocale();
   const [cards, setCards] = React.useState<Card[]>([]);
 
   // ✅ BUSCADOR: se lee desde la URL (?q=...)
   const searchParams = useSearchParams();
   const search = (searchParams?.get("q") ?? "").toLowerCase().trim();
-
 
   // ✅ NORMALIZADOR DE ID (CLAVE)
   const normId = React.useCallback((v: any) => {
@@ -234,12 +236,16 @@ const locale = useLocale();
   } | null>(null);
 
   // ✅ 1) Normaliza IDs y elimina duplicados por id (NORMALIZADO)
+  // ✅ + Normaliza stock a number
   const uniqueCards = React.useMemo(() => {
     const map = new Map<string, Card>();
     for (const c of cards) {
       const id = normId(c.id);
       if (!id) continue;
-      if (!map.has(id)) map.set(id, { ...c, id });
+
+      const stock = Math.max(0, Math.floor(Number((c as any).stock ?? 0)));
+
+      if (!map.has(id)) map.set(id, { ...c, id, stock });
     }
     return Array.from(map.values());
   }, [cards, normId]);
@@ -261,23 +267,22 @@ const locale = useLocale();
   const mostViewed = React.useMemo(() => {
     return uniqueCards.find((c) => c.id !== recommended?.id && c.id !== greatDealPick?.id) ?? null;
   }, [uniqueCards, recommended, greatDealPick]);
-// ✅ 5) blog
-const [latestPost, setLatestPost] = React.useState<any>(null);
 
-React.useEffect(() => {
-  async function loadLatestPost() {
-    try {
-      const res = await fetch("/api/blog/latest", { cache: "no-store" });
-      const data = await res.json();
+  // ✅ 5) blog
+  const [latestPost, setLatestPost] = React.useState<any>(null);
 
-      setLatestPost(data?.post ?? null);
-    } catch {}
-  }
+  React.useEffect(() => {
+    async function loadLatestPost() {
+      try {
+        const res = await fetch("/api/blog/latest", { cache: "no-store" });
+        const data = await res.json();
 
-  loadLatestPost();
-}, []);
+        setLatestPost(data?.post ?? null);
+      } catch {}
+    }
 
-
+    loadLatestPost();
+  }, []);
 
   // -----------------------
   // USER SESSION (MVP)
@@ -322,6 +327,9 @@ React.useEffect(() => {
   const [sport, setSport] = React.useState<"all" | Sport>("all");
   const [player, setPlayer] = React.useState<"all" | string>("all");
   const [sort, setSort] = React.useState<"recommended" | "price_desc" | "price_asc">("recommended");
+
+  // ✅ mobile filters drawer
+  const [filtersOpen, setFiltersOpen] = React.useState(false);
 
   // pagination
   const pageSize = 9;
@@ -452,25 +460,25 @@ React.useEffect(() => {
   }
 
   // ✅ listado de jugadores
-const players = React.useMemo(() => {
-  const set = new Set<string>();
+  const players = React.useMemo(() => {
+    const set = new Set<string>();
 
-  const base = sport === "all" ? uniqueCards : uniqueCards.filter((c) => c.sport === sport);
+    const base = sport === "all" ? uniqueCards : uniqueCards.filter((c) => c.sport === sport);
 
-  for (const c of base) {
-    const p = c.player?.trim();
-    if (p) set.add(p);
-  }
+    for (const c of base) {
+      const p = c.player?.trim();
+      if (p) set.add(p);
+    }
 
-  return Array.from(set).sort((a, b) => a.localeCompare(b));
-}, [uniqueCards, sport]);
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [uniqueCards, sport]);
 
-// ✅ resetear player si ya no existe en el sport seleccionado
-React.useEffect(() => {
-  if (player === "all") return;
-  if (players.includes(player)) return;
-  setPlayer("all");
-}, [sport, players, player]);
+  // ✅ resetear player si ya no existe en el sport seleccionado
+  React.useEffect(() => {
+    if (player === "all") return;
+    if (players.includes(player)) return;
+    setPlayer("all");
+  }, [sport, players, player]);
 
   // ✅ filtros
   const filtered = React.useMemo(() => {
@@ -487,7 +495,7 @@ React.useEffect(() => {
     });
 
     if (sort === "price_desc") result = [...result].sort((a, b) => b.price - a.price);
-    if (sort === "price_asc") result = [...result].sort((a, b) => a.price - b.price);
+    if (sort === "price_asc") result = [...result].sort((a, b) => a.price - a.price);
 
     return result;
   }, [uniqueCards, search, sport, sort, player]);
@@ -544,9 +552,9 @@ React.useEffect(() => {
   return (
     <div className="min-h-screen bg-white text-gray-900">
       {/* MAIN */}
-      <div className="mx-auto grid max-w-7xl grid-cols-[280px_1fr] gap-8 px-6 py-10">
+<div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 py-6 lg:grid-cols-[280px_1fr] lg:px-6 lg:py-10">
         {/* SIDEBAR */}
-        <aside className="space-y-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+<aside className="hidden lg:block space-y-6 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm lg:p-6">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">{t("filters")}</h2>
 
           <div>
@@ -618,39 +626,30 @@ React.useEffect(() => {
                 </div>
               )}
 
-{/* ✅ BLOG (última nota) */}
+              {/* ✅ BLOG (última nota) */}
               <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
                 <div className="text-sm font-bold text-gray-900 mb-3">Blog</div>
 
                 {latestPost ? (
                   <>
-                    {/* click en la nota */}
-
                     <a
                       href={`/blog/${latestPost.slug}`}
                       className="block text-sm font-semibold text-gray-800 hover:text-black transition"
                     >
                       {latestPost.title}
                     </a>
-{latestPost.coverImage && (
-  <img
-    src={latestPost.coverImage}
-    alt={latestPost.title}
-    className="mb-5 h-42 w-full rounded-xl object-cover border border-gray-200"
-  />
-)}
+                    {latestPost.coverImage && (
+                      <img
+                        src={latestPost.coverImage}
+                        alt={latestPost.title}
+                        className="mb-5 h-42 w-full rounded-xl object-cover border border-gray-200"
+                      />
+                    )}
 
-                    {/* extracto corto */}
-                    <p className="mt-1 text-sm text-gray-500 line-clamp-7">
-                      {latestPost.excerpt}
-                    </p>
+                    <p className="mt-1 text-sm text-gray-500 line-clamp-7">{latestPost.excerpt}</p>
 
-                    {/* ir al blog */}
-                    <a
-                      href="/blog"
-                      className="font-semibold mt-2 text-sm text-sky-600 hover:text-sky-900"
-                    >
-                      {t("goToBlog")} 
+                    <a href="/blog" className="font-semibold mt-2 text-sm text-sky-600 hover:text-sky-900">
+                      {t("goToBlog")}
                     </a>
                   </>
                 ) : (
@@ -661,37 +660,137 @@ React.useEffect(() => {
           </div>
         </aside>
 
-        {/* GRID */}
+{/* ✅ MOBILE FILTERS DRAWER */}
+{filtersOpen && (
+  <div className="fixed inset-0 z-[200] lg:hidden">
+    {/* fondo */}
+    <div className="absolute inset-0 bg-black/40" onClick={() => setFiltersOpen(false)} />
+
+    {/* panel */}
+    <div className="absolute inset-x-0 bottom-0 max-h-[85vh] overflow-auto rounded-t-3xl bg-white p-5 shadow-xl">
+      <div className="mb-4 flex items-center justify-between">
+        <div className="text-sm font-bold text-gray-900">{t("filters")}</div>
+        <button
+          type="button"
+          onClick={() => setFiltersOpen(false)}
+          className="rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold hover:bg-gray-50"
+        >
+          Close
+        </button>
+      </div>
+
+      {/* ✅ filtros (mobile) */}
+      <div className="space-y-6">
+        <div>
+          <p className="mb-3 text-sm font-semibold text-gray-800">{t("category")}</p>
+          <div className="space-y-2 text-sm text-gray-700">
+            <label className="flex items-center gap-2">
+              <input type="radio" checked={sport === "all"} onChange={() => setSport("all")} />
+              {t("all")}
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                checked={sport === "basketball"}
+                onChange={() => setSport("basketball")}
+              />
+              Basketball
+            </label>
+            <label className="flex items-center gap-2">
+              <input type="radio" checked={sport === "soccer"} onChange={() => setSport("soccer")} />
+              Soccer
+            </label>
+            <label className="flex items-center gap-2">
+              <input type="radio" checked={sport === "nfl"} onChange={() => setSport("nfl")} />
+              NFL
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <p className="mb-3 text-sm font-semibold text-gray-800">Player</p>
+          <select
+            value={player}
+            onChange={(e) => setPlayer(e.target.value)}
+            className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-black/10"
+          >
+            <option value="all">{t("all")}</option>
+            {players.map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <p className="mb-3 text-sm font-semibold text-gray-800">{t("wishlist")}</p>
+          <div className="text-sm text-gray-600">
+            {t("saved")}: <span className="font-semibold text-gray-900">{favCount}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <button
+          type="button"
+          onClick={() => setFiltersOpen(false)}
+          className="w-full rounded-full bg-black py-3 text-sm font-semibold text-white hover:bg-gray-900"
+        >
+          Ver resultados
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+{/* GRID */}
         <main>
           {/* BANNER SOLO EN COLUMNA DE TARJETAS */}
           <div className="mb-6 overflow-hidden">
-            <div className="relative h-[250px] w-full">
-              <img
-                src={getBannerSrc(sport)}
-                alt="Category banner"
-                className="h-full w-full object-cover object-top"
-                draggable={false}
-              />
-            </div>
-          </div>
+  <div className="relative h-[180px] sm:h-[220px] md:h-[250px] w-full">
+    <img
+      src={getBannerSrc(sport)}
+      alt="Category banner"
+      className="h-full w-full object-cover object-top"
+      draggable={false}
+    />
+
+    {/* ✅ Degradé hacia abajo para que no corte seco */}
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 sm:h-24 md:h-28 bg-gradient-to-b from-transparent to-white" />
+  </div>
+</div>
+
 
           <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-lg font-semibold">{filtered.length} {t("results")}</h2>
+            <h2 className="text-lg font-semibold">
+              {filtered.length} {t("results")}
+            </h2>
 
             <div className="flex items-center gap-2">
-              <select
+      {/* ✅ Mobile: abrir menú de filtros */}
+      <button
+        type="button"
+        onClick={() => setFiltersOpen(true)}
+        className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold hover:bg-gray-50 lg:hidden"
+      >
+        {t("filters")}
+      </button>
+
+      <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value as any)}
                 className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-black/10"
               >
-<option value="recommended">{t("sortRecommended")}</option>
+                <option value="recommended">{t("sortRecommended")}</option>
                 <option value="price_desc">{t("priceHighToLow")}</option>
                 <option value="price_asc">{t("priceLowToHigh")}</option>
               </select>
             </div>
           </div>
 
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+
             {paged.map((card) => (
               <CardTile
                 key={card.id}
@@ -700,8 +799,7 @@ React.useEffect(() => {
                 onToggleWish={() => toggleWish(card.id)}
                 onOpen={() => setSelectedId(card.id)}
                 onAddToCart={() => addToCart(card.id)}
-t={t}
-
+                t={t}
               />
             ))}
           </div>
@@ -728,7 +826,7 @@ t={t}
                 disabled={safePage === totalPages}
                 className="cursor-pointer rounded-full border border-gray-200 bg-white px-4 py-2 text-sm hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                {t("next")} 
+                {t("next")}
               </button>
             </div>
           </div>
@@ -865,13 +963,26 @@ t={t}
 
                 <div className="mt-5 text-2xl font-bold text-gray-900">{formatUSD(selectedCard.price)}</div>
 
+                {/* ✅ STOCK: modal */}
+                {((selectedCard.stock ?? 0) <= 0) && (
+                  <div className="mt-3 inline-flex rounded-full bg-gray-200 px-3 py-1 text-xs font-semibold text-gray-700">
+                    Sin stock
+                  </div>
+                )}
+
                 <div className="mt-6 flex gap-2">
                   <button
                     type="button"
                     onClick={() => addToCart(selectedCard.id)}
-                    className="flex-1 rounded-full bg-sky-500 py-3 text-sm font-semibold text-white hover:bg-sky-600"
+                    disabled={(selectedCard.stock ?? 0) <= 0}
+                    className={[
+                      "flex-1 rounded-full py-3 text-sm font-semibold",
+                      (selectedCard.stock ?? 0) <= 0
+                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                        : "bg-sky-500 text-white hover:bg-sky-600",
+                    ].join(" ")}
                   >
-                    Add to cart
+                    {(selectedCard.stock ?? 0) <= 0 ? "Sin stock" : "Add to cart"}
                   </button>
 
                   <button
@@ -883,7 +994,6 @@ t={t}
                   </button>
                 </div>
 
-                
                 <div className="mt-14 flex gap-4">
                   <button
                     type="button"
@@ -1010,14 +1120,29 @@ function CardTile({
   onAddToCart: () => void;
   t: (key: string) => string;
 }) {
-
   const img = card.image?.trim() ? card.image : getFallback(card.sport);
+
+  // ✅ STOCK
+  const outOfStock = (card.stock ?? 0) <= 0;
 
   return (
     <div className="group relative rounded-[22px] p-[2px] transition">
       <div className="absolute inset-0 rounded-[22px] bg-gradient-to-r from-sky-200 via-cyan-200 to-blue-200 opacity-0 blur-lg transition group-hover:opacity-70" />
 
-      <div className="relative overflow-hidden rounded-[20px] border border-gray-200 bg-white shadow-sm transition group-hover:shadow-lg">
+      {/* ✅ STOCK: gris cuando no hay stock */}
+      <div
+        className={[
+          "relative overflow-hidden rounded-[20px] border border-gray-200 bg-white shadow-sm transition group-hover:shadow-lg",
+          outOfStock ? "opacity-60" : "",
+        ].join(" ")}
+      >
+        {/* ✅ STOCK: badge */}
+        {outOfStock && (
+          <div className="absolute left-4 top-4 z-20 rounded-full bg-gray-900 px-3 py-1 text-xs font-semibold text-white">
+            Sin stock
+          </div>
+        )}
+
         <button
           type="button"
           onClick={(e) => {
@@ -1027,7 +1152,11 @@ function CardTile({
           className="absolute right-4 top-4 z-20 rounded-full border border-gray-200 bg-white/90 p-2 shadow-sm backdrop-blur hover:bg-gray-50"
           aria-label="Save"
         >
-          <Heart size={18} className={wished ? "text-pink-600" : "text-gray-600"} fill={wished ? "currentColor" : "none"} />
+          <Heart
+            size={18}
+            className={wished ? "text-pink-600" : "text-gray-600"}
+            fill={wished ? "currentColor" : "none"}
+          />
         </button>
 
         <div
@@ -1065,15 +1194,21 @@ function CardTile({
               )}
             </div>
 
+            {/* ✅ STOCK: deshabilitar agregar */}
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
+                if (outOfStock) return;
                 onAddToCart();
               }}
-              className="w-full rounded-full bg-sky-400 py-3 text-sm font-semibold text-white hover:bg-sky-600"
+              disabled={outOfStock}
+              className={[
+                "w-full rounded-full py-3 text-sm font-semibold",
+                outOfStock ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-sky-400 text-white hover:bg-sky-600",
+              ].join(" ")}
             >
-              {t("addToCart")}
+              {outOfStock ? "Sin stock" : t("addToCart")}
             </button>
           </div>
         </div>
