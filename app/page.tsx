@@ -1,8 +1,8 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-export default function Home() {
-  const h = headers();
+export default async function Home() {
+  const h = await headers();
 
   const country = (h.get("x-vercel-ip-country") || "").toUpperCase();
   const accept = (h.get("accept-language") || "").toLowerCase();
