@@ -183,7 +183,8 @@ const activeLocale = ((locale || pathLocale) === "es" ? "es" : "en") as "es" | "
   const favCount = Object.values(wishlist).filter(Boolean).length;
 
 return (
-  <header className="sticky top-0 z-50 border-b border-gray-200 bg-[#fcfcfd]/95 backdrop-blur">
+  <header className="sticky top-0 z-[500] border-b border-gray-200 bg-[#fcfcfd]/95 backdrop-blur">
+
     <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 sm:py-4">
       {/* ✅ DESKTOP (sm+): como antes, en una fila */}
       <div className="hidden sm:flex items-center gap-6">
@@ -453,7 +454,7 @@ return (
 
       {/* ✅ Drawer mobile */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-[200] sm:hidden">
+<div className="fixed inset-0 z-[1000] sm:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setMobileMenuOpen(false)} />
           <div className="absolute right-0 top-0 h-full w-[86%] max-w-sm bg-white shadow-xl">
             <div className="flex items-center justify-between border-b border-gray-200 px-4 py-4">

@@ -840,13 +840,17 @@ export default function StorePageClient() {
       {selectedCard && (
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4"
-          onMouseDown={() => setSelectedId(null)}
+onPointerDown={() => setSelectedId(null)}
+onMouseDown={() => setSelectedId(null)}
         >
           <div
-            className="w-full max-w-4xl overflow-hidden rounded-3xl bg-white shadow-xl"
-            onMouseDown={(e) => e.stopPropagation()}
+            className="w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-3xl bg-white shadow-xl flex flex-col"
+
+onPointerDown={(e) => e.stopPropagation()}
+onMouseDown={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+            <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4"
+>
               <div className="text-sm text-gray-600">
                 <span className="font-semibold text-gray-900">{selectedCard.player}</span> ·{" "}
                 <span className="uppercase">{selectedCard.sport}</span> ·{" "}
@@ -862,9 +866,11 @@ export default function StorePageClient() {
               </button>
             </div>
 
-            <div className="grid gap-0 md:grid-cols-[1.2fr_0.8fr]">
+            <div className="grid flex-1 gap-0 overflow-y-auto md:grid-cols-[1.2fr_0.8fr]"
+>
               <div
-                className="relative h-[420px] border-b border-gray-200 bg-[#f3f4f6] md:border-b-0 md:border-r"
+                className="relative h-[260px] sm:h-[360px] md:h-[420px] border-b border-gray-200 bg-[#f3f4f6] md:border-b-0 md:border-r"
+
                 onWheelCapture={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
