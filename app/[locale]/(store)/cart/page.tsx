@@ -95,8 +95,9 @@ export default function CartPage() {
   const [cards, setCards] = React.useState<Card[]>([]);
   const [items, setItems] = React.useState<{ cardId: string; qty: number }[]>([]);
   const [msg, setMsg] = React.useState("");
-const pathname = usePathname();
-const locale = pathname.split("/")[1] || "en"; // toma "es" o "en" del URL
+const pathname = usePathname() || "";
+const locale = (pathname.split("/")[1] || "en").toLowerCase();
+
 const ordersUrl = `/${locale}/orders`;
 
 
