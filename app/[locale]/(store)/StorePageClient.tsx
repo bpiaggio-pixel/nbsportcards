@@ -861,14 +861,14 @@ export default function StorePageClient() {
       {/* MODAL */}
       {portalRoot && selectedCard && createPortal(
         <div
-                  className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4"
+                  className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4 md:p-10"
+
                   onPointerDown={() => setSelectedId(null)}
-                   onMouseDown={() => setSelectedId(null)}
                 >
                   <div
-                    className="w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-3xl bg-white shadow-xl flex flex-col"
+className="w-full max-w-4xl max-h-[78vh] md:max-h-[82vh] overflow-hidden rounded-3xl bg-white shadow-xl flex flex-col"
+
                     onPointerDown={(e) => e.stopPropagation()}
-                     onMouseDown={(e) => e.stopPropagation()}
                   >
                     <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
                       <div className="text-sm text-gray-600">
@@ -888,7 +888,7 @@ export default function StorePageClient() {
         
                     <div className="grid flex-1 gap-0 overflow-y-auto md:grid-cols-[1.2fr_0.8fr]">
                       <div
-                        className="relative h-[260px] sm:h-[360px] md:h-[420px] border-b border-gray-200 bg-[#f3f4f6] md:border-b-0 md:border-r"
+className="relative h-[260px] sm:h-[340px] md:h-[380px] lg:h-[600px] border-b border-gray-200 bg-[#f3f4f6] md:border-b-0 md:border-r"
                         onWheelCapture={(e) => {
                           e.preventDefault();
                           e.stopPropagation();

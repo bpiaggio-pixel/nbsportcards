@@ -72,10 +72,31 @@ async function main() {
       exists.add(id);
       created++;
     } else {
-      await prisma.card.update({
-        where: { id },
-        data: { sport, title, player, priceCents, image, image2, greatDeal },
-      });
+   await prisma.card.upsert({
+  where: { id },
+  update: {
+    sport,
+    title,
+    player,
+    priceCents,
+    image,
+    image2,
+    greatDeal,
+    stock,
+  },
+  create: {
+    id,
+    sport,
+    title,
+    player,
+    priceCents,
+    image,
+    image2,
+    greatDeal,
+    stock,
+  },
+});
+
       updated++;
     }
   }
