@@ -338,6 +338,27 @@ export default function StorePageClient() {
 
   // modal
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
+  const [portalRoot, setPortalRoot] = React.useState<HTMLElement | null>(null);
+
+  React.useEffect(() => {
+    // Create (or reuse) a dedicated portal root so the modal is always above everything
+    const id = "app-portal-root";
+    let el = document.getElementById(id) as HTMLElement | null;
+    if (!el) {
+      el = document.createElement("div");
+      el.id = id;
+      document.body.appendChild(el);
+    }
+    setPortalRoot(el);
+  }, []);
+
+  React.useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedId(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
   const selectedCard = React.useMemo(
     () => uniqueCards.find((c) => normId(c.id) === normId(selectedId)) ?? null,
     [uniqueCards, selectedId, normId]
@@ -369,16 +390,6 @@ export default function StorePageClient() {
 
   React.useEffect(() => {
     setActiveSide("front");
-  }, [selectedId]);
-
-  // ✅ allow closing the modal with ESC
-  React.useEffect(() => {
-    if (!selectedId) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setSelectedId(null);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
   }, [selectedId]);
 
   const frontImg =
@@ -848,234 +859,229 @@ export default function StorePageClient() {
       <TopCardsShowcase items={topShowcaseItems} onSelect={(id) => setSelectedId(id)} />
 
       {/* MODAL */}
-      {mounted && selectedCard &&
-        createPortal(
-          <div
-            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4"
-            onPointerDown={() => setSelectedId(null)}
-            onMouseDown={() => setSelectedId(null)}
-          >
-          <div
-            className="relative w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-3xl bg-white shadow-xl flex flex-col"
-            onPointerDown={(e) => e.stopPropagation()}
-             onMouseDown={(e) => e.stopPropagation()}
-          >
-            {/* ✅ Close button that is ALWAYS reachable on mobile */}
-            <button
-              type="button"
-              onClick={() => setSelectedId(null)}
-              aria-label="Cerrar"
-              className="absolute right-3 z-[40] rounded-full border border-gray-200 bg-white/90 p-2 shadow-sm backdrop-blur hover:bg-gray-50"
-              style={{ top: "calc(env(safe-area-inset-top) + 12px)" }}
-            >
-              <X size={18} />
-            </button>
-
-            <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4 pr-14">
-              <div className="text-sm text-gray-600">
-                <span className="font-semibold text-gray-900">{selectedCard.player}</span> ·{" "}
-                <span className="uppercase">{selectedCard.sport}</span> ·{" "}
-                <span className="font-mono">{selectedCard.id}</span>
-              </div>
-            </div>
-
-            <div className="grid flex-1 gap-0 overflow-y-auto md:grid-cols-[1.2fr_0.8fr]">
-              <div
-                className="relative h-[260px] sm:h-[360px] md:h-[420px] border-b border-gray-200 bg-[#f3f4f6] md:border-b-0 md:border-r"
-                onWheelCapture={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  const factor = e.deltaY > 0 ? 0.9 : 1.1;
-                  setZoom((z) => clampZoom(z * factor));
-                }}
-                style={{ overscrollBehavior: "contain" }}
-              >
-                {/* controles de zoom */}
-                <div className="absolute right-4 top-4 z-20 flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setZoom((z) => clampZoom(z * 1.1))}
-                    className="rounded-full border border-gray-200 bg-white/90 px-3 py-2 text-sm font-bold shadow-sm backdrop-blur hover:bg-gray-50"
-                    aria-label="Zoom in"
-                  >
-                    +
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setZoom((z) => clampZoom(z / 1.1))}
-                    className="rounded-full border border-gray-200 bg-white/90 px-3 py-2 text-sm font-bold shadow-sm backdrop-blur hover:bg-gray-50"
-                    aria-label="Zoom out"
-                  >
-                    –
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setZoom(1);
-                      setPan({ x: 0, y: 0 });
-                    }}
-                    className="rounded-full border border-gray-200 bg-white/90 px-3 py-2 text-xs font-semibold shadow-sm backdrop-blur hover:bg-gray-50"
-                    aria-label="Reset zoom"
-                  >
-                    1:1
-                  </button>
-                </div>
-
-                <div
-                  className="relative z-10 flex h-full items-center justify-center p-6 overflow-hidden"
-                  style={{
-                    cursor: zoom > 1 ? "grab" : "default",
-                    touchAction: "none",
-                  }}
-                  onPointerDown={(e) => {
-                    if (zoom <= 1) return;
-                    (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
-
-                    dragRef.current = {
-                      dragging: true,
-                      sx: e.clientX,
-                      sy: e.clientY,
-                      ox: pan.x,
-                      oy: pan.y,
-                    };
-                  }}
-                  onPointerMove={(e) => {
-                    const st = dragRef.current;
-                    if (!st?.dragging) return;
-
-                    const dx = e.clientX - st.sx;
-                    const dy = e.clientY - st.sy;
-                    setPan({ x: st.ox + dx, y: st.oy + dy });
-                  }}
-                  onPointerUp={(e) => {
-                    const st = dragRef.current;
-                    if (!st) return;
-                    dragRef.current = { ...st, dragging: false };
-                    try {
-                      (e.currentTarget as HTMLDivElement).releasePointerCapture(e.pointerId);
-                    } catch {}
-                  }}
-                  onPointerCancel={() => {
-                    const st = dragRef.current;
-                    if (!st) return;
-                    dragRef.current = { ...st, dragging: false };
-                  }}
+      {portalRoot && selectedCard && createPortal(
+        <div
+                  className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4"
+                  onPointerDown={() => setSelectedId(null)}
+                   onMouseDown={() => setSelectedId(null)}
                 >
-                  <img
-                    src={activeImg}
-                    alt={`${selectedCard.title} - ${activeSide}`}
-                    draggable={false}
-                    style={{
-                      transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-                      transformOrigin: "center",
-                    }}
-                    className="h-full w-full select-none object-contain transition-transform"
-                  />
-                </div>
-              </div>
-
-              <div className="p-6">
-                <h3 className="text-lg font-semibold leading-snug text-gray-900">{selectedCard.title}</h3>
-                <p className="mt-2 text-sm text-gray-600">{selectedCard.player}</p>
-
-                <div className="mt-5 text-2xl font-bold text-gray-900">{formatUSD(selectedCard.price)}</div>
-
-                {/* ✅ STOCK: modal */}
-                {((selectedCard.stock ?? 0) <= 0) && (
-                  <div className="mt-3 inline-flex rounded-full bg-gray-200 px-3 py-1 text-xs font-semibold text-gray-700">
-                    Sin stock
-                  </div>
-                )}
-
-                <div className="mt-6 flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => addToCart(selectedCard.id)}
-                    disabled={(selectedCard.stock ?? 0) <= 0}
-                    className={[
-                      "flex-1 rounded-full py-3 text-sm font-semibold",
-                      (selectedCard.stock ?? 0) <= 0
-                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                        : "bg-sky-500 text-white hover:bg-sky-600",
-                    ].join(" ")}
+                  <div
+                    className="w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-3xl bg-white shadow-xl flex flex-col"
+                    onPointerDown={(e) => e.stopPropagation()}
+                     onMouseDown={(e) => e.stopPropagation()}
                   >
-                    {(selectedCard.stock ?? 0) <= 0 ? "Sin stock" : "Add to cart"}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => toggleWish(selectedCard.id)}
-                    className="rounded-full border border-gray-200 px-4 py-3 text-sm font-semibold hover:bg-gray-50"
-                  >
-                    {wishlist[normId(selectedCard.id)] ? t("savedBtn") : t("save")}
-                  </button>
-                </div>
-
-                <div className="mt-14 flex gap-4">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setActiveSide("front");
-                      setZoom(1);
-                      setPan({ x: 0, y: 0 });
-                    }}
-                    className={[
-                      "relative h-[92px] w-[92px] overflow-hidden rounded-2xl border bg-gray-100",
-                      "transition hover:shadow-md",
-                      activeSide === "front" ? "border-sky-500 ring-2 ring-sky-200" : "border-gray-200",
-                    ].join(" ")}
-                    aria-label="View front"
-                  >
-                    <img
-                      src={frontImg}
-                      alt="Front thumbnail"
-                      className="h-full w-full object-contain p-2"
-                      draggable={false}
-                    />
-                    <span className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-semibold text-gray-700">
-                      Front
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    disabled={!backImg}
-                    onClick={() => {
-                      setActiveSide("back");
-                      setZoom(1);
-                      setPan({ x: 0, y: 0 });
-                    }}
-                    className={[
-                      "relative h-[92px] w-[92px] overflow-hidden rounded-2xl border bg-gray-100",
-                      "transition hover:shadow-md disabled:opacity-40 disabled:cursor-not-allowed",
-                      activeSide === "back" ? "border-sky-500 ring-2 ring-sky-200" : "border-gray-200",
-                    ].join(" ")}
-                    aria-label="View back"
-                  >
-                    {backImg ? (
-                      <img
-                        src={backImg}
-                        alt="Back thumbnail"
-                        className="h-full w-full object-contain p-2"
-                        draggable={false}
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center text-xs font-semibold text-gray-500">
-                        No back
+                    <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
+                      <div className="text-sm text-gray-600">
+                        <span className="font-semibold text-gray-900">{selectedCard.player}</span> ·{" "}
+                        <span className="uppercase">{selectedCard.sport}</span> ·{" "}
+                        <span className="font-mono">{selectedCard.id}</span>
                       </div>
-                    )}
-                    <span className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-semibold text-gray-700">
-                      Back
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          </div>,
-          document.body
-        )}
-}
+        
+                      <button
+                        type="button"
+                        className="fixed right-4 top-[calc(env(safe-area-inset-top)+12px)] sm:static sm:right-auto sm:top-auto rounded-full border border-gray-200 bg-white/90 backdrop-blur p-2 hover:bg-gray-50"
+                        onClick={() => setSelectedId(null)}
+                      >
+                        <X size={18} />
+                      </button>
+                    </div>
+        
+                    <div className="grid flex-1 gap-0 overflow-y-auto md:grid-cols-[1.2fr_0.8fr]">
+                      <div
+                        className="relative h-[260px] sm:h-[360px] md:h-[420px] border-b border-gray-200 bg-[#f3f4f6] md:border-b-0 md:border-r"
+                        onWheelCapture={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          const factor = e.deltaY > 0 ? 0.9 : 1.1;
+                          setZoom((z) => clampZoom(z * factor));
+                        }}
+                        style={{ overscrollBehavior: "contain" }}
+                      >
+                        {/* controles de zoom */}
+                        <div className="absolute right-4 top-4 z-20 flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setZoom((z) => clampZoom(z * 1.1))}
+                            className="rounded-full border border-gray-200 bg-white/90 px-3 py-2 text-sm font-bold shadow-sm backdrop-blur hover:bg-gray-50"
+                            aria-label="Zoom in"
+                          >
+                            +
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setZoom((z) => clampZoom(z / 1.1))}
+                            className="rounded-full border border-gray-200 bg-white/90 px-3 py-2 text-sm font-bold shadow-sm backdrop-blur hover:bg-gray-50"
+                            aria-label="Zoom out"
+                          >
+                            –
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setZoom(1);
+                              setPan({ x: 0, y: 0 });
+                            }}
+                            className="rounded-full border border-gray-200 bg-white/90 px-3 py-2 text-xs font-semibold shadow-sm backdrop-blur hover:bg-gray-50"
+                            aria-label="Reset zoom"
+                          >
+                            1:1
+                          </button>
+                        </div>
+        
+                        <div
+                          className="relative z-10 flex h-full items-center justify-center p-6 overflow-hidden"
+                          style={{
+                            cursor: zoom > 1 ? "grab" : "default",
+                            touchAction: "none",
+                          }}
+                          onPointerDown={(e) => {
+                            if (zoom <= 1) return;
+                            (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
+        
+                            dragRef.current = {
+                              dragging: true,
+                              sx: e.clientX,
+                              sy: e.clientY,
+                              ox: pan.x,
+                              oy: pan.y,
+                            };
+                          }}
+                          onPointerMove={(e) => {
+                            const st = dragRef.current;
+                            if (!st?.dragging) return;
+        
+                            const dx = e.clientX - st.sx;
+                            const dy = e.clientY - st.sy;
+                            setPan({ x: st.ox + dx, y: st.oy + dy });
+                          }}
+                          onPointerUp={(e) => {
+                            const st = dragRef.current;
+                            if (!st) return;
+                            dragRef.current = { ...st, dragging: false };
+                            try {
+                              (e.currentTarget as HTMLDivElement).releasePointerCapture(e.pointerId);
+                            } catch {}
+                          }}
+                          onPointerCancel={() => {
+                            const st = dragRef.current;
+                            if (!st) return;
+                            dragRef.current = { ...st, dragging: false };
+                          }}
+                        >
+                          <img
+                            src={activeImg}
+                            alt={`${selectedCard.title} - ${activeSide}`}
+                            draggable={false}
+                            style={{
+                              transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+                              transformOrigin: "center",
+                            }}
+                            className="h-full w-full select-none object-contain transition-transform"
+                          />
+                        </div>
+                      </div>
+        
+                      <div className="p-6">
+                        <h3 className="text-lg font-semibold leading-snug text-gray-900">{selectedCard.title}</h3>
+                        <p className="mt-2 text-sm text-gray-600">{selectedCard.player}</p>
+        
+                        <div className="mt-5 text-2xl font-bold text-gray-900">{formatUSD(selectedCard.price)}</div>
+        
+                        {/* ✅ STOCK: modal */}
+                        {((selectedCard.stock ?? 0) <= 0) && (
+                          <div className="mt-3 inline-flex rounded-full bg-gray-200 px-3 py-1 text-xs font-semibold text-gray-700">
+                            Sin stock
+                          </div>
+                        )}
+        
+                        <div className="mt-6 flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => addToCart(selectedCard.id)}
+                            disabled={(selectedCard.stock ?? 0) <= 0}
+                            className={[
+                              "flex-1 rounded-full py-3 text-sm font-semibold",
+                              (selectedCard.stock ?? 0) <= 0
+                                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                                : "bg-sky-500 text-white hover:bg-sky-600",
+                            ].join(" ")}
+                          >
+                            {(selectedCard.stock ?? 0) <= 0 ? "Sin stock" : "Add to cart"}
+                          </button>
+        
+                          <button
+                            type="button"
+                            onClick={() => toggleWish(selectedCard.id)}
+                            className="rounded-full border border-gray-200 px-4 py-3 text-sm font-semibold hover:bg-gray-50"
+                          >
+                            {wishlist[normId(selectedCard.id)] ? t("savedBtn") : t("save")}
+                          </button>
+                        </div>
+        
+                        <div className="mt-14 flex gap-4">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setActiveSide("front");
+                              setZoom(1);
+                              setPan({ x: 0, y: 0 });
+                            }}
+                            className={[
+                              "relative h-[92px] w-[92px] overflow-hidden rounded-2xl border bg-gray-100",
+                              "transition hover:shadow-md",
+                              activeSide === "front" ? "border-sky-500 ring-2 ring-sky-200" : "border-gray-200",
+                            ].join(" ")}
+                            aria-label="View front"
+                          >
+                            <img
+                              src={frontImg}
+                              alt="Front thumbnail"
+                              className="h-full w-full object-contain p-2"
+                              draggable={false}
+                            />
+                            <span className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-semibold text-gray-700">
+                              Front
+                            </span>
+                          </button>
+        
+                          <button
+                            type="button"
+                            disabled={!backImg}
+                            onClick={() => {
+                              setActiveSide("back");
+                              setZoom(1);
+                              setPan({ x: 0, y: 0 });
+                            }}
+                            className={[
+                              "relative h-[92px] w-[92px] overflow-hidden rounded-2xl border bg-gray-100",
+                              "transition hover:shadow-md disabled:opacity-40 disabled:cursor-not-allowed",
+                              activeSide === "back" ? "border-sky-500 ring-2 ring-sky-200" : "border-gray-200",
+                            ].join(" ")}
+                            aria-label="View back"
+                          >
+                            {backImg ? (
+                              <img
+                                src={backImg}
+                                alt="Back thumbnail"
+                                className="h-full w-full object-contain p-2"
+                                draggable={false}
+                              />
+                            ) : (
+                              <div className="flex h-full w-full items-center justify-center text-xs font-semibold text-gray-500">
+                                No back
+                              </div>
+                            )}
+                            <span className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-semibold text-gray-700">
+                              Back
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>,
+        portalRoot
+      )}
     </div>
   );
 }

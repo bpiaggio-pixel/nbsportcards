@@ -30,10 +30,20 @@ const activeLocale = ((locale || pathLocale) === "es" ? "es" : "en") as "es" | "
 
   const [langOpen, setLangOpen] = React.useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => setMounted(true), []);
+  const [portalRoot, setPortalRoot] = React.useState<HTMLElement | null>(null);
 
-  // ✅ lock body scroll when the mobile menu is open (prevents weird layering + scroll)
+  React.useEffect(() => {
+    // Create (or reuse) a dedicated portal root to avoid stacking-context + SSR issues
+    const id = "app-portal-root";
+    let el = document.getElementById(id) as HTMLElement | null;
+    if (!el) {
+      el = document.createElement("div");
+      el.id = id;
+      document.body.appendChild(el);
+    }
+    setPortalRoot(el);
+  }, []);
+
   React.useEffect(() => {
     if (!mobileMenuOpen) return;
     const prev = document.body.style.overflow;
@@ -196,7 +206,7 @@ const activeLocale = ((locale || pathLocale) === "es" ? "es" : "en") as "es" | "
   const favCount = Object.values(wishlist).filter(Boolean).length;
 
 return (
-  <header className="sticky top-0 z-[2000] border-b border-gray-200 bg-[#fcfcfd]/95 backdrop-blur">
+  <header className="sticky top-0 z-[9999] border-b border-gray-200 bg-[#fcfcfd]/95 backdrop-blur">
     <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 sm:py-4">
       {/* ✅ DESKTOP (sm+): como antes, en una fila */}
       <div className="hidden sm:flex items-center gap-6">
@@ -465,16 +475,18 @@ return (
       </div>
 
       {/* ✅ Drawer mobile */}
-      {mounted && mobileMenuOpen &&
-        createPortal(
-          <div className="fixed inset-0 z-[9999] sm:hidden">
-          <div className="absolute inset-0 bg-black/40" onPointerDown={() => setMobileMenuOpen(false)} />
+      {portalRoot && mobileMenuOpen && createPortal(
+        <div className="fixed inset-0 z-[9999] sm:hidden">
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setMobileMenuOpen(false)}
+          />
           <div className="absolute right-0 top-0 h-full w-[86%] max-w-sm bg-white shadow-xl">
             <div className="flex items-center justify-between border-b border-gray-200 px-4 py-4">
               <div className="text-sm font-bold text-gray-900">Menu</div>
               <button
                 type="button"
-                onPointerDown={() => setMobileMenuOpen(false)}
+                onClick={() => setMobileMenuOpen(false)}
                 className="rounded-full border border-gray-200 bg-white p-2 hover:bg-gray-50"
                 aria-label="Close menu"
               >
@@ -482,10 +494,10 @@ return (
               </button>
             </div>
 
-            <div className="px-4 py-4 space-y-2">
+            <div className="space-y-2 px-4 py-4">
               <Link
                 href="/blog"
-                onPointerDown={() => setMobileMenuOpen(false)}
+                onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold hover:bg-gray-50"
               >
                 <FileText size={16} className="text-gray-600" />
@@ -496,70 +508,52 @@ return (
                 <>
                   <Link
                     href="/favorites"
-                    onPointerDown={() => setMobileMenuOpen(false)}
+                    onClick={() => setMobileMenuOpen(false)}
                     className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold hover:bg-gray-50"
                   >
-                    <div className="flex items-center gap-3">
-                      <Heart
-                        size={16}
-                        className={favCount > 0 ? "text-pink-600" : "text-gray-500"}
-                        fill={favCount > 0 ? "currentColor" : "none"}
-                      />
+                    <span className="flex items-center gap-3">
+                      <Heart size={16} className="text-gray-600" />
                       {t("favorites")}
-                    </div>
-                    {favCount > 0 && <span className="text-xs font-bold text-gray-700">({favCount})</span>}
+                    </span>
+                  </Link>
+
+                  <Link
+                    href="/cart"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold hover:bg-gray-50"
+                  >
+                    <span className="flex items-center gap-3">
+                      <ShoppingCart size={16} className="text-gray-600" />
+                      {t("cart")}
+                    </span>
+                    {cartCount > 0 && (
+                      <span className="rounded-full bg-black px-2 py-0.5 text-xs font-bold text-white">
+                        {cartCount}
+                      </span>
+                    )}
                   </Link>
 
                   <Link
                     href="/orders"
-                    onPointerDown={() => setMobileMenuOpen(false)}
+                    onClick={() => setMobileMenuOpen(false)}
                     className="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold hover:bg-gray-50"
                   >
                     <Receipt size={16} className="text-gray-600" />
                     {t("orders")}
                   </Link>
-
-                  <Link
-                    href="/cart"
-                    onPointerDown={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold hover:bg-gray-50"
-                  >
-                    <div className="flex items-center gap-3">
-                      <ShoppingCart size={16} className="text-gray-900" />
-                      {t("cart")}
-                    </div>
-                    {cartCount > 0 && <span className="text-xs font-bold text-gray-700">({cartCount})</span>}
-                  </Link>
-
-                  <div className="mt-3 rounded-xl border border-gray-200 p-4">
-                    <div className="text-xs text-gray-500 mb-1">👤</div>
-                    <div className="text-sm font-semibold text-gray-900 break-all">{user.email}</div>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        logout();
-                        setMobileMenuOpen(false);
-                      }}
-                      className="mt-3 w-full rounded-full bg-black py-3 text-sm font-semibold text-white hover:bg-gray-900"
-                    >
-                      {t("logout")}
-                    </button>
-                  </div>
                 </>
               ) : (
                 <>
                   <Link
                     href="/login"
-                    onPointerDown={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold hover:bg-gray-50"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-center gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold hover:bg-gray-50"
                   >
                     {t("login")}
                   </Link>
-
                   <Link
                     href="/register"
-                    onPointerDown={() => setMobileMenuOpen(false)}
+                    onClick={() => setMobileMenuOpen(false)}
                     className="flex items-center justify-center gap-3 rounded-xl bg-black px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900"
                   >
                     {t("register")}
@@ -569,8 +563,8 @@ return (
             </div>
           </div>
         </div>,
-          document.body
-        )}
+        portalRoot
+      )}
     </div>
   </header>
 );
