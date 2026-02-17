@@ -27,6 +27,7 @@ export async function GET() {
         image2: true,
         greatDeal: true,
         stock: true,
+        auto: true,
         // si no existe en tu modelo, dejalo fuera:
         // greatDeal: true,
       },
@@ -42,6 +43,7 @@ export async function GET() {
       image2: c.image2 ?? undefined,
       greatDeal: normalizeYes(c.greatDeal),
       stock: c.stock,
+      auto: c.auto,
       // si más adelante lo agregás a DB:
       // greatDeal: normalizeYes(c.greatDeal),
     }));

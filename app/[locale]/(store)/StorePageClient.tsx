@@ -21,6 +21,9 @@ type Card = {
   // ✅ STOCK
   stock?: number;
 
+  // ✅ AUTÓGRAFO
+  auto?: boolean;
+
   great_deal?: string;
   greatDeal?: string;
 };
@@ -327,10 +330,18 @@ export default function StorePageClient() {
   // filters
   const [sport, setSport] = React.useState<"all" | Sport>("all");
   const [player, setPlayer] = React.useState<"all" | string>("all");
+  const [autoFilter, setAutoFilter] = React.useState<"all" | "yes" | "no">("all");
   const [sort, setSort] = React.useState<"recommended" | "price_desc" | "price_asc">("recommended");
 
   // ✅ mobile filters drawer
   const [filtersOpen, setFiltersOpen] = React.useState(false);
+
+  function clearFilters() {
+    setSport("all");
+    setPlayer("all");
+    setSort("recommended");
+    setPage(1);
+  }
 
   // pagination
   const pageSize = 9;
@@ -509,18 +520,20 @@ export default function StorePageClient() {
     let result = uniqueCards.filter((c) => {
       const matchesSport = sport === "all" ? true : c.sport === sport;
       const matchesPlayer = player === "all" ? true : c.player === player;
+      const matchesAuto =
+        autoFilter === "all" ? true : autoFilter === "yes" ? Boolean(c.auto) : !Boolean(c.auto);
 
       const matchesSearch =
         q.length === 0 ? true : c.title.toLowerCase().includes(q) || c.player.toLowerCase().includes(q);
 
-      return matchesSport && matchesPlayer && matchesSearch;
+      return matchesSport && matchesPlayer && matchesAuto && matchesSearch;
     });
 
     if (sort === "price_desc") result = [...result].sort((a, b) => b.price - a.price);
     if (sort === "price_asc") result = [...result].sort((a, b) => a.price - a.price);
 
     return result;
-  }, [uniqueCards, search, sport, sort, player]);
+  }, [uniqueCards, search, sport, sort, player, autoFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const safePage = Math.min(Math.max(page, 1), totalPages);
@@ -577,7 +590,27 @@ export default function StorePageClient() {
 <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 py-6 lg:grid-cols-[280px_1fr] lg:px-6 lg:py-10">
         {/* SIDEBAR */}
 <aside className="hidden lg:block space-y-6 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm lg:p-6">
+          <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">{t("filters")}</h2>
+          <button
+            type="button"
+            onClick={clearFilters}
+            className=" text-xs
+  px-3 py-1
+  rounded-md
+  border border-gray-300
+  bg-white
+  text-gray-700
+  hover:bg-sky-500
+  hover:text-white
+  hover:border-sky-500
+  cursor-pointer
+  transition-colors
+  duration-200"
+          >
+            Limpiar
+          </button>
+        </div>
 
           <div>
             <p className="mb-3 text-sm font-semibold text-gray-800">{t("category")}</p>
@@ -618,6 +651,19 @@ export default function StorePageClient() {
           </div>
 
           <div>
+            <p className="mb-3 text-sm font-semibold text-gray-800">Autógrafo</p>
+            <select
+              value={autoFilter}
+              onChange={(e) => setAutoFilter(e.target.value as any)}
+              className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-black/10"
+            >
+              <option value="all">Todas</option>
+              <option value="yes">Con autógrafo</option>
+              <option value="no">Sin autógrafo</option>
+            </select>
+          </div>
+
+          <div>
             <p className="mb-3 text-sm font-semibold text-gray-800">{t("wishlist")}</p>
             <div className="text-sm text-gray-600">
               {t("saved")}: <span className="font-semibold text-gray-900">{favCount}</span>
@@ -629,7 +675,7 @@ export default function StorePageClient() {
           <div className="pt-2">
             <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-500">{t("highlights")}</h3>
 
-            <div className="space-y-10">
+            <div className="space-y-8">
               {mostViewed && (
                 <div className="transition hover:-translate-y-[1px] hover:shadow-md">
                   <SidebarCard title={t("mostViewed")} card={mostViewed} onOpen={() => setSelectedId(mostViewed.id)} />
@@ -664,11 +710,11 @@ export default function StorePageClient() {
                       <img
                         src={latestPost.coverImage}
                         alt={latestPost.title}
-                        className="mb-5 h-42 w-full rounded-xl object-cover border border-gray-200"
+                        className="mb-5 h-32 w-full rounded-xl object-cover border border-gray-200"
                       />
                     )}
 
-                    <p className="mt-1 text-sm text-gray-500 line-clamp-7">{latestPost.excerpt}</p>
+                    <p className="mt-1 text-sm text-gray-500 line-clamp-4">{latestPost.excerpt}</p>
 
                     <a href="/blog" className="font-semibold mt-2 text-sm text-sky-600 hover:text-sky-900">
                       {t("goToBlog")}
@@ -692,14 +738,14 @@ export default function StorePageClient() {
     <div className="absolute inset-x-0 bottom-0 max-h-[85vh] overflow-auto rounded-t-3xl bg-white p-5 shadow-xl">
       <div className="mb-4 flex items-center justify-between">
         <div className="text-sm font-bold text-gray-900">{t("filters")}</div>
-        <button
+        <div className="flex items-center gap-2"><button type="button" onClick={clearFilters} className="rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-sky-600 hover:bg-gray-50">Limpiar</button><button
           type="button"
           onClick={() => setFiltersOpen(false)}
           className="rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold hover:bg-gray-50"
         >
           Close
         </button>
-      </div>
+      </div></div>
 
       {/* ✅ filtros (mobile) */}
       <div className="space-y-6">

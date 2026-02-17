@@ -62,12 +62,15 @@ async function main() {
     // ✅ acepta ambos nombres de columna
     const greatDeal = normalizeYes(r.greatDeal ?? r.great_deal);
 
+    // ✅ autógrafo: columna "auto" (si / vacío)
+    const auto = ["si", "yes", "true", "1"].includes(normalizeYes((r as any).auto));
+
     // stock SOLO para nuevas
     const stock = Math.max(0, Math.floor(Number(r.stock ?? 0)));
 
     if (!exists.has(id)) {
       await prisma.card.create({
-        data: { id, sport, title, player, priceCents, image, image2, stock, greatDeal },
+        data: { id, sport, title, player, priceCents, image, image2, stock, greatDeal, auto },
       });
       exists.add(id);
       created++;
@@ -83,6 +86,7 @@ async function main() {
     image2,
     greatDeal,
     stock,
+    auto,
   },
   create: {
     id,
@@ -94,6 +98,7 @@ async function main() {
     image2,
     greatDeal,
     stock,
+    auto,
   },
 });
 
