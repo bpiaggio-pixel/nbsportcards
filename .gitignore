@@ -45,5 +45,4 @@ next-env.d.ts
 .vercel
 .env*.local
 
-/public/cards/
 

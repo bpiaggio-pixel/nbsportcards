@@ -238,6 +238,24 @@ export default function StorePageClient() {
     ox: number;
     oy: number;
   } | null>(null);
+// ✅ Pinch-to-zoom (2 dedos) usando Pointer Events
+const pointersRef = React.useRef(new Map<number, { x: number; y: number }>());
+const pinchRef = React.useRef<{
+  pinching: boolean;
+  startDist: number;
+  startZoom: number;
+  startPan: { x: number; y: number };
+  startMid: { x: number; y: number };
+  containerRect: { left: number; top: number; width: number; height: number };
+} | null>(null);
+
+const dist = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+  Math.hypot(a.x - b.x, a.y - b.y);
+
+const mid = (a: { x: number; y: number }, b: { x: number; y: number }) => ({
+  x: (a.x + b.x) / 2,
+  y: (a.y + b.y) / 2,
+});
 
   // ✅ 1) Normaliza IDs y elimina duplicados por id (NORMALIZADO)
   // ✅ + Normaliza stock a number
@@ -981,38 +999,112 @@ className="relative h-[260px] sm:h-[340px] md:h-[380px] lg:h-[600px] border-b bo
                             touchAction: "none",
                           }}
                           onPointerDown={(e) => {
-                            if (zoom <= 1) return;
-                            (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
-        
-                            dragRef.current = {
-                              dragging: true,
-                              sx: e.clientX,
-                              sy: e.clientY,
-                              ox: pan.x,
-                              oy: pan.y,
-                            };
-                          }}
-                          onPointerMove={(e) => {
-                            const st = dragRef.current;
-                            if (!st?.dragging) return;
-        
-                            const dx = e.clientX - st.sx;
-                            const dy = e.clientY - st.sy;
-                            setPan({ x: st.ox + dx, y: st.oy + dy });
-                          }}
-                          onPointerUp={(e) => {
-                            const st = dragRef.current;
-                            if (!st) return;
-                            dragRef.current = { ...st, dragging: false };
-                            try {
-                              (e.currentTarget as HTMLDivElement).releasePointerCapture(e.pointerId);
-                            } catch {}
-                          }}
-                          onPointerCancel={() => {
-                            const st = dragRef.current;
-                            if (!st) return;
-                            dragRef.current = { ...st, dragging: false };
-                          }}
+  const el = e.currentTarget as HTMLDivElement;
+  el.setPointerCapture(e.pointerId);
+
+  // guardo este dedo
+  pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+  // si ahora hay 2 dedos -> arranca pinch
+  if (pointersRef.current.size === 2) {
+    const pts = Array.from(pointersRef.current.values());
+    const rect = el.getBoundingClientRect();
+
+    pinchRef.current = {
+      pinching: true,
+      startDist: dist(pts[0], pts[1]),
+      startZoom: zoom,
+      startPan: { ...pan },
+      startMid: mid(pts[0], pts[1]),
+      containerRect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
+    };
+
+    // corto cualquier drag previo
+    if (dragRef.current) dragRef.current.dragging = false;
+    return;
+  }
+
+  // si es 1 dedo y hay zoom, permito pan (drag)
+  if (zoom <= 1) return;
+
+  dragRef.current = {
+    dragging: true,
+    sx: e.clientX,
+    sy: e.clientY,
+    ox: pan.x,
+    oy: pan.y,
+  };
+}}
+onPointerMove={(e) => {
+  // actualizo posición del dedo
+  if (pointersRef.current.has(e.pointerId)) {
+    pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  }
+
+  // si estoy pincheando y sigo con 2 dedos
+  if (pinchRef.current?.pinching && pointersRef.current.size === 2) {
+    const pts = Array.from(pointersRef.current.values());
+    const info = pinchRef.current;
+
+    const newDist = dist(pts[0], pts[1]);
+    const ratio = newDist / Math.max(1, info.startDist);
+
+    const newZoom = clampZoom(info.startZoom * ratio);
+
+    // mantengo el “punto bajo los dedos” estable ajustando pan
+    const rect = info.containerRect;
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+
+    const m = mid(pts[0], pts[1]);
+    const d0 = { x: m.x - cx, y: m.y - cy };
+
+    const Z0 = info.startZoom;
+    const Z1 = newZoom;
+    const r = Z1 / Math.max(0.0001, Z0);
+
+    const newPan = {
+      x: d0.x * (1 - r) + info.startPan.x * r,
+      y: d0.y * (1 - r) + info.startPan.y * r,
+    };
+
+    setZoom(newZoom);
+    setPan(newPan);
+    return;
+  }
+
+  // si no hay pinch, manejo drag (pan)
+  const st = dragRef.current;
+  if (!st?.dragging) return;
+
+  const dx = e.clientX - st.sx;
+  const dy = e.clientY - st.sy;
+  setPan({ x: st.ox + dx, y: st.oy + dy });
+}}
+onPointerUp={(e) => {
+  pointersRef.current.delete(e.pointerId);
+
+  // si ya no hay 2 dedos, termina pinch
+  if (pointersRef.current.size < 2 && pinchRef.current?.pinching) {
+    pinchRef.current = null;
+  }
+
+  const st = dragRef.current;
+  if (st) dragRef.current = { ...st, dragging: false };
+
+  try {
+    (e.currentTarget as HTMLDivElement).releasePointerCapture(e.pointerId);
+  } catch {}
+}}
+onPointerCancel={(e) => {
+  pointersRef.current.delete(e.pointerId);
+  if (pointersRef.current.size < 2 && pinchRef.current?.pinching) {
+    pinchRef.current = null;
+  }
+  const st = dragRef.current;
+  if (st) dragRef.current = { ...st, dragging: false };
+}}
+
                         >
                           <img
                             src={activeImg}
