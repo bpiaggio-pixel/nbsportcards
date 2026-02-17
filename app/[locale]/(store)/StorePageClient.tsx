@@ -257,6 +257,42 @@ const mid = (a: { x: number; y: number }, b: { x: number; y: number }) => ({
   y: (a.y + b.y) / 2,
 });
 
+  // ✅ Límites de pan (evita que la imagen se vaya “fuera de vista”)
+  const containerRef = React.useRef<HTMLDivElement | null>(null);
+  const mediaRef = React.useRef<HTMLImageElement | null>(null);
+
+  const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
+
+  const clampPan = (nextPan: { x: number; y: number }, nextZoom: number) => {
+    const c = containerRef.current;
+    const m = mediaRef.current;
+    if (!c || !m) return nextPan;
+
+    const cw = c.clientWidth;
+    const ch = c.clientHeight;
+
+    // tamaño base (sin transform). Para <img> funciona bien.
+    const baseW = m.offsetWidth;
+    const baseH = m.offsetHeight;
+
+    const scaledW = baseW * nextZoom;
+    const scaledH = baseH * nextZoom;
+
+    const maxX = Math.max(0, (scaledW - cw) / 2);
+    const maxY = Math.max(0, (scaledH - ch) / 2);
+
+    return {
+      x: clamp(nextPan.x, -maxX, maxX),
+      y: clamp(nextPan.y, -maxY, maxY),
+    };
+  };
+
+  React.useEffect(() => {
+    // Si cambia el zoom por botones o por pinch, ajusta el pan a los nuevos límites
+    setPan((p) => clampPan(p, zoom));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zoom]);
+
   // ✅ 1) Normaliza IDs y elimina duplicados por id (NORMALIZADO)
   // ✅ + Normaliza stock a number
   const uniqueCards = React.useMemo(() => {
@@ -934,7 +970,7 @@ className="w-full max-w-4xl max-h-[78vh] md:max-h-[82vh] overflow-hidden rounded
 
                     onPointerDown={(e) => e.stopPropagation()}
                   >
-                    <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
+                    <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4 relative pr-16">
                       <div className="text-sm text-gray-600">
                         <span className="font-semibold text-gray-900">{selectedCard.player}</span> ·{" "}
                         <span className="uppercase">{selectedCard.sport}</span> ·{" "}
@@ -943,7 +979,7 @@ className="w-full max-w-4xl max-h-[78vh] md:max-h-[82vh] overflow-hidden rounded
         
                       <button
                         type="button"
-                        className="fixed right-4 top-[calc(env(safe-area-inset-top)+12px)] sm:static sm:right-auto sm:top-auto rounded-full border border-gray-200 bg-white/90 backdrop-blur p-2 hover:bg-gray-50"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 z-50 rounded-full border border-gray-200 bg-white/90 backdrop-blur p-2 hover:bg-gray-50"
                         onClick={() => setSelectedId(null)}
                       >
                         <X size={18} />
@@ -994,6 +1030,7 @@ className="relative h-[260px] sm:h-[340px] md:h-[380px] lg:h-[600px] border-b bo
         
                         <div
                           className="relative z-10 flex h-full items-center justify-center p-6 overflow-hidden"
+                          ref={containerRef}
                           style={{
                             cursor: zoom > 1 ? "grab" : "default",
                             touchAction: "none",
@@ -1069,7 +1106,7 @@ onPointerMove={(e) => {
     };
 
     setZoom(newZoom);
-    setPan(newPan);
+    setPan(clampPan(newPan, newZoom));
     return;
   }
 
@@ -1079,7 +1116,7 @@ onPointerMove={(e) => {
 
   const dx = e.clientX - st.sx;
   const dy = e.clientY - st.sy;
-  setPan({ x: st.ox + dx, y: st.oy + dy });
+  setPan(clampPan({ x: st.ox + dx, y: st.oy + dy }, zoom));
 }}
 onPointerUp={(e) => {
   pointersRef.current.delete(e.pointerId);
@@ -1107,6 +1144,7 @@ onPointerCancel={(e) => {
 
                         >
                           <img
+                            ref={mediaRef}
                             src={activeImg}
                             alt={`${selectedCard.title} - ${activeSide}`}
                             draggable={false}
