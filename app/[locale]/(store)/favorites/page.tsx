@@ -311,10 +311,6 @@ if (handleUserNotFound(res, data)) return;
                 >
                   Quitar de favoritas
                 </button>
-
-                <p className="mt-6 text-xs text-gray-500">
-                  Tip: después sumamos condición, año, set y frente/dorso.
-                </p>
               </div>
             </div>
           </div>
