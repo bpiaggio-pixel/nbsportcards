@@ -770,7 +770,7 @@ const mid = (a: { x: number; y: number }, b: { x: number; y: number }) => ({
 
                     <p className="mt-1 text-sm text-gray-500 line-clamp-4">{latestPost.excerpt}</p>
 
-                    <a href="/blog" className="font-semibold mt-2 text-sm text-sky-600 hover:text-sky-900">
+                      <a href={`/${locale}/blog`} className="font-semibold mt-2 text-sm text-sky-600 hover:text-sky-900">
                       {t("goToBlog")}
                     </a>
                   </>
