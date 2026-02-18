@@ -147,6 +147,37 @@ if (handleUserNotFound(res, data)) return;
     await loadFavs(user.id);
   }
 
+async function addToCart(cardId: string) {
+  if (!user?.id) {
+    window.location.href = "/login";
+    return;
+  }
+
+  try {
+    const cartRes = await fetch(`/api/cart?userId=${encodeURIComponent(user.id)}`, { cache: "no-store" });
+    const cartData = await cartRes.json();
+
+    const existing = Array.isArray(cartData.items)
+      ? cartData.items.find((x: any) => String(x.cardId) === String(cardId))
+      : null;
+
+    const nextQty = (existing?.qty ?? 0) + 1;
+
+    const res = await fetch("/api/cart", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: user.id, cardId, qty: nextQty }),
+    });
+
+    if (!res.ok) return;
+
+    window.dispatchEvent(new Event("cart:changed"));
+  } catch (e) {
+    console.log("addToCart error:", e);
+  }
+}
+
+
   if (!user?.id) {
     return (
       <div className="min-h-screen bg-[#f6f7f8] p-10 text-gray-900">
@@ -303,6 +334,14 @@ if (handleUserNotFound(res, data)) return;
                 <h3 className="text-lg font-semibold text-gray-900">{selectedCard.title}</h3>
                 <p className="mt-2 text-sm text-gray-600">{selectedCard.player}</p>
                 <div className="mt-4 text-2xl font-bold text-gray-900">{formatUSD(selectedCard.price)}</div>
+                <button
+                  type="button"
+                  onClick={() => addToCart(String(selectedCard.id))}
+                  className="mt-6 w-full rounded-full bg-sky-500 py-3 text-sm font-semibold text-white hover:bg-sky-600"
+                >
+                  Agregar al carrito
+                </button>
+
 
                 <button
                   type="button"
