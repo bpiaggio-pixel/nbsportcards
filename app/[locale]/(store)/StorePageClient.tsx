@@ -755,7 +755,7 @@ const mid = (a: { x: number; y: number }, b: { x: number; y: number }) => ({
                 {latestPost ? (
                   <>
                     <a
-                      href={`/blog/${latestPost.slug}`}
+                      href={`/${locale}/blog/${String(latestPost.slug).replace(/^\/+/, "")}`}
                       className="block text-sm font-semibold text-gray-800 hover:text-black transition"
                     >
                       {latestPost.title}
