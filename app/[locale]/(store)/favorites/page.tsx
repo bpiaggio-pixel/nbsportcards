@@ -22,6 +22,54 @@ function getFallback(sport: Sport) {
     ? "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=1200&q=80"
     : "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=1200&q=80";
 }
+// 🔥 Global Sale Config (client)
+const SALE_ACTIVE = String(process.env.NEXT_PUBLIC_SALE_ACTIVE ?? "false") === "true";
+const SALES_RULES: Record<string, number> = (() => {
+  try {
+    const raw = process.env.NEXT_PUBLIC_SALES_RULES ?? "{}";
+
+    // raw debería ser algo como:
+    // {"soccer":10,"basketball":5}
+
+    const parsed = JSON.parse(raw);
+
+    // Validación básica para evitar errores
+    if (!parsed || typeof parsed !== "object") return {};
+
+    return parsed;
+  } catch (err) {
+    console.error("Invalid NEXT_PUBLIC_SALES_RULES JSON");
+    return {};
+  }
+})();
+
+function getSalePercentForSport(sport?: string) {
+  const s = String(sport ?? "").trim().toLowerCase();
+
+  const percent = SALES_RULES[s];
+
+  if (typeof percent !== "number") return 0;
+
+  return percent;
+}
+
+
+// Siempre trabajar en CENTAVOS (enteros) para descuentos
+function getBaseCentsFromPrice(price: number) {
+  return Math.round(Number(price) * 100);
+}
+
+// Devuelve CENTAVOS (enteros)
+function applySalePrice(cents: number, sport?: string) {
+  if (!SALE_ACTIVE) return cents;
+
+  const percent = getSalePercentForSport(sport);
+
+  if (percent <= 0) return cents;
+
+  return Math.round(cents * (1 - percent / 100));
+}
+
 
 function handleUserNotFound(res: Response, data: any) {
   if (res.status === 401 && data?.error === "USER_NOT_FOUND") {
@@ -361,7 +409,33 @@ async function addToCart(cardId: string) {
                         {card.title}
                       </h3>
                       <p className="text-sm text-gray-500">{card.player}</p>
-                      <p className="text-lg font-bold text-gray-900">{formatUSD(card.price)}</p>
+                      {(() => {
+                        const baseCents = getBaseCentsFromPrice(card.price);
+                        const discountedCents = applySalePrice(baseCents, card.sport);
+                        const percent = getSalePercentForSport(card.sport);
+const onSale =
+  SALE_ACTIVE &&
+  percent > 0 &&
+  discountedCents !== baseCents;
+
+                        return (
+                          <div className="mt-1 flex flex-wrap items-center gap-2">
+                            {onSale && (
+                              <>
+                                <span className="rounded-full bg-gray-200 text-gray-800 px-2 py-0.5 text-[10px] font-bold">
+                                  -{percent}%
+                                </span>
+                                <span className="text-sm text-gray-400 line-through">
+                                  {formatUSD(baseCents / 100)}
+                                </span>
+                              </>
+                            )}
+                            <span className="text-lg font-bold text-gray-900">
+                              {formatUSD(discountedCents / 100)}
+                            </span>
+                          </div>
+                        );
+                      })()}
 <button
   type="button"
   onClick={(e) => {
@@ -573,7 +647,29 @@ async function addToCart(cardId: string) {
               <div className="mt-6">
                 <h3 className="text-lg font-semibold text-gray-900">{selectedCard.title}</h3>
                 <p className="mt-2 text-sm text-gray-600">{selectedCard.player}</p>
-                <div className="mt-4 text-2xl font-bold text-gray-900">{formatUSD(selectedCard.price)}</div>
+                {(() => {
+                  const baseCents = getBaseCentsFromPrice(selectedCard.price);
+                  const discountedCents = applySalePrice(baseCents, selectedCard.sport);
+                  const percent = getSalePercentForSport(selectedCard.sport);
+                  const onSale = SALE_ACTIVE && percent > 0 && discountedCents !== baseCents;
+                  return (
+                    <div className="mt-4 flex flex-wrap items-center gap-2">
+                      {onSale && (
+                        <>
+                          <span className="text-base text-gray-400 line-through">
+                            {formatUSD(baseCents / 100)}
+                          </span>
+                          <span className="rounded-full bg-gray-200 text-gray-800 px-2 py-1 text-xs font-bold">
+                            -{percent}%
+                          </span>
+                        </>
+                      )}
+                      <span className={`text-2xl font-bold ${onSale ? "text-sky-600" : "text-gray-900"}`}>
+                        {formatUSD(discountedCents / 100)}
+                      </span>
+                    </div>
+                  );
+                })()}
                 <button
                   type="button"
                   onClick={() => addToCart(String(selectedCard.id))}

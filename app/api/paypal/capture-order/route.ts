@@ -1,8 +1,47 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { paypalFetch } from "@/lib/paypal";
-
+import { applySaleCents } from "@/lib/discounts";
 export const runtime = "nodejs";
+
+function centsFromUSD(value: any): number {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return 0;
+  return Math.round(n * 100);
+}
+
+async function computeExpectedTotalDiscountedCents(orderId: string) {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: { items: true },
+  });
+  if (!order) return null;
+
+  const itemsSubtotalBaseCents = (order as any).items.reduce((acc: number, it: any) => {
+    return acc + Number(it.unitCents ?? 0) * Number(it.qty ?? 0);
+  }, 0);
+
+  const shippingCents = Number((order as any).totalCents ?? 0) - itemsSubtotalBaseCents;
+
+  const cardIds = Array.from(new Set((order as any).items.map((it: any) => it.cardId)));
+  const cards = await prisma.card.findMany({
+    where: { id: { in: cardIds } },
+    select: { id: true, sport: true },
+  });
+  const sportById = new Map(cards.map((c) => [c.id, c.sport]));
+
+  const itemsSubtotalDiscountedCents = (order as any).items.reduce((acc: number, it: any) => {
+    const unit = Number(it.unitCents ?? 0);
+    const qty = Number(it.qty ?? 0);
+    const sport = sportById.get(it.cardId);
+    const discountedUnit = applySaleCents(unit, sport);
+    return acc + discountedUnit * qty;
+  }, 0);
+
+  const expectedTotalDiscountedCents = itemsSubtotalDiscountedCents + Math.max(0, shippingCents);
+
+  return { expectedTotalDiscountedCents };
+}
 
 async function markPaidAndFulfill(orderId: string, paypalOrderId: string, captureId?: string | null, payerEmail?: string | null) {
   await prisma.$transaction(async (tx) => {
@@ -13,7 +52,6 @@ async function markPaidAndFulfill(orderId: string, paypalOrderId: string, captur
 
     if (!order) return;
 
-    // idempotencia
     if ((order as any).status === "PAID") return;
     if ((order as any).status === "CANCELLED") return;
 
@@ -56,6 +94,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing orderId/paypalOrderId" }, { status: 400 });
     }
 
+    // ✅ validar que coincide con lo guardado
+    const order = await prisma.order.findUnique({ where: { id: orderId } });
+    if (!order) return NextResponse.json({ error: "Order not found" }, { status: 404 });
+
+    if (String((order as any).paypalOrderId ?? "") !== paypalOrderId) {
+      return NextResponse.json({ error: "paypalOrderId mismatch" }, { status: 400 });
+    }
+
     const capture = await paypalFetch<any>(`/v2/checkout/orders/${paypalOrderId}/capture`, {
       method: "POST",
       body: JSON.stringify({}),
@@ -67,6 +113,23 @@ export async function POST(req: Request) {
       capture?.purchase_units?.[0]?.payments?.captures?.[0]?.id
         ? String(capture.purchase_units[0].payments.captures[0].id)
         : null;
+
+    // ✅ validar monto capturado vs esperado
+    const capturedValue = capture?.purchase_units?.[0]?.payments?.captures?.[0]?.amount?.value;
+    const capturedCents = centsFromUSD(capturedValue);
+
+    const computed = await computeExpectedTotalDiscountedCents(orderId);
+    if (!computed) return NextResponse.json({ error: "Order not found" }, { status: 404 });
+
+    const expectedCents = computed.expectedTotalDiscountedCents;
+
+    // tolerancia mínima por redondeos (1 cent)
+    if (Math.abs(capturedCents - expectedCents) > 1) {
+      return NextResponse.json(
+        { error: "Captured amount mismatch", capturedCents, expectedCents },
+        { status: 400 }
+      );
+    }
 
     if (status === "COMPLETED") {
       await markPaidAndFulfill(orderId, paypalOrderId, captureId, payerEmail);

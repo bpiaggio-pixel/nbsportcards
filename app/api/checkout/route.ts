@@ -29,6 +29,36 @@ function isAllowedCountry(code: string): code is AllowedCountry {
   return (ALLOWED_COUNTRIES as readonly string[]).includes(code);
 }
 
+/* 🔥 AGREGAMOS SOLO ESTO */
+function applySaleCents(unitCents: number) {
+  const SALE_ACTIVE = String(process.env.SALE_ACTIVE ?? "false") === "true";
+  const SALE_PERCENT = Number(process.env.SALE_PERCENT ?? "0") || 0;
+
+  if (!SALE_ACTIVE || SALE_PERCENT <= 0) return unitCents;
+
+  return Math.round(unitCents * (1 - SALE_PERCENT / 100));
+}
+
+function getSportDiscountPercent(sport?: string | null): number {
+  const s0 = String(sport ?? "").trim().toLowerCase();
+
+  // normaliza nombres típicos
+  let s = s0;
+  if (s === "football" || s === "futbol" || s === "fútbol") s = "soccer";
+  if (s === "basket") s = "basketball";
+
+  if (s === "soccer") return 10;
+  if (s === "basketball") return 5;
+
+  return 0;
+}
+
+function applySportDiscount(unitCents: number, sport?: string | null) {
+  const percent = getSportDiscountPercent(sport);
+  if (percent <= 0) return unitCents;
+  return Math.round(unitCents * (1 - percent / 100));
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
@@ -75,10 +105,10 @@ export async function POST(req: Request) {
     }));
 
     const cardIds = Array.from(new Set(cartItems.map((it) => it.cardId)));
-    const cards = await prisma.card.findMany({
-      where: { id: { in: cardIds } },
-      select: { id: true, title: true, priceCents: true, stock: true },
-    });
+const cards = await prisma.card.findMany({
+  where: { id: { in: cardIds } },
+  select: { id: true, title: true, priceCents: true, stock: true, sport: true },
+});
 
     const byId = new Map(cards.map((c) => [c.id, c]));
 
@@ -93,11 +123,15 @@ export async function POST(req: Request) {
       }
     }
 
-    const orderItems = cartItems.map((it) => {
-      const c = byId.get(it.cardId)!;
-      const unitCents = Number(c.priceCents ?? 0);
-      return { cardId: c.id, title: c.title, unitCents, qty: it.qty };
-    });
+    /* 🔥 SOLO MODIFICAMOS ESTA PARTE */
+const orderItems = cartItems.map((it) => {
+  const c = byId.get(it.cardId)!;
+  const baseUnitCents = Number(c.priceCents ?? 0);
+
+  const unitCents = applySportDiscount(baseUnitCents, c.sport);
+
+  return { cardId: c.id, title: c.title, unitCents, qty: it.qty };
+});
 
     const subtotalCents = orderItems.reduce((acc, it) => acc + it.unitCents * it.qty, 0);
     const shippingCents = SHIPPING_USD_CENTS[country];
@@ -109,7 +143,7 @@ export async function POST(req: Request) {
         userId,
         totalCents,
         currency: "USD",
-        status: "PENDING" as any, // ✅ si tu OrderStatus es enum, igual compila
+        status: "PENDING" as any,
         fullName,
         phone,
         address1,
@@ -123,7 +157,23 @@ export async function POST(req: Request) {
       include: { items: true },
     });
 
-    return NextResponse.json({ ok: true, orderId: order.id });
+return NextResponse.json({
+  ok: true,
+  orderId: order.id,
+  debug: {
+    country,
+    shippingCents,
+    subtotalCents,
+    totalCents,
+    items: orderItems.map((it) => ({
+      cardId: it.cardId,
+      qty: it.qty,
+      unitCents: it.unitCents,
+    })),
+  },
+});
+
+
   } catch (e: any) {
     console.error("ORDERS CREATE ERROR:", e);
     return NextResponse.json({ error: e?.message ?? "Server error" }, { status: 500 });

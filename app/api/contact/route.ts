@@ -106,13 +106,12 @@ function userEmailHtml(args: {
                       <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
                         <tr>
                           <td style="vertical-align:middle;">
-                            <img
-                              src="https://nbcards.com/email-logo.png"
-                              alt="NBCards"
-                              width="44"
-                              height="44"
-                              style="display:block; border-radius:12px; background:#ffffff;"
-                            />
+<img
+  src="https://nbcards.com/email-logo.png"
+  alt="NBCards"
+  width="120"
+  style="display:block; height:auto;"
+/>
                           </td>
 
                           <td style="vertical-align:middle; padding-left:12px;">

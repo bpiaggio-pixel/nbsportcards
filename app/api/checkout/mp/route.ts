@@ -6,6 +6,8 @@ export const runtime = "nodejs";
 
 const mp = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN! });
 
+
+
 function getSiteUrl() {
   const url = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   return url.replace(/\/$/, "");
@@ -23,9 +25,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Falta MP_ACCESS_TOKEN en env" }, { status: 500 });
     }
 
-const body = await req.json().catch(() => ({}));
-const orderId = String(body?.orderId ?? "").trim();
-const locale = String(body?.locale ?? "en").trim();
+    const body = await req.json().catch(() => ({}));
+    const orderId = String(body?.orderId ?? "").trim();
+    const locale = String(body?.locale ?? "en").trim();
 
     if (!orderId) return NextResponse.json({ error: "Missing orderId" }, { status: 400 });
 
@@ -35,28 +37,46 @@ const locale = String(body?.locale ?? "en").trim();
     });
     if (!order) return NextResponse.json({ error: "Order not found" }, { status: 404 });
 
+    // ✅ Traer sport por cardId (porque order.items no trae sport)
+    const cardIds = Array.from(new Set(order.items.map((it: any) => it.cardId).filter(Boolean)));
+
+    const cards = await prisma.card.findMany({
+      where: { id: { in: cardIds } },
+      select: { id: true, sport: true },
+    });
+
+    const sportMap: Record<string, string> = Object.fromEntries(
+      cards.map((c: any) => [String(c.id), String(c.sport ?? "")])
+    );
+
     const siteUrl = getSiteUrl();
     const pref = new Preference(mp);
 
-const successUrl = `${siteUrl}/${locale}/orders?status=success&orderId=${order.id}`;
-const pendingUrl = `${siteUrl}/${locale}/orders?status=pending&orderId=${order.id}`;
-const failureUrl = `${siteUrl}/${locale}/orders?status=failure&orderId=${order.id}`;
-
+    const successUrl = `${siteUrl}/${locale}/orders?status=success&orderId=${order.id}`;
+    const pendingUrl = `${siteUrl}/${locale}/orders?status=pending&orderId=${order.id}`;
+    const failureUrl = `${siteUrl}/${locale}/orders?status=failure&orderId=${order.id}`;
 
     // shipping "box": derivado desde total - subtotal(items)
-    const itemsSubtotal = order.items.reduce((acc: number, it: any) => acc + Number(it.unitCents) * Number(it.qty), 0);
+    const itemsSubtotal = order.items.reduce(
+      (acc: number, it: any) => acc + Number(it.unitCents) * Number(it.qty ?? 1),
+      0
+    );
     const shippingCents = Math.max(0, Number(order.totalCents) - itemsSubtotal);
 
     const preference = await pref.create({
       body: {
         items: [
-          ...order.items.map((it: any) => ({
-            id: String(it.cardId),
-            title: String(it.title),
-            quantity: Number(it.qty),
-            unit_price: usdToArs(Number(it.unitCents)),
-            currency_id: "ARS",
-          })),
+          ...order.items.map((it: any) => {
+            const unitCents = Number(it.unitCents); // ✅ ya viene con descuento guardado en la orden
+
+return {
+  id: String(it.cardId),
+  title: String(it.title),
+  quantity: Number(it.qty ?? 1),
+  unit_price: usdToArs(unitCents),
+  currency_id: "ARS",
+};
+          }),
           {
             id: "shipping_box",
             title: "Shipping (box)",

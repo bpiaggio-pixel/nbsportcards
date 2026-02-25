@@ -81,9 +81,9 @@ export default async function StoreLayout({
               <a href="#" className="text-gray-500 hover:text-gray-800">
                 {t("terms")}
               </a>
-              <a href="#" className="text-gray-500 hover:text-gray-800">
+              <Link href="/help" className="text-gray-500 hover:text-gray-800">
                 {t("support")}
-              </a>
+              </Link>
             </div>
           </div>
         </div>

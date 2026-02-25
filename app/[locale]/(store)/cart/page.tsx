@@ -44,6 +44,58 @@ function getFallback(sport: Sport) {
 }
 
 
+// 🔥 Global Sale Config (client)
+const SALE_ACTIVE = String(process.env.NEXT_PUBLIC_SALE_ACTIVE ?? "false") === "true";
+const SALES_RULES: Record<string, number> = (() => {
+  try {
+    const raw = process.env.NEXT_PUBLIC_SALES_RULES ?? "{}";
+
+    // raw debería ser algo como:
+    // {"soccer":10,"basketball":5}
+
+    const parsed = JSON.parse(raw);
+
+    // Validación básica para evitar errores
+    if (!parsed || typeof parsed !== "object") return {};
+
+    return parsed;
+  } catch (err) {
+    console.error("Invalid NEXT_PUBLIC_SALES_RULES JSON");
+    return {};
+  }
+})();
+
+function getSalePercentForSport(sport?: string) {
+  const s = String(sport ?? "").trim().toLowerCase();
+
+  const percent = SALES_RULES[s];
+
+  if (typeof percent !== "number") return 0;
+
+  return percent;
+}
+
+
+
+
+
+// Always work in CENTS (integers) for discounts
+function getBaseCentsFromPrice(price: number) {
+  return Math.round(Number(price) * 100);
+}
+
+// Returns CENTS (integers)
+function applySalePrice(cents: number, sport?: string) {
+  if (!SALE_ACTIVE) return cents;
+
+  const percent = getSalePercentForSport(sport);
+
+  if (percent <= 0) return cents;
+
+  return Math.round(cents * (1 - percent / 100));
+}
+
+
 // ✅ normaliza IDs: "Card-011" -> "11"
 const normId = (v: any) => {
   const s = String(v ?? "").trim();
@@ -194,7 +246,15 @@ const ordersUrl = `/${locale}/orders`;
     });
   }, [items, cardsById]);
 
-  const subtotal = enriched.reduce((acc, it) => acc + Number(it.card.price) * it.qty, 0);
+  const subtotalBase = enriched.reduce((acc, it) => acc + Number(it.card.price) * it.qty, 0);
+
+  const subtotal = enriched.reduce((acc, it) => {
+    const baseCents = getBaseCentsFromPrice(Number(it.card.price));
+    const discountedCents = applySalePrice(baseCents, it.card.sport);
+    return acc + (discountedCents / 100) * it.qty;
+  }, 0);
+
+  const savings = Math.max(0, subtotalBase - subtotal);
 
 const countryCode = normCountry(shipping.country);
 const shippingUsd = isAllowedCountry(countryCode) ? SHIPPING_USD[countryCode] : 0;
@@ -468,7 +528,29 @@ async function checkout() {
                         <div className="font-semibold">{it.card.title}</div>
                         <div className="text-sm text-gray-600">{it.card.player}</div>
 
-                        <div className="mt-2 font-bold">{formatUSD(Number(it.card.price))}</div>
+                        {(() => {
+                          const baseCents = getBaseCentsFromPrice(Number(it.card.price));
+                          const discountedCents = applySalePrice(baseCents, it.card.sport);
+
+                          const percent = getSalePercentForSport(it.card.sport);
+                          const onSale = SALE_ACTIVE && percent > 0;
+
+                          return (
+                            <div className="mt-2 flex items-center gap-2">
+                              {onSale && (
+                                <>
+                                  <span className="text-sm text-gray-400 line-through">
+                                    {formatUSD(baseCents / 100)}
+                                  </span>
+                                  <span className="rounded-full bg-gray-200 text-gray-800 px-2 py-0.5 text-[10px] font-bold">
+                                    -{percent}%
+                                  </span>
+                                </>
+                              )}
+                              <span className="font-bold">{formatUSD(discountedCents / 100)}</span>
+                            </div>
+                          );
+                        })()}
 
                         <div className="mt-1 text-xs text-gray-500">
                           Stock: <span className="font-semibold">{stock}</span>
@@ -528,6 +610,11 @@ async function checkout() {
       <div>
         Subtotal: <span className="font-semibold text-gray-900">{formatUSD(subtotal)}</span>
       </div>
+      {savings > 0 && (
+        <div>
+          Discount: <span className="font-semibold text-gray-900">-{formatUSD(savings)}</span>
+        </div>
+      )}
       <div>
         Shipping (box): <span className="font-semibold text-gray-900">{formatUSD(shippingUsd)}</span>
       </div>

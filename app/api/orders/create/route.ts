@@ -29,6 +29,21 @@ function isAllowedCountry(code: string): code is AllowedCountry {
   return (ALLOWED_COUNTRIES as readonly string[]).includes(code);
 }
 
+function getSportDiscountPercent(sport?: string | null): number {
+  const s = String(sport ?? "").trim().toLowerCase();
+
+  if (s === "soccer") return 10;
+  if (s === "basketball") return 5;
+
+  return 0;
+}
+
+function applySportDiscount(unitCents: number, sport?: string | null): number {
+  const percent = getSportDiscountPercent(sport);
+  if (percent <= 0) return unitCents;
+  return Math.round(unitCents * (1 - percent / 100));
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
@@ -81,7 +96,7 @@ export async function POST(req: Request) {
     const cardIds = Array.from(new Set(cartItems.map((it) => it.cardId)));
     const cards = await prisma.card.findMany({
       where: { id: { in: cardIds } },
-      select: { id: true, title: true, priceCents: true, stock: true },
+      select: { id: true, title: true, priceCents: true, stock: true, sport: true },
     });
 
     const byId = new Map(cards.map((c) => [c.id, c]));
@@ -101,16 +116,18 @@ export async function POST(req: Request) {
     }
 
     // 4) Armo items + total (USD)
-    const orderItems = cartItems.map((it) => {
-      const c = byId.get(it.cardId)!;
-      const unitCents = Number(c.priceCents ?? 0);
-      return {
-        cardId: c.id,
-        title: c.title,
-        unitCents,
-        qty: it.qty,
-      };
-    });
+const orderItems = cartItems.map((it) => {
+  const c = byId.get(it.cardId)!;
+  const baseUnitCents = Number(c.priceCents ?? 0);
+  const unitCents = applySportDiscount(baseUnitCents, c.sport);
+
+  return {
+    cardId: c.id,
+    title: c.title,
+    unitCents,
+    qty: it.qty,
+  };
+});
 
     const subtotalCents = orderItems.reduce((acc, it) => acc + it.unitCents * it.qty, 0);
     const shippingCents = SHIPPING_USD_CENTS[country];

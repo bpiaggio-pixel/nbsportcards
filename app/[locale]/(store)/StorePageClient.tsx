@@ -15,6 +15,7 @@ type Card = {
   title: string;
   player: string;
   price: number;
+priceCents?: number;
   image?: string;
   image2?: string;
 
@@ -32,6 +33,42 @@ type SessionUser = { id: string; email: string } | null;
 
 function formatUSD(value: number) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(value);
+}
+
+// 🔥 Global Sale Config
+const SALE_ACTIVE = String(process.env.NEXT_PUBLIC_SALE_ACTIVE ?? "false") === "true";
+
+// Mapa de descuentos por deporte. Ej: {"soccer":10,"basketball":5}
+const SALES_RULES: Record<string, number> = (() => {
+  try {
+    const raw = process.env.NEXT_PUBLIC_SALES_RULES ?? "{}";
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? (parsed as Record<string, number>) : {};
+  } catch {
+    return {};
+  }
+})();
+
+function getSalePercentForSport(sport?: Sport | string) {
+  const s = String(sport ?? "").trim().toLowerCase();
+  const percent = Number((SALES_RULES as any)[s] ?? 0);
+  return Number.isFinite(percent) ? percent : 0;
+}
+// Siempre trabajar en CENTAVOS (enteros)
+function getBaseCents(card: { price: number; priceCents?: number }) {
+  if (typeof card.priceCents === "number" && Number.isFinite(card.priceCents)) return card.priceCents;
+  return Math.round(Number(card.price) * 100);
+}
+
+// Devuelve CENTAVOS (enteros)
+function applySalePrice(cents: number, sport?: Sport | string) {
+  if (!SALE_ACTIVE) return cents;
+
+  const percent = getSalePercentForSport(sport);
+  if (percent <= 0) return cents;
+
+  const discounted = cents * (1 - percent / 100);
+  return Math.round(discounted);
 }
 
 function getFallback(sport: Sport) {
@@ -60,6 +97,7 @@ function getBannerSrc(s: "all" | Sport) {
   if (s === "nfl") return "/banners/nfl.jpg";
   return "/banners/all.jpg";
 }
+
 
 /* -------------------------
    TOP SHOWCASE (rotating)
@@ -192,9 +230,7 @@ function TopCardsShowcase({
   );
 }
 
-/* -------------------------
-   STORE PAGE CLIENT (REAL)
--------------------------- */
+/* STORE PAGE CLIENT (REAL) */
 export default function StorePageClient() {
   const t = useTranslations("Store");
   const locale = useLocale();
@@ -583,8 +619,8 @@ const mid = (a: { x: number; y: number }, b: { x: number; y: number }) => ({
       return matchesSport && matchesPlayer && matchesAuto && matchesSearch;
     });
 
-    if (sort === "price_desc") result = [...result].sort((a, b) => b.price - a.price);
-    if (sort === "price_asc") result = [...result].sort((a, b) => a.price - a.price);
+if (sort === "price_desc") result = [...result].sort((a, b) => b.price - a.price);
+if (sort === "price_asc") result = [...result].sort((a, b) => a.price - b.price);
 
     return result;
   }, [uniqueCards, search, sport, sort, player, autoFilter]);
@@ -878,6 +914,8 @@ const mid = (a: { x: number; y: number }, b: { x: number; y: number }) => ({
       draggable={false}
     />
 
+
+
     {/* ✅ Degradé hacia abajo para que no corte seco */}
     <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 sm:h-24 md:h-28 bg-gradient-to-b from-transparent to-white" />
   </div>
@@ -1161,7 +1199,43 @@ onPointerCancel={(e) => {
                         <h3 className="text-lg font-semibold leading-snug text-gray-900">{selectedCard.title}</h3>
                         <p className="mt-2 text-sm text-gray-600">{selectedCard.player}</p>
         
-                        <div className="mt-5 text-2xl font-bold text-gray-900">{formatUSD(selectedCard.price)}</div>
+{(() => {
+  const baseCents = getBaseCents(selectedCard);
+  const discountedCents = applySalePrice(baseCents, selectedCard.sport);
+  const percent = getSalePercentForSport(selectedCard.sport);
+  const onSale = SALE_ACTIVE && percent > 0 && discountedCents !== baseCents;
+
+  return (
+    <div className="flex flex-col gap-1">
+      {/* Badges */}
+      <div className="flex flex-wrap items-center gap-2">
+        {onSale && (
+          <span className="shrink-0 whitespace-nowrap rounded-full bg-gray-200 text-gray-800 px-2 py-1 text-xs font-bold">
+            -{percent}%
+          </span>
+        )}
+
+        {isGreatDeal(selectedCard) && (
+          <span className="shrink-0 whitespace-nowrap rounded-full bg-green-200 px-2 py-1 text-xs font-semibold text-green-700">
+            Great Deal
+          </span>
+        )}
+      </div>
+
+      {/* Precio */}
+      <div className="flex flex-wrap items-end gap-2">
+        {onSale && (
+          <span className="text-sm text-gray-400 line-through whitespace-nowrap">
+            {formatUSD(baseCents / 100)}
+          </span>
+        )}
+        <span className={`text-lg font-bold whitespace-nowrap ${onSale ? "text-sky-600" : "text-gray-900"}`}>
+          {formatUSD(discountedCents / 100)}
+        </span>
+      </div>
+    </div>
+  );
+})()}
         
                         {/* ✅ STOCK: modal */}
                         {((selectedCard.stock ?? 0) <= 0) && (
@@ -1293,13 +1367,40 @@ function SidebarCard({
         <p className="mt-1 text-xs text-gray-500">{card.player}</p>
 
         <div className="mt-2 flex items-center gap-2">
-          <p className="text-sm font-bold text-gray-900">{formatUSD(card.price)}</p>
+          {(() => {
+const baseCents = getBaseCents(card);
+  const discountedCents = applySalePrice(baseCents, card.sport);
+  const percent = getSalePercentForSport(card.sport);
+  const onSale = SALE_ACTIVE && percent > 0;
+  return (
+    <div className="flex flex-col gap-1">
+      <div className="flex flex-wrap items-center gap-2">
+        {onSale && (
+          <span className="rounded-full bg-gray-200 text-gray-800 px-2 py-0.5 text-[10px] font-bold ">
+            -{percent}%
+          </span>
+        )}
+        {isGreatDeal(card) && (
+          <span className="rounded-full bg-green-200 px-2 py-0.5 text-[10px] font-semibold text-green-700">
+            Great Deal
+          </span>
+        )}
+      </div>
 
-          {isGreatDeal(card) && (
-            <span className="rounded-full bg-green-100 px-2 py-1 text-[11px] font-semibold text-green-700">
-              Great Deal
-            </span>
-          )}
+      <div className="flex flex-wrap items-end gap-2">
+        {onSale && (
+          <span className="text-xs text-gray-400 line-through">
+            {formatUSD(baseCents / 100)}
+          </span>
+        )}
+        <span className={`text-sm font-bold ${onSale ? "text-sky-600" : "text-gray-900"}`}>
+          {formatUSD(discountedCents / 100)}
+        </span>
+      </div>
+    </div>
+  );
+})()}
+
         </div>
       </div>
     </button>
@@ -1387,13 +1488,46 @@ function CardTile({
             <p className="text-sm text-gray-500">{card.player}</p>
 
             <div className="flex items-center gap-2">
-              <p className="text-lg font-bold text-gray-900">{formatUSD(card.price)}</p>
-              {isGreatDeal(card) && (
-                <span className="rounded-full bg-green-200 px-2 py-1 text-xs font-semibold text-green-700">
-                  Great Deal
-                </span>
-              )}
-            </div>
+ {(() => {
+  const baseCents = getBaseCents(card);
+  const discountedCents = applySalePrice(baseCents, card.sport);
+  const percent = getSalePercentForSport(card.sport);
+  const onSale = SALE_ACTIVE && percent > 0;
+
+  return (
+    <div className="flex flex-col gap-1">
+      {/* Badges en su propia fila */}
+      <div className="flex flex-wrap items-center gap-2">
+  {onSale && (
+    <span className="shrink-0 whitespace-nowrap rounded-full bg-gray-200 text-gray-800 px-2 py-1 text-xs font-bold ">
+      -{percent}%
+    </span>
+  )}
+
+  {isGreatDeal(card) && (
+    <span className="shrink-0 whitespace-nowrap rounded-full bg-green-200 px-2 py-1 text-xs font-semibold text-green-700">
+      Great Deal
+    </span>
+  )}
+</div>
+
+      {/* Precio en su propia fila */}
+     <div className="flex flex-wrap items-end gap-2">
+  {onSale && (
+    <span className="text-sm text-gray-400 line-through whitespace-nowrap">
+      {formatUSD(baseCents / 100)}
+    </span>
+  )}
+  <span className={`text-lg font-bold whitespace-nowrap ${onSale ? "text-sky-600" : "text-gray-900"}`}>
+    {formatUSD(discountedCents / 100)}
+  </span>
+</div>
+    </div>
+  );
+})()}
+
+
+</div>
 
             {/* ✅ STOCK: deshabilitar agregar */}
             <button
