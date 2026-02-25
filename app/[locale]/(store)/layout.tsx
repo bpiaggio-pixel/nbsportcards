@@ -63,6 +63,9 @@ export default async function StoreLayout({
               <Link href="/cart" className="text-gray-600 hover:text-gray-900">
                 {t("cart")}
               </Link>
+              <Link href="/help" className="text-gray-600 hover:text-gray-900">
+                {t("help")}
+              </Link>
             </div>
           </div>
 

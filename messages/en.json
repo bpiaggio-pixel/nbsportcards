@@ -7,6 +7,7 @@
     "cart": "Cart",
     "login": "Login",
     "register": "Register",
+    "help": "Help",
     "logout": "Logout"
   },
   "Store": {
@@ -56,6 +57,7 @@
   "rights": "All rights reserved.",
   "privacy": "Privacy",
   "terms": "Terms",
+  "help": "Help",
   "support": "Support"
  }
 }

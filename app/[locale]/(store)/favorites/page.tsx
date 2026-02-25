@@ -45,6 +45,81 @@ export default function FavoritesPage() {
   // modal
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
 
+// ✅ ZOOM + PAN (modal) igual al Home
+const [zoom, setZoom] = React.useState(1);
+const ZOOM_MIN = 0.6;
+const ZOOM_MAX = 4;
+const clampZoom = (v: number) => Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, v));
+
+const [pan, setPan] = React.useState({ x: 0, y: 0 });
+
+const containerRef = React.useRef<HTMLDivElement | null>(null);
+const mediaRef = React.useRef<HTMLImageElement | null>(null);
+
+const dragRef = React.useRef<{
+  dragging: boolean;
+  sx: number;
+  sy: number;
+  ox: number;
+  oy: number;
+} | null>(null);
+
+// ✅ Pinch-to-zoom (2 dedos)
+const pointersRef = React.useRef(new Map<number, { x: number; y: number }>());
+const pinchRef = React.useRef<{
+  pinching: boolean;
+  startDist: number;
+  startZoom: number;
+  startPan: { x: number; y: number };
+  containerRect: { left: number; top: number; width: number; height: number };
+} | null>(null);
+
+const dist = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+  Math.hypot(a.x - b.x, a.y - b.y);
+
+const mid = (a: { x: number; y: number }, b: { x: number; y: number }) => ({
+  x: (a.x + b.x) / 2,
+  y: (a.y + b.y) / 2,
+});
+
+const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
+
+const clampPan = (nextPan: { x: number; y: number }, nextZoom: number) => {
+  const c = containerRef.current;
+  const m = mediaRef.current;
+  if (!c || !m) return nextPan;
+
+  const cw = c.clientWidth;
+  const ch = c.clientHeight;
+
+  const baseW = m.offsetWidth;
+  const baseH = m.offsetHeight;
+
+  const scaledW = baseW * nextZoom;
+  const scaledH = baseH * nextZoom;
+
+  const maxX = Math.max(0, (scaledW - cw) / 2);
+  const maxY = Math.max(0, (scaledH - ch) / 2);
+
+  return {
+    x: clamp(nextPan.x, -maxX, maxX),
+    y: clamp(nextPan.y, -maxY, maxY),
+  };
+};
+
+// Ajusta pan cuando cambia zoom
+React.useEffect(() => {
+  setPan((p) => clampPan(p, zoom));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [zoom]);
+
+// ✅ Reset cuando cambia de card / abre modal
+React.useEffect(() => {
+  if (!selectedId) return;
+  setZoom(1);
+  setPan({ x: 0, y: 0 });
+}, [selectedId]);
+
   // Normaliza IDs: "Card-011" => "11", " 11 " => "11"
   const normId = (v: any) => {
     const s = String(v ?? "").trim();
@@ -287,6 +362,16 @@ async function addToCart(cardId: string) {
                       </h3>
                       <p className="text-sm text-gray-500">{card.player}</p>
                       <p className="text-lg font-bold text-gray-900">{formatUSD(card.price)}</p>
+<button
+  type="button"
+  onClick={(e) => {
+    e.stopPropagation();
+    addToCart(String(card.id));
+  }}
+  className="w-full rounded-full py-3 text-sm font-semibold bg-sky-400 text-white hover:bg-sky-600"
+>
+  Agregar al carrito
+</button>
                     </div>
                   </div>
                 </div>
@@ -323,12 +408,167 @@ async function addToCart(cardId: string) {
             </div>
 
             <div className="p-6">
-              <img
-                src={selectedCard.image?.trim() ? selectedCard.image : getFallback(selectedCard.sport)}
-                alt={selectedCard.title}
-                className="w-full max-h-[420px] object-contain rounded-2xl bg-[#f3f4f6] p-6"
-                draggable={false}
-              />
+       <div
+  className="relative h-[260px] sm:h-[340px] md:h-[420px] border border-gray-200 bg-[#f3f4f6] rounded-2xl overflow-hidden"
+  onWheelCapture={(e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const factor = (e as any).deltaY > 0 ? 0.9 : 1.1;
+    setZoom((z) => clampZoom(z * factor));
+  }}
+  style={{ overscrollBehavior: "contain" }}
+>
+  {/* controles zoom */}
+  <div className="absolute right-4 top-4 z-20 flex items-center gap-2">
+    <button
+      type="button"
+      onClick={() => setZoom((z) => clampZoom(z * 1.1))}
+      className="rounded-full border border-gray-200 bg-white/90 px-3 py-2 text-sm font-bold shadow-sm backdrop-blur hover:bg-gray-50"
+      aria-label="Zoom in"
+    >
+      +
+    </button>
+    <button
+      type="button"
+      onClick={() => setZoom((z) => clampZoom(z / 1.1))}
+      className="rounded-full border border-gray-200 bg-white/90 px-3 py-2 text-sm font-bold shadow-sm backdrop-blur hover:bg-gray-50"
+      aria-label="Zoom out"
+    >
+      –
+    </button>
+    <button
+      type="button"
+      onClick={() => {
+        setZoom(1);
+        setPan({ x: 0, y: 0 });
+      }}
+      className="rounded-full border border-gray-200 bg-white/90 px-3 py-2 text-xs font-semibold shadow-sm backdrop-blur hover:bg-gray-50"
+      aria-label="Reset zoom"
+    >
+      1:1
+    </button>
+  </div>
+
+  <div
+    ref={containerRef}
+    className="relative z-10 flex h-full items-center justify-center p-6 overflow-hidden"
+    style={{
+      cursor: zoom > 1 ? "grab" : "default",
+      touchAction: "none",
+    }}
+    onPointerDown={(e) => {
+      const el = e.currentTarget as HTMLDivElement;
+      el.setPointerCapture(e.pointerId);
+
+      pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+      // pinch
+      if (pointersRef.current.size === 2) {
+        const pts = Array.from(pointersRef.current.values());
+        const rect = el.getBoundingClientRect();
+
+        pinchRef.current = {
+          pinching: true,
+          startDist: dist(pts[0], pts[1]),
+          startZoom: zoom,
+          startPan: { ...pan },
+          containerRect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
+        };
+
+        if (dragRef.current) dragRef.current.dragging = false;
+        return;
+      }
+
+      // pan
+      if (zoom <= 1) return;
+
+      dragRef.current = {
+        dragging: true,
+        sx: e.clientX,
+        sy: e.clientY,
+        ox: pan.x,
+        oy: pan.y,
+      };
+    }}
+    onPointerMove={(e) => {
+      if (pointersRef.current.has(e.pointerId)) {
+        pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      }
+
+      // pinch move
+      if (pinchRef.current?.pinching && pointersRef.current.size === 2) {
+        const pts = Array.from(pointersRef.current.values());
+        const info = pinchRef.current;
+
+        const newDist = dist(pts[0], pts[1]);
+        const ratio = newDist / Math.max(1, info.startDist);
+        const newZoom = clampZoom(info.startZoom * ratio);
+
+        const rect = info.containerRect;
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+
+        const m = mid(pts[0], pts[1]);
+        const d0 = { x: m.x - cx, y: m.y - cy };
+
+        const Z0 = info.startZoom;
+        const Z1 = newZoom;
+        const r = Z1 / Math.max(0.0001, Z0);
+
+        const newPan = {
+          x: d0.x * (1 - r) + info.startPan.x * r,
+          y: d0.y * (1 - r) + info.startPan.y * r,
+        };
+
+        setZoom(newZoom);
+        setPan(clampPan(newPan, newZoom));
+        return;
+      }
+
+      // pan move
+      const st = dragRef.current;
+      if (!st?.dragging) return;
+
+      const dx = e.clientX - st.sx;
+      const dy = e.clientY - st.sy;
+      setPan(clampPan({ x: st.ox + dx, y: st.oy + dy }, zoom));
+    }}
+    onPointerUp={(e) => {
+      pointersRef.current.delete(e.pointerId);
+
+      if (pointersRef.current.size < 2 && pinchRef.current?.pinching) {
+        pinchRef.current = null;
+      }
+
+      const st = dragRef.current;
+      if (st) dragRef.current = { ...st, dragging: false };
+
+      try {
+        (e.currentTarget as HTMLDivElement).releasePointerCapture(e.pointerId);
+      } catch {}
+    }}
+    onPointerCancel={(e) => {
+      pointersRef.current.delete(e.pointerId);
+      if (pointersRef.current.size < 2 && pinchRef.current?.pinching) {
+        pinchRef.current = null;
+      }
+      const st = dragRef.current;
+      if (st) dragRef.current = { ...st, dragging: false };
+    }}
+  >
+    <img
+      ref={mediaRef}
+      src={selectedCard.image?.trim() ? selectedCard.image : getFallback(selectedCard.sport)}
+      alt={selectedCard.title}
+      draggable={false}
+      style={{
+        transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+        transformOrigin: "center",
+      }}
+      className="h-full w-full select-none object-contain transition-transform"
+    />
+  </div>
+</div>
 
               <div className="mt-6">
                 <h3 className="text-lg font-semibold text-gray-900">{selectedCard.title}</h3>

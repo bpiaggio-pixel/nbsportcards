@@ -3,7 +3,7 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { Link } from "@/navigation";
-import { Heart, ShoppingCart, FileText, Receipt, Menu, X } from "lucide-react";
+import { Heart, ShoppingCart, FileText, Receipt, Menu, X, HelpCircle } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -380,6 +380,18 @@ return (
               </div>
             )}
           </div>
+
+ {/* ✅ HELP BUTTON (desktop) */}
+<Link
+  href="/help"
+  aria-label={activeLocale === "es" ? "Ayuda" : "Help"}
+  title={activeLocale === "es" ? "Ayuda" : "Help"}
+  className="group relative rounded-full border border-gray-200 bg-white p-2 hover:bg-gray-50 transition"
+>
+  <span className="absolute inset-0 rounded-full bg-gradient-to-r from-sky-200 via-cyan-200 to-blue-200 opacity-0 blur-lg transition group-hover:opacity-60 -z-10" />
+  <HelpCircle size={18} className="relative z-10 text-gray-700" />
+</Link>
+
         </div>
       </div>
 
@@ -439,6 +451,17 @@ return (
                 </div>
               )}
             </div>
+
+              {/* ✅ HELP BUTTON (mobile top bar) */}
+<Link
+  href="/help"
+  aria-label={activeLocale === "es" ? "Ayuda" : "Help"}
+  title={activeLocale === "es" ? "Ayuda" : "Help"}
+  className="group relative rounded-full border border-gray-200 bg-white p-2 hover:bg-gray-50 transition"
+>
+  <span className="absolute inset-0 rounded-full bg-gradient-to-r from-sky-200 via-cyan-200 to-blue-200 opacity-0 blur-lg transition group-hover:opacity-60 -z-10" />
+  <HelpCircle size={18} className="relative z-10 text-gray-700" />
+</Link>
 
             {/* menú */}
             <button
