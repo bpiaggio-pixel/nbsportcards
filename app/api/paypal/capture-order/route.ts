@@ -23,7 +23,13 @@ async function computeExpectedTotalDiscountedCents(orderId: string) {
 
   const shippingCents = Number((order as any).totalCents ?? 0) - itemsSubtotalBaseCents;
 
-  const cardIds = Array.from(new Set((order as any).items.map((it: any) => it.cardId)));
+  const cardIds: string[] = Array.from(
+  new Set(
+    (order as any).items
+      .map((it: any) => String(it.cardId))
+      .filter(Boolean)
+  )
+);
   const cards = await prisma.card.findMany({
     where: { id: { in: cardIds } },
     select: { id: true, sport: true },
