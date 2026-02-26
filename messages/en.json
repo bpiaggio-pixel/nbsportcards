@@ -8,6 +8,7 @@
     "login": "Login",
     "register": "Register",
     "help": "Help",
+  "cards": "Cards",
     "logout": "Logout"
   },
   "Store": {
@@ -44,6 +45,9 @@
     "front": "Front",
     "back": "Back",
     "noBack": "No back",
+    "auto": "Autograph",
+    "autosi": "with Autograph",
+    "autono": "without Autograph",
     "loading": "Loading…"
   },
 "Footer": {

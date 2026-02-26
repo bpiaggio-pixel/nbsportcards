@@ -5,9 +5,11 @@ import { createTranslator } from "next-intl";
 
 export default async function StoreLayout({
   children,
+  modal,
   params,
 }: {
   children: React.ReactNode;
+  modal: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
@@ -88,6 +90,8 @@ export default async function StoreLayout({
           </div>
         </div>
       </footer>
+      {/* ✅ Slot para el modal interceptado */}
+      {modal}
     </div>
   );
 }

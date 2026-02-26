@@ -2,7 +2,7 @@
 
 import React from "react";
 import { createPortal } from "react-dom";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Heart, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
@@ -234,18 +234,23 @@ function TopCardsShowcase({
 export default function StorePageClient() {
   const t = useTranslations("Store");
   const locale = useLocale();
+  const router = useRouter();
   const [cards, setCards] = React.useState<Card[]>([]);
 
   // ✅ BUSCADOR: se lee desde la URL (?q=...)
   const searchParams = useSearchParams();
   const search = (searchParams?.get("q") ?? "").toLowerCase().trim();
 
-  // ✅ NORMALIZADOR DE ID (CLAVE)
-  const normId = React.useCallback((v: any) => {
-    const s = String(v ?? "").trim();
-    const m = s.match(/\d+/);
-    return m ? String(parseInt(m[0], 10)) : s;
-  }, []);
+// ✅ NORMALIZADOR DE ID (CLAVE) — FIX: no “recortar” IDs tipo cuid/uuid
+const normId = React.useCallback((v: any) => {
+  const s = String(v ?? "").trim();
+
+  // Si el id es puramente numérico, lo normalizamos (quita ceros, etc.)
+  if (/^\d+$/.test(s)) return String(parseInt(s, 10));
+
+  // Si no es numérico (cuid/uuid/etc), lo devolvemos tal cual
+  return s;
+}, []);
 
   React.useEffect(() => {
     async function loadCards() {
@@ -439,6 +444,21 @@ const mid = (a: { x: number; y: number }, b: { x: number; y: number }) => ({
 
   // modal
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
+  const didMountRef = React.useRef(false);
+
+React.useEffect(() => {
+  if (!didMountRef.current) {
+    didMountRef.current = true;
+    return;
+  }
+
+  if (selectedId) {
+    router.push(`/${locale}/cards/${encodeURIComponent(selectedId)}`, { scroll: false });
+  } else {
+    router.push(`/${locale}`, { scroll: false });
+  }
+}, [selectedId, router, locale]);
+
   const [portalRoot, setPortalRoot] = React.useState<HTMLElement | null>(null);
 
   React.useEffect(() => {
@@ -741,15 +761,15 @@ if (sort === "price_asc") result = [...result].sort((a, b) => a.price - b.price)
           </div>
 
           <div>
-            <p className="mb-3 text-sm font-semibold text-gray-800">Autógrafo</p>
+            <p className="mb-3 text-sm font-semibold text-gray-800">{t("auto")}</p>
             <select
               value={autoFilter}
               onChange={(e) => setAutoFilter(e.target.value as any)}
               className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-black/10"
             >
-              <option value="all">Todas</option>
-              <option value="yes">Con autógrafo</option>
-              <option value="no">Sin autógrafo</option>
+              <option value="all">{t("all")}</option>
+              <option value="yes">{t("autosi")}</option>
+              <option value="no">{t("autono")}</option>
             </select>
           </div>
 
@@ -996,8 +1016,8 @@ if (sort === "price_asc") result = [...result].sort((a, b) => a.price - b.price)
       {/* CARROUSEL ABAJO */}
       <TopCardsShowcase items={topShowcaseItems} onSelect={(id) => setSelectedId(id)} />
 
-      {/* MODAL */}
-      {portalRoot && selectedCard && createPortal(
+{/* MODAL (desactivado: ahora lo maneja @modal/(.)cards/[id]) */}
+{portalRoot && selectedCard && createPortal(
         <div
                   className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4 md:p-10"
 

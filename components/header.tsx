@@ -3,7 +3,7 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { Link } from "@/navigation";
-import { Heart, ShoppingCart, FileText, Receipt, Menu, X, HelpCircle } from "lucide-react";
+import { Heart, ShoppingCart, FileText, Receipt, Menu, X, LayoutGrid, HelpCircle, UserCircle2, ClipboardList } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -26,6 +26,13 @@ export default function Header() {
 const pathLocale = (pathname?.split("/")?.[1] ?? "");
 
 const activeLocale = ((locale || pathLocale) === "es" ? "es" : "en") as "es" | "en";
+
+  // ✅ Solo mostramos el buscador en Home (/{locale})
+  // Nota: en este proyecto el home real es /es o /en (sin más segmentos)
+  const isHome = React.useMemo(() => {
+    if (!pathname) return false;
+    return pathname === `/${activeLocale}` || pathname === `/${activeLocale}/`;
+  }, [pathname, activeLocale]);
 
 
   const [langOpen, setLangOpen] = React.useState(false);
@@ -227,24 +234,35 @@ return (
         </Link>
 
         <div className="flex-1">
-          <input
-            placeholder={t("searchPlaceholder")}
-            value={search}
-            onChange={(e) => {
-              const v = e.target.value;
-              setSearch(v);
+          {isHome ? (
+            <input
+              placeholder={t("searchPlaceholder")}
+              value={search}
+              onChange={(e) => {
+                const v = e.target.value;
+                setSearch(v);
 
-              const next = new URLSearchParams(params?.toString() ?? "");
-              const q = v.trim();
-              if (q) next.set("q", q);
-              else next.delete("q");
+                const next = new URLSearchParams(params?.toString() ?? "");
+                const q = v.trim();
+                if (q) next.set("q", q);
+                else next.delete("q");
 
-              const qs = next.toString();
-              const safePath = pathname ?? "/";
-              router.replace(qs ? `${safePath}?${qs}` : safePath);
-            }}
-            className="w-full rounded-full border border-gray-200 bg-gray-100 px-5 py-2 text-sm outline-none focus:bg-white focus:ring-2 focus:ring-black/10"
-          />
+                const qs = next.toString();
+                const safePath = pathname ?? "/";
+                router.replace(qs ? `${safePath}?${qs}` : safePath);
+              }}
+              className="w-full rounded-full border border-gray-200 bg-gray-100 px-5 py-2 text-sm outline-none focus:bg-white focus:ring-2 focus:ring-black/10"
+            />
+          ) : (
+<Link
+  href="/"
+  className="group flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold hover:bg-gray-50 transition relative"
+>
+  <span className="absolute inset-0 rounded-full bg-gradient-to-r from-sky-200 via-cyan-200 to-blue-200 opacity-0 blur-lg transition group-hover:opacity-60 -z-10" />
+  <LayoutGrid size={16} className="relative z-10 text-gray-600" />
+  <span className="relative z-10">{t("cards")}</span>
+</Link>
+          )}
         </div>
 
         <div className="flex items-center gap-2">
@@ -280,7 +298,7 @@ return (
                 className="group flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold hover:bg-gray-50 transition relative"
               >
                 <span className="absolute inset-0 rounded-full bg-gradient-to-r from-sky-200 via-cyan-200 to-blue-200 opacity-0 blur-lg transition group-hover:opacity-60 -z-10" />
-                <Receipt size={16} className="relative z-10 text-gray-600" />
+                <ClipboardList size={16} className="relative z-10 text-gray-600" />
                 <span className="relative z-10">{t("orders")}</span>
               </Link>
 
@@ -300,7 +318,10 @@ return (
                 title={user.email}
                 className="hidden lg:block text-sm font-semibold text-gray-700 max-w-[120px] truncate"
               >
-                👤 {user.email.length > 10 ? `${user.email.slice(0, 10)}…` : user.email}
+                <UserCircle2
+  size={20}
+  className="text-gray-600 inline align-middle mr-1"
+/> {user.email.length > 8 ? `${user.email.slice(0, 8)}…` : user.email}
               </span>
 
               <button
@@ -476,24 +497,33 @@ return (
         </div>
 
         <div className="mt-3">
-          <input
-            placeholder={t("searchPlaceholder")}
-            value={search}
-            onChange={(e) => {
-              const v = e.target.value;
-              setSearch(v);
+          {isHome ? (
+            <input
+              placeholder={t("searchPlaceholder")}
+              value={search}
+              onChange={(e) => {
+                const v = e.target.value;
+                setSearch(v);
 
-              const next = new URLSearchParams(params?.toString() ?? "");
-              const q = v.trim();
-              if (q) next.set("q", q);
-              else next.delete("q");
+                const next = new URLSearchParams(params?.toString() ?? "");
+                const q = v.trim();
+                if (q) next.set("q", q);
+                else next.delete("q");
 
-              const qs = next.toString();
-              const safePath = pathname ?? "/";
-              router.replace(qs ? `${safePath}?${qs}` : safePath);
-            }}
-            className="w-full rounded-full border border-gray-200 bg-gray-100 px-5 py-2 text-sm outline-none focus:bg-white focus:ring-2 focus:ring-black/10"
-          />
+                const qs = next.toString();
+                const safePath = pathname ?? "/";
+                router.replace(qs ? `${safePath}?${qs}` : safePath);
+              }}
+              className="w-full rounded-full border border-gray-200 bg-gray-100 px-5 py-2 text-sm outline-none focus:bg-white focus:ring-2 focus:ring-black/10"
+            />
+          ) : (
+            <Link
+              href="/"
+              className="flex w-full items-center justify-center rounded-full border border-gray-200 bg-gray-100 px-4 py-2 text-sm font-semibold hover:bg-gray-200 transition"
+            >
+              {t("cards")}
+            </Link>
+          )}
         </div>
       </div>
 

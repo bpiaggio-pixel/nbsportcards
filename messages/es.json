@@ -8,6 +8,7 @@
     "login": "Ingresar",
     "register": "Crear cuenta",
     "help": "Ayuda",
+  "cards": "Tarjetas",
     "logout": "Salir"
   },
   "Store": {
@@ -44,6 +45,9 @@
     "front": "Frente",
     "back": "Dorso",
     "noBack": "Sin dorso",
+    "auto": "Autógrafo",
+    "autosi": "Con Autógrafo",
+    "autono": "Sin Autógrafo",
     "loading": "Cargando…"
   },
   "Footer": {

@@ -18,52 +18,75 @@ export default async function HelpPage({
   const faqs = isEs
     ? [
         {
-          q: "¿Cómo me registro?",
-          a: "Puedes registrarte desde el botón -crear cuenta- completando usuario y contraseña. De ese modo podrás guardar favoritas, hacer compras y realizar seguimientos de los estados de tus ordenes.",
-        },
+  q: "¿Cómo creo una cuenta?",
+  a: "Solo tienes que hacer clic en el botón 'Crear cuenta' y configurar tu usuario y contraseña. Una vez registrado, podrás guardar tarjetas como favoritas, realizar compras y hacer seguimiento del estado de tus pedidos."
+},
 
-        {
-          q: "¿Cómo compro una tarjeta?",
-          a: "Agregá la tarjeta al carrito, (puedes agregar la cantidad que quieras) y terminá el checkout completando los datos para el envio. Si estás en Argentina, podés pagar con MercadoPago.También puedes elegir Paypal.",
-        },
-        {
-          q: "¿Cómo funcionan los favoritos?",
-          a: "Podés guardar tarjetas como favoritas. Si estás logueado se guardan en tu cuenta, y luego puedes verlas todas juntas desde el link -favoritos- y también agregarlas al carrito para hacer la compra.",
-        },
-        {
-          q: "¿Puedo ver mis pedidos?",
-          a: "Sí, en la sección “Pedidos” vas a encontrar tu historial.",
-        },
-        {
-          q: "¿Cómo hago el seguimiento de mis pedidos?",
-          a: "En la sección “Pedidos” vas a encontrar el estado de tu orden, hay 4 etapas, -generado-, -pagado-, -enviado- y -entregado-. Una vez que el nevió haya sido hecho podrás ver el tracking number para hacerle seguimiento.",
-        },
-        {
-          q: "Tengo un problema con una compra, ¿qué hago?",
-          a: "Escribinos desde el formulario de abajo con tu email y (si tenés) el número de pedido.",
-        },
-        {
-          q: "¿Puedo cancelar un pedido?",
-          a: "Siempre y cuando el pedido no haya sido enviado, puedes escribirnos desde el formulario de abajo con tu email y (si tenés) el número de pedido solicitando la cancelación de tu orden y nos pondremos en contacto contigo para hacer un reembolso y cancelarlo.",
-        },
+{
+  q: "¿Cómo compro una tarjeta?",
+  a: "Agrega la tarjeta al carrito (puedes elegir la cantidad que desees) y continúa al checkout completando tus datos de envío. Si estás en Argentina, puedes pagar de forma segura con MercadoPago. También aceptamos PayPal."
+},
+
+{
+  q: "¿Cómo funcionan los favoritos?",
+  a: "Puedes guardar cualquier tarjeta en tu lista de Favoritos. Si estás logueado, se almacenarán en tu cuenta de forma segura. Podrás verlas en cualquier momento desde la sección 'Favoritos' y agregarlas al carrito cuando estés listo para comprar."
+},
+
+{
+  q: "¿Puedo ver mi historial de pedidos?",
+  a: "Sí. Puedes acceder a tu historial completo de pedidos en cualquier momento desde la sección 'Pedidos' dentro de tu cuenta."
+},
+
+{
+  q: "¿Cómo hago el seguimiento de mi pedido?",
+  a: "En la sección 'Pedidos' encontrarás el estado de tu orden. Los pedidos pasan por cuatro etapas: 'Generado', 'Pagado', 'Enviado' y 'Entregado'. Una vez que el pedido haya sido enviado, recibirás un número de seguimiento para monitorear la entrega en tiempo real."
+},
+
+{
+  q: "Tengo un problema con una compra, ¿qué debo hacer?",
+  a: "Si tienes algún inconveniente, puedes contactarnos mediante el formulario que se encuentra más abajo. Incluye tu correo electrónico y, si lo tienes, el número de pedido para que podamos ayudarte lo antes posible."
+},
+
+{
+  q: "¿Puedo cancelar un pedido?",
+  a: "Puedes cancelar tu pedido siempre que aún no haya sido enviado. Escríbenos a través del formulario indicando tu correo electrónico y el número de pedido (si lo tienes). Nuestro equipo te ayudará con el proceso de cancelación y reembolso."
+},
       ]
     : [
-        {
-          q: "How do I buy a card?",
-          a: "Add the card to your cart and complete checkout. If you are in Argentina, you can pay with MercadoPago.",
-        },
-        {
-          q: "How do favorites work?",
-          a: "You can save cards as favorites. If you’re logged in, they’re stored in your account; otherwise they stay in your browser.",
-        },
-        {
-          q: "Can I see my orders?",
-          a: "Yes, go to “Orders” to view your order history.",
-        },
-        {
-          q: "I have an issue with a purchase—what should I do?",
-          a: "Use the contact form below and include your email and (if you have it) the order number.",
-        },
+       {
+  q: "How do I create an account?",
+  a: "Simply click the 'Create Account' button and set up your username and password. Once registered, you'll be able to save favorites, complete purchases, and track the status of your orders."
+},
+
+{
+  q: "How do I purchase a card?",
+  a: "Add the card to your cart (you can select the quantity you’d like) and proceed to checkout by entering your shipping details. Customers in Argentina can pay securely with MercadoPago. PayPal is also available."
+},
+
+{
+  q: "How do Favorites work?",
+  a: "You can save any card to your Favorites list. When you're logged in, your favorites are securely stored in your account. You can view them anytime from the 'Favorites' section and easily add them to your cart when you're ready to purchase."
+},
+
+{
+  q: "Can I view my order history?",
+  a: "Yes. You can access your complete order history at any time from the 'Orders' section in your account."
+},
+
+{
+  q: "How can I track my order?",
+  a: "In the 'Orders' section, you’ll find your order status. Orders move through four stages: 'Generated', 'Paid', 'Shipped', and 'Delivered'. Once your order has been shipped, a tracking number will be provided so you can follow your delivery in real time."
+},
+
+{
+  q: "I have an issue with my purchase. What should I do?",
+  a: "If you experience any issue, please contact us using the form below. Include your email address and, if available, your order number so we can assist you as quickly as possible."
+},
+
+{
+  q: "Can I cancel my order?",
+  a: "Orders can be canceled as long as they have not yet been shipped. Please contact us using the form below with your email address and order number (if available). Our team will assist you with the cancellation and refund process."
+},
       ];
 
   return (

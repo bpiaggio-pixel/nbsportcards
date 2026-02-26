@@ -9,6 +9,11 @@ export default async function sitemap() {
     take: 5000,
   });
 
+  const cards = await prisma.card.findMany({
+    select: { id: true, updatedAt: true },
+    take: 5000,
+  });
+
   const locales = ["en", "es"] as const;
 
   const staticUrls = locales.flatMap((l) => [
@@ -23,5 +28,12 @@ export default async function sitemap() {
     }))
   );
 
-  return [...staticUrls, ...postUrls];
+  const cardUrls = locales.flatMap((l) =>
+    cards.map((c) => ({
+      url: `${baseUrl}/${l}/cards/${encodeURIComponent(c.id)}`,
+      lastModified: c.updatedAt ?? new Date(),
+    }))
+  );
+
+  return [...staticUrls, ...postUrls, ...cardUrls];
 }
