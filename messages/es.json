@@ -11,6 +11,13 @@
   "cards": "Tarjetas",
     "logout": "Salir"
   },
+
+"Register": {
+    "submit": "Registrarse",
+    "createcount": "Crear Cuenta",
+    "account": "Ya tengo una Cuenta"
+  },
+
   "Store": {
     "topCards": "TOP CARDS",
     "filters": "Filtros",

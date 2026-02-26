@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import Image from "next/image";
 
 
@@ -11,6 +13,9 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState("");
+const locale = useLocale();
+const t = useTranslations("Register");
+
 
   // Si ya está logueado, mandalo al home
   useEffect(() => {
@@ -97,10 +102,10 @@ export default function LoginPage() {
 
         <button
           type="button"
-          onClick={() => router.push("/register")}
+  onClick={() => router.push(`/${locale}/register`)}
           className="mt-3 w-full rounded-full border border-gray-200 bg-white py-3 text-sm font-semibold hover:bg-gray-50"
         >
-          Crear cuenta
+          {t("createcount")}
         </button>
 
         {msg && <p className="mt-4 text-sm text-gray-700">{msg}</p>}

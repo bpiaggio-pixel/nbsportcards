@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
+import { useLocale } from "next-intl";
+
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -10,6 +13,8 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState("");
+const t = useTranslations("Register");
+const locale = useLocale();
 
   // Si ya está logueado, mandalo al home
   useEffect(() => {
@@ -60,7 +65,7 @@ export default function RegisterPage() {
             priority
             className="mb-3"
           />
-          <h1 className="text-2xl font-bold">Crear cuenta</h1>
+          <h1 className="text-2xl font-bold">{t("createcount")}</h1>
         </div>
 
         <input
@@ -89,15 +94,15 @@ export default function RegisterPage() {
           onClick={handleRegister}
           className="w-full rounded-full bg-black py-3 text-white font-semibold hover:bg-gray-900"
         >
-          Registrarse
-        </button>
+  {t("submit")}
+</button>
 
         <button
           type="button"
-          onClick={() => router.push("/login")}
+onClick={() => router.push(`/${locale}/login`)}
           className="mt-3 w-full rounded-full border border-gray-200 bg-white py-3 text-sm font-semibold hover:bg-gray-50"
         >
-          Ya tengo cuenta
+          {t("account")}
         </button>
 
         {msg && <p className="mt-4 text-sm text-gray-700">{msg}</p>}
