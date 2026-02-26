@@ -599,7 +599,7 @@ return (
   onClick={() => {
     logout();
     setMobileMenuOpen(false);
-    router.push("/login");   // 👈 redirige después de cerrar sesión
+    router.push(`/${locale}/login`);
   }}
   className="flex w-full items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold hover:bg-gray-50"
 >
