@@ -95,7 +95,7 @@ function getBannerSrc(s: "all" | Sport) {
   if (s === "basketball") return "/banners/basketball.jpg";
   if (s === "soccer") return "/banners/soccer.jpg";
   if (s === "nfl") return "/banners/nfl.jpg";
-  return "/banners/all.jpg";
+  return "/banners/all5.jpg";
 }
 
 
@@ -927,12 +927,28 @@ if (sort === "price_asc") result = [...result].sort((a, b) => a.price - b.price)
           {/* BANNER SOLO EN COLUMNA DE TARJETAS */}
           <div className="mb-6 overflow-hidden">
   <div className="relative h-[180px] sm:h-[220px] md:h-[250px] w-full">
-    <img
-      src={getBannerSrc(sport)}
-      alt="Category banner"
-      className="h-full w-full object-cover object-top"
-      draggable={false}
-    />
+<img
+  src={getBannerSrc(sport)}
+  alt="Category banner"
+  draggable={false}
+  className="h-full w-full object-cover object-top select-none will-change-transform"
+  style={{ animation: "bannerZoom 10s ease-in-out infinite alternate" }}
+/>
+
+
+
+
+
+<style jsx>{`
+  @keyframes bannerZoom {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.07);
+    }
+  }
+`}</style>
 
 
 
