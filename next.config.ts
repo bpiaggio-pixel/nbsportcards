@@ -13,12 +13,25 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
+  async headers() {
+    return [
+      {
+        // Cache fuerte SOLO para banners
+        source: "/banners/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
+  },
+
   experimental: {
     serverActions: {},
   },
 };
 
 export default withNextIntl(nextConfig);
-
-
-

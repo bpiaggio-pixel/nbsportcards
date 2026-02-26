@@ -3,7 +3,7 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { Link } from "@/navigation";
-import { Heart, ShoppingCart, FileText, Receipt, Menu, X, LayoutGrid, HelpCircle, UserCircle2, ClipboardList } from "lucide-react";
+import { Heart, ShoppingCart, FileText, Receipt, Menu, X, LayoutGrid, HelpCircle, UserCircle2, ClipboardList, LogOut } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -594,6 +594,18 @@ return (
                     <Receipt size={16} className="text-gray-600" />
                     {t("orders")}
                   </Link>
+<button
+  type="button"
+  onClick={() => {
+    logout();
+    setMobileMenuOpen(false);
+    router.push("/login");   // 👈 redirige después de cerrar sesión
+  }}
+  className="flex w-full items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold hover:bg-gray-50"
+>
+  <LogOut size={16} className="text-gray-600" />
+  {t("logout")}
+</button>
                 </>
               ) : (
                 <>
