@@ -2,7 +2,7 @@
 
 import React from "react";
 import { createPortal } from "react-dom";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Heart, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
@@ -235,6 +235,7 @@ export default function StorePageClient() {
   const t = useTranslations("Store");
   const locale = useLocale();
   const router = useRouter();
+const pathname = usePathname();
   const [cards, setCards] = React.useState<Card[]>([]);
 
   // ✅ BUSCADOR: se lee desde la URL (?q=...)
@@ -650,10 +651,11 @@ if (sort === "price_asc") result = [...result].sort((a, b) => a.price - b.price)
   const paged = filtered.slice((safePage - 1) * pageSize, safePage * pageSize);
 
   async function addToCart(cardId: string) {
-    if (!user?.id) {
-      window.location.href = "/login";
-      return;
-    }
+if (!user?.id) {
+  const redirectTo = pathname ?? `/${locale}`;
+  router.push(`/${locale}/login?redirect=${encodeURIComponent(redirectTo)}`);
+  return;
+}
 
     try {
       const cartRes = await fetch(`/api/cart?userId=${encodeURIComponent(user.id)}`, { cache: "no-store" });
@@ -699,7 +701,7 @@ if (sort === "price_asc") result = [...result].sort((a, b) => a.price - b.price)
       {/* MAIN */}
 <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 py-6 lg:grid-cols-[280px_1fr] lg:px-6 lg:py-10">
         {/* SIDEBAR */}
-<aside className="hidden lg:block space-y-6 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm lg:p-6">
+<aside className="hidden lg:block space-y-6 rounded-2xl border border-gray-200 bg-[#fcfcfc] p-4 shadow-sm lg:p-6">
           <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">{t("filters")}</h2>
           <button
@@ -783,9 +785,11 @@ if (sort === "price_asc") result = [...result].sort((a, b) => a.price - b.price)
           <div className="my-8 border-t border-gray-200" />
 
           <div className="pt-2">
-            <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-500">{t("highlights")}</h3>
+            <h3 className="mb-6 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">
+  {t("highlights")}
+</h3>
 
-            <div className="space-y-8">
+            <div className="space-y-10">
               {mostViewed && (
                 <div className="transition hover:-translate-y-[1px] hover:shadow-md">
                   <SidebarCard title={t("mostViewed")} card={mostViewed} onOpen={() => setSelectedId(mostViewed.id)} />
@@ -1032,7 +1036,7 @@ if (sort === "price_asc") result = [...result].sort((a, b) => a.price - b.price)
       {/* CARROUSEL ABAJO */}
       <TopCardsShowcase items={topShowcaseItems} onSelect={(id) => setSelectedId(id)} />
 
-{/* MODAL (desactivado: ahora lo maneja @modal/(.)cards/[id]) */}
+{/* MODAL */}
 {portalRoot && selectedCard && createPortal(
         <div
                   className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4 md:p-10"
@@ -1051,6 +1055,7 @@ className="w-full max-w-4xl max-h-[78vh] md:max-h-[82vh] overflow-hidden rounded
                         <span className="font-mono">{selectedCard.id}</span>
                       </div>
         
+
                       <button
                         type="button"
                         className="absolute right-4 top-1/2 -translate-y-1/2 z-50 rounded-full border border-gray-200 bg-white/90 backdrop-blur p-2 hover:bg-gray-50"
@@ -1269,6 +1274,19 @@ onPointerCancel={(e) => {
           {formatUSD(discountedCents / 100)}
         </span>
       </div>
+
+<div className="mt-3">
+  {(selectedCard.stock ?? 0) > 0 ? (
+    <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
+      Stock: {selectedCard.stock}
+    </span>
+  ) : (
+    <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">
+      Sin stock
+    </span>
+  )}
+</div>
+
     </div>
   );
 })()}
@@ -1289,7 +1307,7 @@ onPointerCancel={(e) => {
                               "flex-1 rounded-full py-3 text-sm font-semibold",
                               (selectedCard.stock ?? 0) <= 0
                                 ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                                : "bg-sky-500 text-white hover:bg-sky-600",
+    : "bg-gradient-to-r from-sky-400 to-sky-600 text-white hover:from-sky-600 hover:to-sky-800 shadow-md  active:scale-[0.97]",
                             ].join(" ")}
                           >
                             {(selectedCard.stock ?? 0) <= 0 ? "Sin stock" : "Add to cart"}
@@ -1566,21 +1584,23 @@ function CardTile({
 </div>
 
             {/* ✅ STOCK: deshabilitar agregar */}
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                if (outOfStock) return;
-                onAddToCart();
-              }}
-              disabled={outOfStock}
-              className={[
-                "w-full rounded-full py-3 text-sm font-semibold",
-                outOfStock ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-sky-400 text-white hover:bg-sky-600",
-              ].join(" ")}
-            >
-              {outOfStock ? "Sin stock" : t("addToCart")}
-            </button>
+<button
+  type="button"
+  onClick={(e) => {
+    e.stopPropagation();
+    if (outOfStock) return;
+    onAddToCart();
+  }}
+  disabled={outOfStock}
+className={[
+  "w-full rounded-full py-3 text-sm font-semibold transition-all duration-200",
+  outOfStock
+    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+    : "bg-gradient-to-r from-sky-400 to-sky-600 text-white hover:from-sky-600 hover:to-sky-800 shadow-md active:scale-[0.97]",
+].join(" ")}
+>
+  {outOfStock ? "Sin stock" : t("addToCart")}
+</button>
           </div>
         </div>
       </div>
