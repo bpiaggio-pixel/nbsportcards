@@ -1310,7 +1310,7 @@ onPointerCancel={(e) => {
     : "bg-gradient-to-r from-sky-400 to-sky-600 text-white hover:from-sky-600 hover:to-sky-800 shadow-md  active:scale-[0.97]",
                             ].join(" ")}
                           >
-                            {(selectedCard.stock ?? 0) <= 0 ? "Sin stock" : "Add to cart"}
+                            {(selectedCard.stock ?? 0) <= 0 ? "Sin stock" : t("addToCart")}
                           </button>
         
                           <button
