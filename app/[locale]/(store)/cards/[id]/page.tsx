@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import Script from "next/script";
 
 type Params = { locale: string; id?: string };
 type Props = { params: Params | Promise<Params> };
@@ -23,17 +24,38 @@ export async function generateMetadata({ params }: Props) {
   if (!id || typeof id !== "string") return {};
 
   const decodedId = decodeURIComponent(id);
+
   const card = await prisma.card.findUnique({ where: { id: decodedId } });
   if (!card) return {};
 
   const title = `${card.title} | NBCards`;
   const description = `${card.player ?? ""} • ${card.sport ?? ""}`.trim();
 
+  const canonical = `https://nbcards.com/${locale}/cards/${encodeURIComponent(decodedId)}`;
+
+  const ogImages =
+    card.image && card.image.startsWith("http")
+      ? [{ url: card.image, alt: card.title }]
+      : [];
+
   return {
     title,
     description,
-    alternates: {
-      canonical: `https://nbcards.com/${locale}/cards/${encodeURIComponent(id)}`,
+    alternates: { canonical },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      siteName: "NBCards",
+      locale,
+      type: "website", // ✅ (Next valida los tipos)
+      images: ogImages,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: card.image && card.image.startsWith("http") ? [card.image] : [],
     },
   };
 }
@@ -50,8 +72,37 @@ export default async function CardPage({ params }: Props) {
   const original = card.priceCents ?? 0;
   const discounted =
     percent > 0 ? Math.round(original * (1 - percent / 100)) : original;
+  const canonical = `https://nbcards.com/${locale}/cards/${encodeURIComponent(decodedId)}`;
+
+  const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: card.title,
+  image: card.image ? [card.image] : undefined,
+  description: `${card.player ?? ""} • ${card.sport ?? ""}`.trim() || undefined,
+  sku: String(card.id),
+  brand: { "@type": "Brand", name: "NBCards" },
+  offers: {
+    "@type": "Offer",
+    url: canonical,
+    priceCurrency: "USD",
+    price: (discounted / 100).toFixed(2),
+    availability:
+      (card.stock ?? 0) > 0
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+    itemCondition: "https://schema.org/NewCondition",
+  },
+};
 
   return (
+  <>
+    <Script
+      id="product-jsonld"
+      type="application/ld+json"
+      strategy="beforeInteractive"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
     <main className="mx-auto max-w-6xl px-4 py-10">
       <div className="mb-6">
         <Link
@@ -129,5 +180,6 @@ export default async function CardPage({ params }: Props) {
         </div>
       </div>
     </main>
+  </>
   );
 }
