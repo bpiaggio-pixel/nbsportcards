@@ -484,6 +484,23 @@ return (
   <HelpCircle size={18} className="relative z-10 text-gray-700" />
 </Link>
 
+{/* ✅ CART ICON BUTTON (mobile top bar) */}
+<Link
+  href="/cart"
+  aria-label={activeLocale === "es" ? "Carrito" : "Cart"}
+  title={activeLocale === "es" ? "Carrito" : "Cart"}
+  className="group relative rounded-full border border-gray-200 bg-white p-2 hover:bg-gray-50 transition"
+>
+  <span className="absolute inset-0 rounded-full bg-gradient-to-r from-sky-200 via-cyan-200 to-blue-200 opacity-0 blur-lg transition group-hover:opacity-60 -z-10" />
+  <ShoppingCart size={18} className="relative z-10 text-gray-700" />
+
+  {cartCount > 0 && (
+    <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-sky-700 text-white text-[11px] leading-[18px] font-bold text-center">
+      {cartCount > 99 ? "99+" : cartCount}
+    </span>
+  )}
+</Link>
+
             {/* menú */}
             <button
               type="button"
