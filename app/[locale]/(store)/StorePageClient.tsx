@@ -685,14 +685,19 @@ if (!user?.id) {
     }
   }
 
-  // ✅ Items para el showcase
-  const topShowcaseItems = React.useMemo(() => {
-    return uniqueCards.slice(0, 7).map((c) => ({
+// ✅ Items para el showcase (Great Deal primero, completa si faltan)
+const topShowcaseItems = React.useMemo(() => {
+  const deals = uniqueCards.filter((c) => isGreatDeal(c));
+  const others = uniqueCards.filter((c) => !isGreatDeal(c));
+
+  return [...deals, ...others]
+    .slice(0, 7)
+    .map((c) => ({
       id: c.id,
       title: c.title,
       image: c.image?.trim() ? c.image : getFallback(c.sport),
     }));
-  }, [uniqueCards]);
+}, [uniqueCards]);
 
   const favCount = React.useMemo(() => Object.values(wishlist).filter(Boolean).length, [wishlist]);
 
@@ -1044,7 +1049,7 @@ if (!user?.id) {
                   onPointerDown={() => setSelectedId(null)}
                 >
                   <div
-className="w-full max-w-4xl max-h-[78vh] md:max-h-[82vh] overflow-hidden rounded-3xl bg-white shadow-xl flex flex-col"
+                     className="w-full max-w-4xl max-h-[78vh] md:max-h-[82vh] overflow-hidden rounded-3xl bg-white shadow-xl flex flex-col"
 
                     onPointerDown={(e) => e.stopPropagation()}
                   >
@@ -1067,7 +1072,7 @@ className="w-full max-w-4xl max-h-[78vh] md:max-h-[82vh] overflow-hidden rounded
         
                     <div className="grid flex-1 gap-0 overflow-y-auto md:grid-cols-[1.2fr_0.8fr]">
                       <div
-className="relative h-[260px] sm:h-[340px] md:h-[380px] lg:h-[600px] border-b border-gray-200 bg-[#f3f4f6] md:border-b-0 md:border-r"
+                        className="relative h-[260px] sm:h-[340px] md:h-[380px] lg:h-[600px] border-b border-gray-200 bg-[#f3f4f6] md:border-b-0 md:border-r"
                         onWheelCapture={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
@@ -1307,7 +1312,7 @@ onPointerCancel={(e) => {
                               "flex-1 rounded-full py-3 text-sm font-semibold",
                               (selectedCard.stock ?? 0) <= 0
                                 ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-    : "bg-gradient-to-r from-sky-400 to-sky-600 text-white hover:from-sky-600 hover:to-sky-800 shadow-md  active:scale-[0.97]",
+                                : "bg-gradient-to-r from-sky-400 to-sky-600 text-white hover:from-sky-600 hover:to-sky-800 shadow-md  active:scale-[0.97]",
                             ].join(" ")}
                           >
                             {(selectedCard.stock ?? 0) <= 0 ? "Sin stock" : t("addToCart")}
