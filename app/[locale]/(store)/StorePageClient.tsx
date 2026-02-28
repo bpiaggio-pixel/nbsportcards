@@ -372,23 +372,42 @@ const mid = (a: { x: number; y: number }, b: { x: number; y: number }) => ({
     return Array.from(map.values());
   }, [cards, normId]);
 
-  // ✅ 2) Recommended = primera Great Deal, si no hay, primera card
-  const recommended = React.useMemo(() => {
-    const deal = uniqueCards.find((c) => isGreatDeal(c));
-    return deal ?? uniqueCards[0] ?? null;
-  }, [uniqueCards]);
+// 1) Most viewed = realmente el mayor views (sin repetir)
+const mostViewed = React.useMemo(() => {
+  const sorted = [...uniqueCards].sort((a, b) => (b.views ?? 0) - (a.views ?? 0));
+  return sorted[0] ?? null;
+}, [uniqueCards]);
 
-  // ✅ 3) Great deal = segunda Great Deal distinta a recommended
-  const greatDealPick = React.useMemo(() => {
-    const deals = uniqueCards.filter((c) => isGreatDeal(c));
-    const second = deals.find((c) => c.id !== recommended?.id);
-    return second ?? null;
-  }, [uniqueCards, recommended]);
+// 2) Recommended = prioriza Great Deal, luego views, luego stock, luego lo que quede
+const recommended = React.useMemo(() => {
+  const sorted = [...uniqueCards].sort((a, b) => {
+    // Great deal primero (true > false)
+    const dealDiff = Number(isGreatDeal(b)) - Number(isGreatDeal(a));
+    if (dealDiff !== 0) return dealDiff;
 
-  // ✅ 4) Most viewed = primera distinta a las otras dos
-  const mostViewed = React.useMemo(() => {
-    return uniqueCards.find((c) => c.id !== recommended?.id && c.id !== greatDealPick?.id) ?? null;
-  }, [uniqueCards, recommended, greatDealPick]);
+    // Más vistas
+    const viewsDiff = (b.views ?? 0) - (a.views ?? 0);
+    if (viewsDiff !== 0) return viewsDiff;
+
+    // En stock primero
+    const stockA = (a.stock ?? 0) > 0 ? 1 : 0;
+    const stockB = (b.stock ?? 0) > 0 ? 1 : 0;
+    if (stockB !== stockA) return stockB - stockA;
+
+    return 0; // mantiene el orden original como fallback
+  });
+
+  return sorted.find((c) => c.id !== mostViewed?.id) ?? null;
+}, [uniqueCards, mostViewed]);
+
+// 3) Great deal = mejor Great Deal disponible que no repita
+const greatDealPick = React.useMemo(() => {
+  const dealsSorted = [...uniqueCards]
+    .filter((c) => isGreatDeal(c))
+    .sort((a, b) => (b.views ?? 0) - (a.views ?? 0)); // si hay varias great deals, elegí la más vista
+
+  return dealsSorted.find((c) => c.id !== mostViewed?.id && c.id !== recommended?.id) ?? null;
+}, [uniqueCards, mostViewed, recommended]);
 
   // ✅ 5) blog
   const [latestPost, setLatestPost] = React.useState<any>(null);
