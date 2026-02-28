@@ -74,23 +74,42 @@ export default function CardModal({
   }, []);
 
   // Fetch card
-  React.useEffect(() => {
-    let alive = true;
-    (async () => {
-      try {
-        const res = await fetch(`/api/cards/${encodeURIComponent(cardId)}`, { cache: "no-store" });
-        const data = await res.json();
-        if (!alive) return;
-        setCard((data?.card ?? null) as Card | null);
-      } catch {
-        if (!alive) return;
-        setCard(null);
-      }
-    })();
-    return () => {
-      alive = false;
-    };
-  }, [cardId]);
+// Fetch card + count view (cooldown)
+React.useEffect(() => {
+  if (!cardId) return;
+
+  // ✅ Count view: 1 cada 30 minutos por card
+  const key = `viewedAt:${cardId}`;
+  const now = Date.now();
+  const last = Number(localStorage.getItem(key) || "0");
+  const cooldownMs = 30 * 60 * 1000;
+
+  if (now - last > cooldownMs) {
+    localStorage.setItem(key, String(now));
+    fetch(`/api/cards/${encodeURIComponent(cardId)}/view`, {
+      method: "POST",
+      cache: "no-store",
+    }).catch(() => {});
+  }
+
+  // 🔻 Tu fetch actual (igual que antes)
+  let alive = true;
+  (async () => {
+    try {
+      const res = await fetch(`/api/cards/${encodeURIComponent(cardId)}`, { cache: "no-store" });
+      const data = await res.json();
+      if (!alive) return;
+      setCard((data?.card ?? null) as Card | null);
+    } catch {
+      if (!alive) return;
+      setCard(null);
+    }
+  })();
+
+  return () => {
+    alive = false;
+  };
+}, [cardId]);
 
   // Escape closes
   React.useEffect(() => {

@@ -11,7 +11,7 @@ function normalizeYes(v: unknown) {
     .replace(/[\u0300-\u036f]/g, "");
 }
 
-export const runtime = "nodejs"; // Prisma + node runtime
+export const runtime = "nodejs"; 
 
 export async function GET() {
   try {
@@ -28,8 +28,9 @@ export async function GET() {
         greatDeal: true,
         stock: true,
         auto: true,
-        // si no existe en tu modelo, dejalo fuera:
-        // greatDeal: true,
+        views: true,
+        createdAt: true,     
+        updatedAt: true,  
       },
     });
 
@@ -44,8 +45,9 @@ export async function GET() {
       greatDeal: normalizeYes(c.greatDeal),
       stock: c.stock,
       auto: c.auto,
-      // si más adelante lo agregás a DB:
-      // greatDeal: normalizeYes(c.greatDeal),
+      views: c.views,
+      createdAt: c.createdAt, 
+      updatedAt: c.updatedAt,
     }));
 
     return NextResponse.json({ cards });

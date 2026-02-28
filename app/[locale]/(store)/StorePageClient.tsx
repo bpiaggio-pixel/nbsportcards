@@ -15,9 +15,12 @@ type Card = {
   title: string;
   player: string;
   price: number;
-priceCents?: number;
+  priceCents?: number;
   image?: string;
   image2?: string;
+  views?: number;
+  createdAt?: string;
+  updatedAt?: string;
 
   // ✅ STOCK
   stock?: number;
@@ -86,6 +89,25 @@ function isGreatDeal(card: Card) {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
   return raw === "si" || raw === "true" || raw === "1" || raw === "x" || raw === "yes";
+}
+
+function parsePercent(input: unknown, fallbackYes = 1) {
+  // Acepta: "25%", "25", "25.5", etc.
+  // Si viene algo tipo "si/true/x" (sin número), devuelve fallbackYes.
+  const s = String(input ?? "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+  const m = s.match(/-?\d+(?:[\.,]\d+)?/);
+  if (m) {
+    const n = Number(m[0].replace(",", "."));
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  if (s === "si" || s === "true" || s === "1" || s === "x" || s === "yes") return fallbackYes;
+  return 0;
 }
 
 /* -------------------------
@@ -640,6 +662,36 @@ React.useEffect(() => {
       return matchesSport && matchesPlayer && matchesAuto && matchesSearch;
     });
 
+// ✅ Orden "Recommended"
+// 1) Great Deal (mayor % primero)
+// 2) Más views
+// 3) En stock primero
+// 4) Newest (fallback: createdAt/updatedAt si viene; si no, conserva orden del API)
+if (sort === "recommended") {
+  result = [...result].sort((a, b) => {
+    const dealA = parsePercent(a.greatDeal ?? a.great_deal, isGreatDeal(a) ? 1 : 0);
+    const dealB = parsePercent(b.greatDeal ?? b.great_deal, isGreatDeal(b) ? 1 : 0);
+    const dealDiff = dealB - dealA;
+    if (dealDiff !== 0) return dealDiff;
+
+    const viewsDiff = (b.views ?? 0) - (a.views ?? 0);
+    if (viewsDiff !== 0) return viewsDiff;
+
+    const stockA = (a.stock ?? 0) > 0 ? 1 : 0;
+    const stockB = (b.stock ?? 0) > 0 ? 1 : 0;
+    if (stockB !== stockA) return stockB - stockA;
+
+    const tA = Date.parse(a.updatedAt ?? a.createdAt ?? "");
+    const tB = Date.parse(b.updatedAt ?? b.createdAt ?? "");
+    const hasA = Number.isFinite(tA);
+    const hasB = Number.isFinite(tB);
+    if (hasA && hasB) return tB - tA;
+    if (hasB && !hasA) return 1;
+    if (hasA && !hasB) return -1;
+    return 0;
+  });
+}
+
 if (sort === "price_desc") result = [...result].sort((a, b) => b.price - a.price);
 if (sort === "price_asc") result = [...result].sort((a, b) => a.price - b.price);
 
@@ -1002,7 +1054,10 @@ const topShowcaseItems = React.useMemo(() => {
                 card={card}
                 wished={!!wishlist[normId(card.id)]}
                 onToggleWish={() => toggleWish(card.id)}
-                onOpen={() => setSelectedId(card.id)}
+                onOpen={() => {
+                 setSelectedId(card.id);
+                 fetch(`/api/cards/${encodeURIComponent(card.id)}/view`, { method: "POST" }).catch(() => {});
+                }} 
                 onAddToCart={() => addToCart(card.id)}
                 t={t}
               />
