@@ -78,6 +78,8 @@
     "auto": "Autograph",
     "autosi": "with Autograph",
     "autono": "without Autograph",
+    "first": "First",
+    "last": "Last",
     "loading": "Loading…"
   },
 "Footer": {

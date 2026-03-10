@@ -78,6 +78,8 @@
     "auto": "Autógrafo",
     "autosi": "Con Autógrafo",
     "autono": "Sin Autógrafo",
+    "first": "Incio",
+    "last": "Fin",
     "loading": "Cargando…"
   },
   "Footer": {

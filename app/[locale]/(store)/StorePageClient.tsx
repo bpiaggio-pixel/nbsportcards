@@ -1136,10 +1136,19 @@ const topShowcaseItems = React.useMemo(() => {
 
             <div className="flex items-center gap-2">
               <button
+  type="button"
+  onClick={() => setPage(1)}
+  disabled={safePage === 1}
+  className="cursor-pointer rounded-full border border-gray-200 bg-white px-4 py-2 text-sm text-gray-800 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+>
+  {t("first")}
+</button>
+
+               <button
                 type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={safePage === 1}
-                className="cursor-pointer rounded-full border border-gray-200 bg-white px-4 py-2 text-sm hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="cursor-pointer rounded-full border border-gray-200 bg-white px-4 py-2 text-sm text-gray-800 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 ← Prev
               </button>
@@ -1148,10 +1157,19 @@ const topShowcaseItems = React.useMemo(() => {
                 type="button"
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={safePage === totalPages}
-                className="cursor-pointer rounded-full border border-gray-200 bg-white px-4 py-2 text-sm hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="cursor-pointer rounded-full border border-gray-200 bg-white px-4 py-2 text-sm text-gray-800 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {t("next")}
               </button>
+
+<button
+  type="button"
+  onClick={() => setPage(totalPages)}
+  disabled={safePage === totalPages}
+  className="cursor-pointer rounded-full border border-gray-200 bg-white px-4 py-2 text-sm text-gray-800 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+>
+  {t("last")}
+</button>
             </div>
           </div>
         </main>
