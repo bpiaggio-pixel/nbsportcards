@@ -6,6 +6,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Heart, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
+import BannerFX from "@/components/BannerFX";
 
 type Sport = "basketball" | "soccer" | "nfl";
 
@@ -117,7 +118,7 @@ function getBannerSrc(s: "all" | Sport) {
   if (s === "basketball") return "/banners/basketball.jpg";
   if (s === "soccer") return "/banners/soccer.jpg";
   if (s === "nfl") return "/banners/nfl.jpg";
-  return "/banners/all5.jpg";
+  return "/banners/all6.png";
 }
 
 
@@ -486,20 +487,24 @@ const greatDealPick = React.useMemo(() => {
 
   // modal
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
-  const didMountRef = React.useRef(false);
 
-React.useEffect(() => {
-  if (!didMountRef.current) {
-    didMountRef.current = true;
-    return;
-  }
+const currentQs = React.useMemo(() => {
+  const s = searchParams?.toString() ?? "";
+  return s ? `?${s}` : "";
+}, [searchParams]);
 
-  if (selectedId) {
-    router.push(`/${locale}/cards/${encodeURIComponent(selectedId)}`, { scroll: false });
-  } else {
-    router.push(`/${locale}`, { scroll: false });
-  }
-}, [selectedId, router, locale]);
+const openCard = React.useCallback(
+  (id: string) => {
+    setSelectedId(id);
+    router.push(`/${locale}/cards/${encodeURIComponent(id)}${currentQs}`, { scroll: false });
+  },
+  [router, locale, currentQs]
+);
+
+const closeCard = React.useCallback(() => {
+  setSelectedId(null);
+  router.push(`/${locale}${currentQs}`, { scroll: false });
+}, [router, locale, currentQs]);
 
   const [portalRoot, setPortalRoot] = React.useState<HTMLElement | null>(null);
 
@@ -516,12 +521,12 @@ React.useEffect(() => {
   }, []);
 
   React.useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setSelectedId(null);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  const onKey = (e: KeyboardEvent) => {
+    if (e.key === "Escape") closeCard();
+  };
+  window.addEventListener("keydown", onKey);
+  return () => window.removeEventListener("keydown", onKey);
+}, [closeCard]);
   const selectedCard = React.useMemo(
     () => uniqueCards.find((c) => normId(c.id) === normId(selectedId)) ?? null,
     [uniqueCards, selectedId, normId]
@@ -773,12 +778,12 @@ const topShowcaseItems = React.useMemo(() => {
   const favCount = React.useMemo(() => Object.values(wishlist).filter(Boolean).length, [wishlist]);
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
-      {/* MAIN */}
+<div className="min-h-screen bg-gradient-to-b from-black from-0% via-gray-800 via-25% to-white to-55% text-white">
+
+{/* MAIN */}
 <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 py-6 lg:grid-cols-[280px_1fr] lg:px-6 lg:py-10">
         {/* SIDEBAR */}
-<aside className="hidden lg:block space-y-6 rounded-2xl border border-gray-200 bg-[#fcfcfc] p-4 shadow-sm lg:p-6">
-          <div className="flex items-center justify-between">
+<aside className="hidden lg:block space-y-6 rounded-3xl border border-white/30 bg-gradient-to-b from-white/90 via-white/82 to-white/72 p-4 shadow-[0_20px_60px_rgba(0,0,0,0.14)] backdrop-blur-md lg:p-6">          <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">{t("filters")}</h2>
           <button
             type="button"
@@ -827,7 +832,7 @@ const topShowcaseItems = React.useMemo(() => {
             <select
               value={player}
               onChange={(e) => setPlayer(e.target.value)}
-              className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-black/10"
+              className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-black/10"
             >
               <option value="all">{t("all")}</option>
               {players.map((p) => (
@@ -843,7 +848,7 @@ const topShowcaseItems = React.useMemo(() => {
             <select
               value={autoFilter}
               onChange={(e) => setAutoFilter(e.target.value as any)}
-              className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-black/10"
+              className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-black/10"
             >
               <option value="all">{t("all")}</option>
               <option value="yes">{t("autosi")}</option>
@@ -868,19 +873,19 @@ const topShowcaseItems = React.useMemo(() => {
             <div className="space-y-10">
               {mostViewed && (
                 <div className="transition hover:-translate-y-[1px] hover:shadow-md">
-                  <SidebarCard title={t("mostViewed")} card={mostViewed} onOpen={() => setSelectedId(mostViewed.id)} />
+                  <SidebarCard title={t("mostViewed")} card={mostViewed} onOpen={() => openCard(mostViewed.id)} />
                 </div>
               )}
 
               {recommended && (
                 <div className="transition hover:-translate-y-[1px] hover:shadow-md">
-                  <SidebarCard title={t("recommended")} card={recommended} onOpen={() => setSelectedId(recommended.id)} />
+                  <SidebarCard title={t("recommended")} card={recommended} onOpen={() => openCard(recommended.id)} />
                 </div>
               )}
 
               {greatDealPick && (
                 <div className="transition hover:-translate-y-[1px] hover:shadow-md">
-                  <SidebarCard title={t("greatDeal")} card={greatDealPick} onOpen={() => setSelectedId(greatDealPick.id)} />
+                  <SidebarCard title={t("greatDeal")} card={greatDealPick} onOpen={() => openCard(greatDealPick.id)} />
                 </div>
               )}
 
@@ -1005,19 +1010,50 @@ const topShowcaseItems = React.useMemo(() => {
 {/* GRID */}
         <main>
           {/* BANNER SOLO EN COLUMNA DE TARJETAS */}
-          <div className="mb-6 overflow-hidden">
-  <div className="relative h-[180px] sm:h-[220px] md:h-[250px] w-full">
-<img
-  src={getBannerSrc(sport)}
-  alt="Category banner"
-  draggable={false}
-  className="h-full w-full object-cover object-top select-none will-change-transform"
-  style={{ animation: "bannerZoom 10s ease-in-out infinite alternate" }}
-/>
+          <div className="-mt-10 mb-6 overflow-hidden">
+  <div className="relative h-[220px] sm:h-[260px] md:h-[300px] w-full bg-gradient-to-b from-black via-gray-900 to-transparent">
+
+
+    {/* FX atrás */}
+    <BannerFX density={240} />
+
+
+
+{/* Glow azul detrás de los jugadores */}
+<div
+  className="pointer-events-none absolute inset-0"
+  style={{ zIndex: 5 }}
+>
+  <div
+    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+    style={{
+      width: "900px",
+      height: "400px",
+      borderRadius: "9999px",
+      filter: "blur(120px)",
+      opacity: 0.5,
+      background:
+        "radial-gradient(circle, rgba(0,168,255,0.75) 0%, rgba(0,168,255,0.28) 42%, rgba(0,168,255,0.1) 58%, transparent 72%)",
+    }}
+  />
+</div>
 
 
 
 
+<div className="pointer-events-none absolute top-0 left-0 h-full w-16 bg-gradient-to-r from-black via-gray/80 to-transparent" />
+<div className="pointer-events-none absolute top-0 right-0 h-full w-16 bg-gradient-to-l from-black via-gray/80 to-transparent" />
+<div className="pointer-events-none absolute bottom-0 left-0 w-full h-18 bg-gradient-to-t from-black via-gray/95 to-transparent z-20" />
+
+
+    {/* PNG jugadores */}
+    <img
+      src={getBannerSrc(sport)}
+      alt="Category banner"
+      draggable={false}
+      className="relative z-10 h-full w-full object-contain select-none"
+      style={{ animation: "bannerZoom 10s ease-in-out infinite alternate" }}
+    />
 
 <style jsx>{`
   @keyframes bannerZoom {
@@ -1025,17 +1061,14 @@ const topShowcaseItems = React.useMemo(() => {
       transform: scale(1);
     }
     to {
-      transform: scale(1.07);
+      transform: scale(1.09);
     }
   }
 `}</style>
 
-
-
-    {/* ✅ Degradé hacia abajo para que no corte seco */}
-    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 sm:h-24 md:h-28 bg-gradient-to-b from-transparent to-white" />
   </div>
 </div>
+
 
 
           <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -1056,7 +1089,7 @@ const topShowcaseItems = React.useMemo(() => {
       <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value as any)}
-                className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-black/10"
+                className="rounded-xl border border-gray-300 bg-gradient-to-b from-white via-gray-200 to-gray-300 shadow-sm px-3 py-2 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-black/10"
               >
                 <option value="recommended">{t("sortRecommended")}</option>
                 <option value="price_desc">{t("priceHighToLow")}</option>
@@ -1074,9 +1107,9 @@ const topShowcaseItems = React.useMemo(() => {
                 wished={!!wishlist[normId(card.id)]}
                 onToggleWish={() => toggleWish(card.id)}
                 onOpen={() => {
-                 setSelectedId(card.id);
-                 fetch(`/api/cards/${encodeURIComponent(card.id)}/view`, { method: "POST" }).catch(() => {});
-                }} 
+  openCard(card.id);
+  fetch(`/api/cards/${encodeURIComponent(card.id)}/view`, { method: "POST" }).catch(() => {});
+}}
                 onAddToCart={() => addToCart(card.id)}
                 t={t}
               />
@@ -1113,14 +1146,14 @@ const topShowcaseItems = React.useMemo(() => {
       </div>
 
       {/* CARROUSEL ABAJO */}
-      <TopCardsShowcase items={topShowcaseItems} onSelect={(id) => setSelectedId(id)} />
+      <TopCardsShowcase items={topShowcaseItems} onSelect={(id) => openCard(id)} />
 
 {/* MODAL */}
 {portalRoot && selectedCard && createPortal(
         <div
                   className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4 md:p-10"
 
-                  onPointerDown={() => setSelectedId(null)}
+                  onPointerDown={closeCard}
                 >
                   <div
                      className="w-full max-w-4xl max-h-[78vh] md:max-h-[82vh] overflow-hidden rounded-3xl bg-white shadow-xl flex flex-col"
@@ -1138,7 +1171,7 @@ const topShowcaseItems = React.useMemo(() => {
                       <button
                         type="button"
                         className="absolute right-4 top-1/2 -translate-y-1/2 z-50 rounded-full border border-gray-200 bg-white/90 backdrop-blur p-2 hover:bg-gray-50"
-                        onClick={() => setSelectedId(null)}
+                        onClick={closeCard}
                       >
                         <X size={18} />
                       </button>
@@ -1482,8 +1515,7 @@ function SidebarCard({
 }) {
   return (
     <button type="button" onClick={onOpen} className="group relative w-full rounded-2xl p-[2px] text-left transition">
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-sky-200 via-cyan-200 to-blue-200 opacity-0 blur-lg transition group-hover:opacity-70" />
-
+<div className="pointer-events-none absolute -inset-0 rounded-2xl bg-gradient-to-r from-sky-400 via-cyan-300 to-blue-500 opacity-0 blur-lg transition duration-300 group-hover:opacity-80" />
       <div className="relative rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition group-hover:shadow-md">
         <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{title}</p>
 
@@ -1562,7 +1594,7 @@ function CardTile({
 
   return (
     <div className="group relative rounded-[22px] p-[2px] transition">
-      <div className="absolute inset-0 rounded-[22px] bg-gradient-to-r from-sky-200 via-cyan-200 to-blue-200 opacity-0 blur-lg transition group-hover:opacity-70" />
+      <div className="absolute inset-0 rounded-[22px] bg-gradient-to-r from-sky-500 via-cyan-400 to-blue-400 opacity-0 blur-lg transition group-hover:opacity-100" />
 
       {/* ✅ STOCK: gris cuando no hay stock */}
       <div

@@ -18,6 +18,29 @@
     "account": "I already have an account"
   },
 
+"cart": {
+    "max": "Maximum available",
+    "datos": "This information is saved in the order for shipment",
+    "datos1": "Shipping Information",
+    "quitar": "Remove",
+    "sub": "Subtotal:",
+    "disc": "Discount:",
+    "ship": "Shipping (box):",
+    "ideal1": "Local payment in Argentina (fixed conversion to pesos at checkout)",
+    "ideal2": "Ideal for international purchases",
+    "name": "Name and Surname",
+    "phone": "Phone",
+    "direction": "Address (street and number)",
+    "depto": "Apartment / Floor / Clarification (optional)",
+    "city": "City",
+    "cp": "Zip Code",
+    "back2": "Return",
+    "prov": "Province / State"
+  },
+
+
+
+
   "Store": {
     "topCards": "TOP CARDS",
     "filters": "Filters",

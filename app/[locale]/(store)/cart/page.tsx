@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ShoppingCart } from "lucide-react";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { usePathname } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 
 
 
@@ -45,6 +46,7 @@ function getFallback(sport: Sport) {
 
 
 // 🔥 Global Sale Config (client)
+
 const SALE_ACTIVE = String(process.env.NEXT_PUBLIC_SALE_ACTIVE ?? "false") === "true";
 const SALES_RULES: Record<string, number> = (() => {
   try {
@@ -141,6 +143,7 @@ function handleUserNotFound(res: Response, data: any, router: any) {
 }
 
 export default function CartPage() {
+  const t = useTranslations("cart");
   const router = useRouter();
 
   const [user, setUser] = React.useState<any>(null);
@@ -426,7 +429,7 @@ async function checkout() {
             className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold hover:bg-gray-50"
             href="/"
           >
-            ← Volver
+            ← {t("back2")}
           </a>
         </div>
 
@@ -438,48 +441,48 @@ async function checkout() {
           <div className="space-y-3">
             {/* ✅ Shipping form */}
             <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-              <div className="text-lg font-bold mb-4">Datos de envío</div>
+              <div className="text-lg font-bold mb-4">{t("datos1")}</div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <input
                   className="w-full border p-3 rounded"
-                  placeholder="Nombre y apellido"
+                  placeholder={t("name")}
                   value={shipping.fullName}
                   onChange={(e) => setShipping((s) => ({ ...s, fullName: e.target.value }))}
                 />
                 <input
                   className="w-full border p-3 rounded"
-                  placeholder="Teléfono"
+                  placeholder={t("phone")}
                   value={shipping.phone}
                   onChange={(e) => setShipping((s) => ({ ...s, phone: e.target.value }))}
                 />
                 <input
                   className="w-full border p-3 rounded md:col-span-2"
-                  placeholder="Dirección (calle y número)"
+                  placeholder={t("direction")}
                   value={shipping.address1}
                   onChange={(e) => setShipping((s) => ({ ...s, address1: e.target.value }))}
                 />
                 <input
                   className="w-full border p-3 rounded md:col-span-2"
-                  placeholder="Depto / Piso / Aclaración (opcional)"
+                  placeholder={t("depto")}
                   value={shipping.address2}
                   onChange={(e) => setShipping((s) => ({ ...s, address2: e.target.value }))}
                 />
                 <input
                   className="w-full border p-3 rounded"
-                  placeholder="Ciudad"
+                  placeholder={t("city")}
                   value={shipping.city}
                   onChange={(e) => setShipping((s) => ({ ...s, city: e.target.value }))}
                 />
                 <input
                   className="w-full border p-3 rounded"
-                  placeholder="Provincia / Estado"
+                  placeholder={t("prov")}
                   value={shipping.state}
                   onChange={(e) => setShipping((s) => ({ ...s, state: e.target.value }))}
                 />
                 <input
                   className="w-full border p-3 rounded"
-                  placeholder="Código Postal"
+                  placeholder={t("cp")}
                   value={shipping.zip}
                   onChange={(e) => setShipping((s) => ({ ...s, zip: e.target.value }))}
                 />
@@ -498,7 +501,7 @@ async function checkout() {
               </div>
 
               <div className="mt-3 text-xs text-gray-500">
-                Estos datos se guardan en la orden para que puedas hacer el envío.
+                {t("datos")}
               </div>
             </div>
 
@@ -557,7 +560,7 @@ async function checkout() {
                         </div>
 
                         {stock > 0 && it.qty >= stock && (
-                          <div className="mt-1 text-xs font-semibold text-amber-600">Máximo disponible</div>
+                          <div className="mt-1 text-xs font-semibold text-amber-600">{t("max")}</div>
                         )}
                         {stock === 0 && (
                           <div className="mt-1 text-xs font-semibold text-red-600">Sin stock</div>
@@ -594,7 +597,7 @@ async function checkout() {
                         onClick={() => removeItem(it.cardId)}
                         type="button"
                       >
-                        Quitar
+                        {t("quitar")}
                       </button>
                     </div>
                   </div>
@@ -608,7 +611,7 @@ async function checkout() {
     {/* Totales */}
     <div className="text-sm text-gray-700 space-y-1">
       <div>
-        Subtotal: <span className="font-semibold text-gray-900">{formatUSD(subtotal)}</span>
+        {t("sub")} <span className="font-semibold text-gray-900">{formatUSD(subtotal)}</span>
       </div>
       {savings > 0 && (
         <div>
@@ -641,7 +644,7 @@ async function checkout() {
         </button>
 
         <div className="mt-2 text-xs text-gray-500">
-          Pago local (conversión fija en checkout)
+          {t("ideal1")}
         </div>
       </div>
 
@@ -754,13 +757,13 @@ async function checkout() {
             }}
             onError={(err) => {
               console.error("PAYPAL ERROR", err);
-              setMsg("❌ Error PayPal");
+              setMsg("❌ Error, to use PayPal you must complete the shipping details above");
             }}
           />
         </PayPalScriptProvider>
 
         <div className="mt-2 text-xs text-gray-500">
-          Ideal para compras internacionales
+          {t("ideal2")}
         </div>
       </div>
     </div>

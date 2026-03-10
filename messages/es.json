@@ -18,6 +18,29 @@
     "account": "Ya tengo una Cuenta"
   },
 
+"cart": {
+    "max": "Máximo disponible",
+    "datos": "Estos datos se guardan en la orden para el envío.",
+    "datos1": "Datos de envío",
+    "quitar": "quitar",
+    "sub": "Subtotal:",
+    "disc": "Descuento:",
+    "ship": "Envio (Caja):",
+    "ideal1": "Pago local (conversión fija a pesos en checkout)",
+    "ideal2": "Ideal para compras internacionales",
+    "name": "Nombre y Apellido",
+    "phone": "Teléfono",
+    "direction": "Dirección (calle y número)",
+    "depto": "Depto / Piso / Aclaración (opcional)",
+    "city": "Ciudad",
+    "cp": "Código Postal",
+    "back2": "Volver",
+    "prov": "Provincia / Estado"
+  },
+
+
+
+
   "Store": {
     "topCards": "TOP CARDS",
     "filters": "Filtros",
