@@ -1190,7 +1190,7 @@ const topShowcaseItems = React.useMemo(() => {
 
                     onPointerDown={(e) => e.stopPropagation()}
                   >
-                    <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4 relative pr-16">
+                    <div className="sticky top-0 z-30 flex items-center justify-between border-b border-gray-300 bg-gradient-to-b from-gray-100 to-gray-200 px-6 py-4 relative pr-16">
                       <div className="text-sm text-gray-600">
                         <span className="font-semibold text-gray-900">{selectedCard.player}</span> ·{" "}
                         <span className="uppercase">{selectedCard.sport}</span> ·{" "}
