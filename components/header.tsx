@@ -435,132 +435,132 @@ export default function Header() {
 
 
 
-        {/* ✅ MOBILE (sm-): fila (logo + idioma + menú) + búsqueda abajo */}
-        <div className="sm:hidden">
-          <div className="flex items-center justify-between gap-3">
-            <Link href="/" className="group relative flex items-center gap-2 text-xl font-bold tracking-tight">
-              <span
-                className={`absolute -inset-3 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-xl transition group-hover:opacity-40 -z-10`}
-              />
-              <Image src="/nb-logo3.png" alt="NB" width={40} height={40} className="h-10 w-10 object-contain" priority />
-            </Link>
+       {/* ✅ MOBILE (sm-): logo + búsqueda + acciones en una sola fila */}
+<div className="sm:hidden">
+  <div className="flex items-center gap-2">
+    <Link href="/" className="group relative flex shrink-0 items-center gap-2 text-xl font-bold tracking-tight">
+      <span
+        className={`absolute -inset-3 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-xl transition group-hover:opacity-40 -z-10`}
+      />
+      <Image src="/nb-logo3.png" alt="NB" width={40} height={40} className="h-10 w-10 object-contain" priority />
+    </Link>
 
-            <div className="flex items-center gap-2">
-              {/* idioma */}
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setLangOpen((v) => !v)}
-                  className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.07] transition"
-                >
-                  <img
-                    src={activeLocale === "es" ? "/flags/es.png" : "/flags/us.png"}
-                    alt="flag"
-                    width={18}
-                    height={18}
-                    className="rounded-sm"
-                    draggable={false}
-                  />
-                  <span className="text-white/50">▾</span>
-                </button>
+    <div className="min-w-0 flex-1">
+      {isHome ? (
+        <input
+          placeholder={t("searchPlaceholder")}
+          value={search}
+          onChange={(e) => {
+            const v = e.target.value;
+            setSearch(v);
 
-                {langOpen && (
-                  <div className="absolute right-0 mt-2 w-40 rounded-xl border border-white/10 bg-[#0f0f18]/95 shadow-2xl backdrop-blur">
-                    <button
-                      type="button"
-                      onClick={() => switchLocale("en")}
-                      className="flex w-full items-center gap-2 px-3 py-2 text-sm text-white/80 hover:bg-white/[0.06]"
-                    >
-                      <Image src="/flags/us.png" alt="English" width={18} height={18} className="rounded-sm" />
-                      <span>English</span>
-                    </button>
+            const next = new URLSearchParams(params?.toString() ?? "");
+            const q = v.trim();
+            if (q) next.set("q", q);
+            else next.delete("q");
 
-                    <button
-                      type="button"
-                      onClick={() => switchLocale("es")}
-                      className="flex w-full items-center gap-2 px-3 py-2 text-sm text-white/80 hover:bg-white/[0.06]"
-                    >
-                      <Image src="/flags/es.png" alt="Español" width={18} height={18} className="rounded-sm" />
-                      <span>Español</span>
-                    </button>
-                  </div>
-                )}
-              </div>
+            const qs = next.toString();
+            const safePath = pathname ?? "/";
+            router.replace(qs ? `${safePath}?${qs}` : safePath);
+          }}
+          className="w-full rounded-full border border-white/10 bg-white/[0.04] px-5 py-2 text-sm text-white/90 placeholder:text-white/40 outline-none focus:bg-white/[0.06] focus:ring-2 focus:ring-sky-500/30"
+        />
+      ) : (
+        <Link
+          href="/"
+          className="flex w-full items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.07] transition"
+        >
+          {t("cards")}
+        </Link>
+      )}
+    </div>
 
-              {/* ✅ HELP BUTTON (mobile top bar) */}
-              <Link
-                href="/help"
-                aria-label={activeLocale === "es" ? "Ayuda" : "Help"}
-                title={activeLocale === "es" ? "Ayuda" : "Help"}
-                className="group relative rounded-full border border-white/10 bg-white/[0.04] p-2 hover:bg-white/[0.07] transition"
-              >
-                <span
-                  className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
-                />
-                <HelpCircle size={18} className="relative z-10 text-white/80" />
-              </Link>
+    <div className="flex shrink-0 items-center gap-2">
+      {/* idioma */}
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setLangOpen((v) => !v)}
+          className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.07] transition"
+        >
+          <img
+            src={activeLocale === "es" ? "/flags/es.png" : "/flags/us.png"}
+            alt="flag"
+            width={18}
+            height={18}
+            className="rounded-sm"
+            draggable={false}
+          />
+          <span className="text-white/50">▾</span>
+        </button>
 
-              {/* ✅ CART ICON BUTTON (mobile top bar) */}
-              <Link
-                href="/cart"
-                aria-label={activeLocale === "es" ? "Carrito" : "Cart"}
-                title={activeLocale === "es" ? "Carrito" : "Cart"}
-                className="group relative rounded-full border border-white/10 bg-white/[0.04] p-2 hover:bg-white/[0.07] transition"
-              >
-                <span
-                  className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
-                />
-                <ShoppingCart size={18} className="relative z-10 text-white/80" />
+        {langOpen && (
+          <div className="absolute right-0 mt-2 w-40 rounded-xl border border-white/10 bg-[#0f0f18]/95 shadow-2xl backdrop-blur">
+            <button
+              type="button"
+              onClick={() => switchLocale("en")}
+              className="flex w-full items-center gap-2 px-3 py-2 text-sm text-white/80 hover:bg-white/[0.06]"
+            >
+              <Image src="/flags/us.png" alt="English" width={18} height={18} className="rounded-sm" />
+              <span>English</span>
+            </button>
 
-                {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-sky-500/80 text-white text-[11px] leading-[18px] font-bold text-center">
-                    {cartCount > 99 ? "99+" : cartCount}
-                  </span>
-                )}
-              </Link>
-
-              {/* menú */}
-              <button
-                type="button"
-                onClick={() => setMobileMenuOpen(true)}
-                className="rounded-full border border-white/10 bg-white/[0.04] p-2 hover:bg-white/[0.07]"
-                aria-label="Open menu"
-              >
-                <Menu size={18} className="text-white/80" />
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => switchLocale("es")}
+              className="flex w-full items-center gap-2 px-3 py-2 text-sm text-white/80 hover:bg-white/[0.06]"
+            >
+              <Image src="/flags/es.png" alt="Español" width={18} height={18} className="rounded-sm" />
+              <span>Español</span>
+            </button>
           </div>
+        )}
+      </div>
 
-          <div className="mt-3">
-            {isHome ? (
-              <input
-                placeholder={t("searchPlaceholder")}
-                value={search}
-                onChange={(e) => {
-                  const v = e.target.value;
-                  setSearch(v);
+      {/* ✅ HELP BUTTON (mobile top bar) */}
+      <Link
+        href="/help"
+        aria-label={activeLocale === "es" ? "Ayuda" : "Help"}
+        title={activeLocale === "es" ? "Ayuda" : "Help"}
+        className="group relative rounded-full border border-white/10 bg-white/[0.04] p-2 hover:bg-white/[0.07] transition"
+      >
+        <span
+          className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
+        />
+        <HelpCircle size={18} className="relative z-10 text-white/80" />
+      </Link>
 
-                  const next = new URLSearchParams(params?.toString() ?? "");
-                  const q = v.trim();
-                  if (q) next.set("q", q);
-                  else next.delete("q");
+      {/* ✅ CART ICON BUTTON (mobile top bar) */}
+      <Link
+        href="/cart"
+        aria-label={activeLocale === "es" ? "Carrito" : "Cart"}
+        title={activeLocale === "es" ? "Carrito" : "Cart"}
+        className="group relative rounded-full border border-white/10 bg-white/[0.04] p-2 hover:bg-white/[0.07] transition"
+      >
+        <span
+          className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
+        />
+        <ShoppingCart size={18} className="relative z-10 text-white/80" />
 
-                  const qs = next.toString();
-                  const safePath = pathname ?? "/";
-                  router.replace(qs ? `${safePath}?${qs}` : safePath);
-                }}
-                className="w-full rounded-full border border-white/10 bg-white/[0.04] px-5 py-2 text-sm text-white/90 placeholder:text-white/40 outline-none focus:bg-white/[0.06] focus:ring-2 focus:ring-sky-500/30"
-              />
-            ) : (
-              <Link
-                href="/"
-                className="flex w-full items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.07] transition"
-              >
-                {t("cards")}
-              </Link>
-            )}
-          </div>
-        </div>
+        {cartCount > 0 && (
+          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-sky-500/80 text-white text-[11px] leading-[18px] font-bold text-center">
+            {cartCount > 99 ? "99+" : cartCount}
+          </span>
+        )}
+      </Link>
+
+      {/* menú */}
+      <button
+        type="button"
+        onClick={() => setMobileMenuOpen(true)}
+        className="rounded-full border border-white/10 bg-white/[0.04] p-2 hover:bg-white/[0.07]"
+        aria-label="Open menu"
+      >
+        <Menu size={18} className="text-white/80" />
+      </button>
+    </div>
+  </div>
+</div>
 
         {/* ✅ Drawer mobile */}
         {portalRoot &&

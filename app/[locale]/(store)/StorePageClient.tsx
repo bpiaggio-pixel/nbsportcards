@@ -930,7 +930,7 @@ const topShowcaseItems = React.useMemo(() => {
     <div className="absolute inset-0 bg-black/40" onClick={() => setFiltersOpen(false)} />
 
     {/* panel */}
-    <div className="absolute inset-x-0 bottom-0 max-h-[85vh] overflow-auto rounded-t-3xl bg-white p-5 shadow-xl">
+   <div className="absolute inset-x-0 bottom-0 max-h-[85vh] overflow-auto rounded-t-3xl bg-gradient-to-b from-gray-100 to-gray-200 p-5 shadow-xl">
       <div className="mb-4 flex items-center justify-between">
         <div className="text-sm font-bold text-gray-900">{t("filters")}</div>
         <div className="flex items-center gap-2"><button type="button" onClick={clearFilters} className="rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-sky-600 hover:bg-gray-50">Limpiar</button><button
@@ -1079,12 +1079,12 @@ const topShowcaseItems = React.useMemo(() => {
             <div className="flex items-center gap-2">
       {/* ✅ Mobile: abrir menú de filtros */}
       <button
-        type="button"
-        onClick={() => setFiltersOpen(true)}
-        className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold hover:bg-gray-50 lg:hidden"
-      >
-        {t("filters")}
-      </button>
+  type="button"
+  onClick={() => setFiltersOpen(true)}
+  className="rounded-full border border-gray-300 bg-gradient-to-b from-gray-200 to-gray-300 px-4 py-2 text-sm font-semibold text-gray-800 hover:from-gray-300 hover:to-gray-400 lg:hidden transition"
+>
+  {t("filters")}
+</button>
 
       <select
                 value={sort}
