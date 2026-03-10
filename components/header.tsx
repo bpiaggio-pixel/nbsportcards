@@ -463,7 +463,7 @@ export default function Header() {
             const safePath = pathname ?? "/";
             router.replace(qs ? `${safePath}?${qs}` : safePath);
           }}
-          className="w-full rounded-full border border-white/10 bg-white/[0.04] px-5 py-2 text-sm text-white/90 placeholder:text-white/40 outline-none focus:bg-white/[0.06] focus:ring-2 focus:ring-sky-500/30"
+          className="w-full rounded-full border border-white/10 bg-white/[0.04] px-5 py-2 text-sm text-white/90 placeholder:text-white/40 outline-none transition hover:bg-white hover:border-sky-400/40 hover:text-gray-900 hover:placeholder:text-gray-400 focus:bg-white focus:border-sky-400/40 focus:text-gray-900 focus:placeholder:text-gray-400 focus:ring-2 focus:ring-sky-500/30"
         />
       ) : (
         <Link

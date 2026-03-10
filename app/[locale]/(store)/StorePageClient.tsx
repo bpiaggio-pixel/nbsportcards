@@ -985,6 +985,18 @@ const topShowcaseItems = React.useMemo(() => {
             ))}
           </select>
         </div>
+<div>
+  <p className="mb-3 text-sm font-semibold text-gray-800">{t("auto")}</p>
+  <select
+    value={autoFilter}
+    onChange={(e) => setAutoFilter(e.target.value as any)}
+    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-black/10"
+  >
+    <option value="all">{t("all")}</option>
+    <option value="yes">{t("autosi")}</option>
+    <option value="no">{t("autono")}</option>
+  </select>
+</div>
 
         <div>
           <p className="mb-3 text-sm font-semibold text-gray-800">{t("wishlist")}</p>
