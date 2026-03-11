@@ -716,9 +716,27 @@ if (sort === "recommended") {
   });
 }
 
-if (sort === "price_desc") result = [...result].sort((a, b) => b.price - a.price);
-if (sort === "price_asc") result = [...result].sort((a, b) => a.price - b.price);
+if (sort === "price_desc") {
+  result = [...result].sort((a, b) => {
+    const stockA = (a.stock ?? 0) > 0 ? 1 : 0;
+    const stockB = (b.stock ?? 0) > 0 ? 1 : 0;
 
+    if (stockB !== stockA) return stockB - stockA; // stock primero
+
+    return b.price - a.price;
+  });
+}
+
+if (sort === "price_asc") {
+  result = [...result].sort((a, b) => {
+    const stockA = (a.stock ?? 0) > 0 ? 1 : 0;
+    const stockB = (b.stock ?? 0) > 0 ? 1 : 0;
+
+    if (stockB !== stockA) return stockB - stockA; // stock primero
+
+    return a.price - b.price;
+  });
+}
     return result;
   }, [uniqueCards, search, sport, sort, player, autoFilter]);
 
