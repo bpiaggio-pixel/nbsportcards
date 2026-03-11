@@ -115,9 +115,9 @@ function parsePercent(input: unknown, fallbackYes = 1) {
    BANNER (por deporte)
 -------------------------- */
 function getBannerSrc(s: "all" | Sport) {
-  if (s === "basketball") return "/banners/basketball.jpg";
-  if (s === "soccer") return "/banners/soccer.jpg";
-  if (s === "nfl") return "/banners/nfl.jpg";
+  if (s === "basketball") return "/banners/basketball1.png";
+  if (s === "soccer") return "/banners/soccer.png";
+  if (s === "nfl") return "/banners/nfl.png";
   return "/banners/all7.png";
 }
 
