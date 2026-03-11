@@ -260,6 +260,7 @@ export default function StorePageClient() {
   const router = useRouter();
 const pathname = usePathname();
   const [cards, setCards] = React.useState<Card[]>([]);
+const [total, setTotal] = React.useState(0);
 
   // ✅ BUSCADOR: se lee desde la URL (?q=...)
   const searchParams = useSearchParams();
@@ -276,18 +277,6 @@ const normId = React.useCallback((v: any) => {
   return s;
 }, []);
 
-  React.useEffect(() => {
-    async function loadCards() {
-      try {
-        const res = await fetch("/api/cards", { cache: "no-store" });
-        const data = await res.json();
-        setCards(Array.isArray(data.cards) ? data.cards : []);
-      } catch {
-        setCards([]);
-      }
-    }
-    loadCards();
-  }, []);
 
   // ✅ ZOOM + PAN (solo para el modal)
   const [zoom, setZoom] = React.useState(1);
@@ -484,6 +473,34 @@ const greatDealPick = React.useMemo(() => {
   // pagination
   const pageSize = 9;
   const [page, setPage] = React.useState(1);
+
+React.useEffect(() => {
+  async function loadCards() {
+    try {
+      const params = new URLSearchParams({
+        q: search,
+        sport,
+        player,
+        auto: autoFilter,
+        sort,
+        page: String(page),
+        pageSize: String(pageSize),
+      });
+
+      const res = await fetch(`/api/cards?${params.toString()}`, {
+        cache: "no-store",
+      });
+
+      const data = await res.json();
+      setCards(Array.isArray(data.cards) ? data.cards : []);
+      setTotal(Number(data.total ?? 0));
+    } catch {
+      setCards([]);
+    }
+  }
+
+  loadCards();
+}, [search, sport, player, autoFilter, sort, page]);
 
   // modal
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
@@ -740,9 +757,9 @@ if (sort === "price_asc") {
     return result;
   }, [uniqueCards, search, sport, sort, player, autoFilter]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-  const safePage = Math.min(Math.max(page, 1), totalPages);
-  const paged = filtered.slice((safePage - 1) * pageSize, safePage * pageSize);
+const totalPages = Math.max(1, Math.ceil(total / pageSize));
+const safePage = Math.min(Math.max(page, 1), totalPages);
+const paged = cards;
 
   async function addToCart(cardId: string) {
 if (!user?.id) {
@@ -1103,7 +1120,7 @@ const topShowcaseItems = React.useMemo(() => {
 
           <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="text-lg font-semibold">
-              {filtered.length} {t("results")}
+              {total} {t("results")}
             </h2>
 
             <div className="flex items-center gap-2">
