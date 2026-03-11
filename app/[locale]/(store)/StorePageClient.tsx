@@ -778,7 +778,7 @@ const topShowcaseItems = React.useMemo(() => {
   const favCount = React.useMemo(() => Object.values(wishlist).filter(Boolean).length, [wishlist]);
 
   return (
-<div className="min-h-screen bg-gradient-to-b from-black from-0% via-gray-800 via-25% to-white to-55% text-white">
+<div className="min-h-screen bg-gradient-to-b from-black from-0% via-gray-800 via-35% to-white to-65% text-white">
 
 {/* MAIN */}
 <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 py-6 lg:grid-cols-[280px_1fr] lg:px-6 lg:py-10">
