@@ -1037,17 +1037,15 @@ const topShowcaseItems = React.useMemo(() => {
     className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
     style={{
       width: "900px",
-      height: "400px",
+      height: "360px",
       borderRadius: "9999px",
-      filter: "blur(120px)",
-      opacity: 0.5,
+      filter: "blur(110px)",
+      opacity: 0.9,
       background:
-        "radial-gradient(circle, rgba(0,168,255,0.75) 0%, rgba(0,168,255,0.28) 42%, rgba(0,168,255,0.1) 58%, transparent 72%)",
+        "radial-gradient(circle, rgba(0,200,255,1) 0%, rgba(0,200,255,0.95) 8%, rgba(0,200,255,0.65) 18%, rgba(0,200,255,0.25) 32%, rgba(0,200,255,0.08) 45%, transparent 58%)",
     }}
   />
 </div>
-
-
 
 
 <div className="pointer-events-none absolute top-0 left-0 h-full w-16 bg-gradient-to-r from-black via-gray/80 to-transparent" />
