@@ -259,9 +259,10 @@ export default function StorePageClient() {
   const t = useTranslations("Store");
   const locale = useLocale();
   const router = useRouter();
-const pathname = usePathname();
+  const pathname = usePathname();
   const [cards, setCards] = React.useState<Card[]>([]);
-const [total, setTotal] = React.useState(0);
+  const [total, setTotal] = React.useState(0);
+  const [topShowcaseCards, setTopShowcaseCards] = React.useState<Card[]>([]);
 
   // ✅ BUSCADOR: se lee desde la URL (?q=...)
   const searchParams = useSearchParams();
@@ -407,7 +408,7 @@ const greatDealPick = React.useMemo(() => {
 React.useEffect(() => {
   async function loadLatestPost() {
     try {
-      const res = await fetch("/api/blog/latest", {
+      const res = await fetch(`/api/blog/latest?locale=${locale}`, {
         next: { revalidate: 300 },
       });
       const data = await res.json();
@@ -416,7 +417,7 @@ React.useEffect(() => {
   }
 
   loadLatestPost();
-}, []);
+}, [locale]);
   // -----------------------
   // USER SESSION (MVP)
   // -----------------------
@@ -506,8 +507,26 @@ React.useEffect(() => {
     }
   }
 
+
   loadCards();
 }, [search, sport, player, autoFilter, sort, page]);
+
+React.useEffect(() => {
+  async function loadTopShowcase() {
+    try {
+      const res = await fetch("/api/cards/top-showcase", {
+        cache: "no-store",
+      });
+
+      const data = await res.json();
+      setTopShowcaseCards(Array.isArray(data.cards) ? data.cards : []);
+    } catch {
+      setTopShowcaseCards([]);
+    }
+  }
+
+  loadTopShowcase();
+}, []);
 
   // modal
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
@@ -760,8 +779,8 @@ if (!user?.id) {
 
 // ✅ Items para el showcase (Great Deal primero, completa si faltan)
 const topShowcaseItems = React.useMemo(() => {
-  const deals = uniqueCards.filter((c) => isGreatDeal(c));
-  const others = uniqueCards.filter((c) => !isGreatDeal(c));
+  const deals = topShowcaseCards.filter((c) => isGreatDeal(c));
+  const others = topShowcaseCards.filter((c) => !isGreatDeal(c));
 
   return [...deals, ...others]
     .slice(0, 7)
@@ -770,7 +789,7 @@ const topShowcaseItems = React.useMemo(() => {
       title: c.title,
       image: c.image?.trim() ? c.image : getFallback(c.sport),
     }));
-}, [uniqueCards]);
+}, [topShowcaseCards]);
 
   const favCount = React.useMemo(() => Object.values(wishlist).filter(Boolean).length, [wishlist]);
 

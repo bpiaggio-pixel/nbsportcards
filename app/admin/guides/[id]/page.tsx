@@ -14,11 +14,10 @@ function slugify(text: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-export default function AdminEditPostPage() {
+export default function AdminEditGuidePage() {
   const params = useParams<{ id: string }>();
   const searchParams = useSearchParams();
   const initialSecret = searchParams?.get("secret") ?? "";
-
 
   const id = String(params?.id ?? "");
   const [secret, setSecret] = React.useState(initialSecret);
@@ -36,7 +35,7 @@ export default function AdminEditPostPage() {
   async function load() {
     setMsg("Cargando...");
 
-    const res = await fetch(`/api/admin/posts/${encodeURIComponent(id)}`, {
+    const res = await fetch(`/api/admin/guides/${encodeURIComponent(id)}`, {
       headers: { "x-admin-secret": secret },
       cache: "no-store",
     });
@@ -47,19 +46,19 @@ export default function AdminEditPostPage() {
       return;
     }
 
-    const p = data?.post;
-    if (!p) {
-      setMsg("❌ Post not found");
+    const guide = data?.guide;
+    if (!guide) {
+      setMsg("❌ Guide not found");
       return;
     }
 
-    setTitle(p.title ?? "");
-    setSlug(p.slug ?? "");
-    setLocale(p.locale ?? "en");
-    setExcerpt(p.excerpt ?? "");
-    setCoverImage(p.coverImage ?? "");
-    setContentHtml(p.contentHtml ?? "");
-    setPublished(!!p.published);
+    setTitle(guide.title ?? "");
+    setSlug(guide.slug ?? "");
+    setLocale(guide.locale ?? "en");
+    setExcerpt(guide.excerpt ?? "");
+    setCoverImage(guide.coverImage ?? "");
+    setContentHtml(guide.contentHtml ?? "");
+    setPublished(!!guide.published);
 
     setMsg("");
     setLoaded(true);
@@ -67,7 +66,7 @@ export default function AdminEditPostPage() {
 
   async function save() {
     setMsg("Guardando...");
-    const res = await fetch(`/api/admin/posts/${encodeURIComponent(id)}`, {
+    const res = await fetch(`/api/admin/guides/${encodeURIComponent(id)}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json", "x-admin-secret": secret },
       body: JSON.stringify({ title, slug, locale, excerpt, coverImage, contentHtml }),
@@ -86,7 +85,8 @@ export default function AdminEditPostPage() {
   async function togglePublish() {
     const next = !published;
     setMsg(next ? "Publicando..." : "Pasando a draft...");
-    const res = await fetch(`/api/admin/posts/${encodeURIComponent(id)}`, {
+
+    const res = await fetch(`/api/admin/guides/${encodeURIComponent(id)}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json", "x-admin-secret": secret },
       body: JSON.stringify({ published: next }),
@@ -112,10 +112,10 @@ export default function AdminEditPostPage() {
     <div className="min-h-screen bg-[#f6f7f8] text-gray-900">
       <div className="mx-auto max-w-3xl px-6 py-10">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">🛠️ Edit Post</h1>
+          <h1 className="text-2xl font-bold">🛠️ Edit Guide</h1>
           <a
             className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold hover:bg-gray-50"
-            href="/admin/blog"
+            href="/admin/guides"
           >
             ← Back
           </a>
@@ -178,18 +178,18 @@ export default function AdminEditPostPage() {
             <div className="text-sm font-semibold mb-2">Slug</div>
             <input className="w-full border p-3 rounded" value={slug} onChange={(e) => setSlug(e.target.value)} />
           </div>
-<div>
-  <div className="text-sm font-semibold mb-2">Language</div>
-  <select
-    className="w-full border p-3 rounded"
-    value={locale}
-    onChange={(e) => setLocale(e.target.value)}
-  >
-    <option value="en">English</option>
-    <option value="es">Español</option>
-  </select>
-</div>
 
+          <div>
+            <div className="text-sm font-semibold mb-2">Language</div>
+            <select
+              className="w-full border p-3 rounded"
+              value={locale}
+              onChange={(e) => setLocale(e.target.value)}
+            >
+              <option value="en">English</option>
+              <option value="es">Español</option>
+            </select>
+          </div>
 
           <div>
             <div className="text-sm font-semibold mb-2">Excerpt</div>
@@ -235,7 +235,7 @@ export default function AdminEditPostPage() {
 
             <a
               className="rounded-full border border-gray-200 bg-white px-6 py-3 text-sm font-semibold hover:bg-gray-50"
-              href={slug ? `/blog/${slug}` : "#"}
+              href={slug ? `/guide/${slug}` : "#"}
               target="_blank"
               rel="noreferrer"
             >

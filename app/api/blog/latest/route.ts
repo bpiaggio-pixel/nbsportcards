@@ -1,23 +1,26 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    // ⚠️ Ajustá el nombre del modelo/campos si tu schema usa otros
+    const { searchParams } = new URL(req.url);
+    const locale = (searchParams.get("locale") ?? "en").trim();
+
     const post = await prisma.post.findFirst({
-  where: { published: true },
-  orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
-  select: {
-  title: true,
-  slug: true,
-  excerpt: true,
-  coverImage: true,
-},
-
-});
-
+      where: {
+        published: true,
+        locale,
+      },
+      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+      select: {
+        title: true,
+        slug: true,
+        excerpt: true,
+        coverImage: true,
+      },
+    });
 
     return NextResponse.json({ post: post ?? null });
   } catch (e: any) {

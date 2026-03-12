@@ -2,13 +2,14 @@
   "Header": {
     "searchPlaceholder": "Search cards...",
     "blog": "Blog",
-    "favorites": "Favorites",
+    "favorites": "Fav",
     "orders": "Orders",
     "cart": "Cart",
     "login": "Login",
     "register": "Register",
     "help": "Help",
-  "cards": "Cards",
+    "cards": "Cards",
+    "guide": "Guide",
     "logout": "Logout"
   },
 
@@ -38,8 +39,20 @@
     "prov": "Province / State"
   },
 
-
-
+  "GuidePage": {
+    "title": "Collector Guide",
+    "description": "Learn how to collect, protect and understand sports cards.",
+    "searchPlaceholder": "Search guides...",
+    "resultsFor": "Results for:",
+    "empty": "No guides found."
+  },
+  "BlogPage": {
+    "title": "Blog",
+    "description": "News, guides, and highlights.",
+    "searchPlaceholder": "Search posts...",
+    "resultsFor": "Results for:",
+    "empty": "No posts found."
+  },
 
   "Store": {
     "topCards": "TOP CARDS",

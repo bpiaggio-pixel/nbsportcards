@@ -10,7 +10,7 @@ function slugify(s: string) {
     .replace(/(^-|-$)+/g, "");
 }
 
-export default function AdminNewPostPage() {
+export default function AdminNewGuidePage() {
   const [secret, setSecret] = React.useState("");
   const [title, setTitle] = React.useState("");
   const [slug, setSlug] = React.useState("");
@@ -26,7 +26,7 @@ export default function AdminNewPostPage() {
 
   async function create() {
     setMsg("Creando...");
-    const res = await fetch("/api/admin/posts", {
+    const res = await fetch("/api/admin/guides", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -43,17 +43,17 @@ export default function AdminNewPostPage() {
 
     setMsg("✅ Creado!");
     const id = String(data?.id ?? "");
-    if (id) window.location.href = `/admin/blog/${encodeURIComponent(id)}?secret=${encodeURIComponent(secret)}`;
+    if (id) window.location.href = `/admin/guides/${encodeURIComponent(id)}?secret=${encodeURIComponent(secret)}`;
   }
 
   return (
     <div className="min-h-screen bg-[#f6f7f8] text-gray-900">
       <div className="mx-auto max-w-3xl px-6 py-10">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">✍️ New Post</h1>
+          <h1 className="text-2xl font-bold">✍️ New Guide</h1>
           <a
             className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold hover:bg-gray-50"
-            href="/admin/blog"
+            href="/admin/guides"
           >
             ← Back
           </a>

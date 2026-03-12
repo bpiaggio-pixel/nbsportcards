@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Link } from "@/navigation";
 import { prisma } from "@/lib/prisma";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
@@ -27,9 +28,31 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function BlogPage() {
+export default async function BlogPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const { locale } = await params;
+  const { q } = await searchParams;
+const t = await getTranslations({ locale, namespace: "BlogPage" });
+  const query = String(q ?? "").trim();
+
   const posts = await prisma.post.findMany({
-    where: { published: true },
+    where: {
+      published: true,
+      locale,
+      ...(query
+        ? {
+            OR: [
+              { title: { contains: query, mode: "insensitive" } },
+              { excerpt: { contains: query, mode: "insensitive" } },
+            ],
+          }
+        : {}),
+    },
     orderBy: { publishedAt: "desc" },
     take: 50,
     select: {
@@ -46,8 +69,22 @@ export default async function BlogPage() {
   return (
     <div className="min-h-screen bg-white text-gray-900">
       <div className="mx-auto max-w-5xl px-6 py-10">
-        <h1 className="text-3xl font-extrabold tracking-tight">Blog</h1>
-        <p className="mt-2 text-gray-600">News, guides, and highlights.</p>
+        <h1 className="text-3xl font-extrabold tracking-tight">{t("title")}</h1>
+<p className="mt-2 text-gray-600">{t("description")}</p>
+<form method="GET" className="mt-6">
+<input
+  type="text"
+  name="q"
+  defaultValue={query}
+  placeholder={t("searchPlaceholder")}
+  className="w-full rounded-2xl border border-gray-300 px-4 py-3 outline-none focus:border-gray-500"
+/>
+</form>
+{query ? (
+  <p className="mt-4 text-sm text-gray-500">
+    {t("resultsFor")} <span className="font-semibold text-gray-900">{query}</span>
+  </p>
+) : null}
 
         <div className="mt-8 grid gap-6 sm:grid-cols-2">
           {posts.map((p) => {
@@ -55,11 +92,12 @@ export default async function BlogPage() {
             const slug = encodeURIComponent(rawSlug);
 
             return (
-              <Link
-                key={p.id}
-                href={`/blog/${slug}`}
-                className="group rounded-3xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-[1px] hover:shadow-md"
-              >
+<Link
+  key={p.id}
+  href={`/blog/${slug}`}
+  locale={locale}
+  className="group rounded-3xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-[1px] hover:shadow-md"
+>
                 {p.coverImage && (
                   <div className="mb-4 h-44 overflow-hidden rounded-2xl bg-gray-100">
                     <img src={p.coverImage} alt={p.title} className="h-full w-full object-cover" />

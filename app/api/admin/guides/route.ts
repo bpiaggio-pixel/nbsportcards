@@ -16,7 +16,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const posts = await prisma.post.findMany({
+    const guides = await prisma.guide.findMany({
       orderBy: { updatedAt: "desc" },
       take: 200,
       select: {
@@ -33,9 +33,9 @@ export async function GET(req: Request) {
       },
     });
 
-    return NextResponse.json({ posts });
+    return NextResponse.json({ guides });
   } catch (e: any) {
-    console.error("ADMIN POSTS GET ERROR:", e);
+    console.error("ADMIN GUIDE GET ERROR:", e);
     return NextResponse.json({ error: e?.message ?? "Server error" }, { status: 500 });
   }
 }
@@ -65,7 +65,7 @@ if (!["en", "es"].includes(locale)) {
   return NextResponse.json({ error: "Invalid locale" }, { status: 400 });
 }
 
-    const created = await prisma.post.create({
+    const created = await prisma.guide.create({
       data: {
         title,
         slug,
@@ -81,7 +81,7 @@ if (!["en", "es"].includes(locale)) {
 
     return NextResponse.json({ id: created.id });
   } catch (e: any) {
-    console.error("ADMIN POSTS POST ERROR:", e);
+    console.error("ADMIN GUIDE POST ERROR:", e);
     return NextResponse.json({ error: e?.message ?? "Server error" }, { status: 500 });
   }
 }

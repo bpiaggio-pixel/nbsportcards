@@ -17,11 +17,13 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
     }
 
     const { id } = await ctx.params;
-    const postId = String(id ?? "").trim();
-    if (!postId) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    const guideId = String(id ?? "").trim();
+    if (!guideId) {
+      return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    }
 
-    const post = await prisma.post.findUnique({
-      where: { id: postId },
+    const guide = await prisma.guide.findUnique({
+      where: { id: guideId },
       select: {
         id: true,
         slug: true,
@@ -37,11 +39,13 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
       },
     });
 
-    if (!post) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    if (!guide) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
 
-    return NextResponse.json({ post });
+    return NextResponse.json({ guide });
   } catch (e: any) {
-    console.error("ADMIN POSTS GET(id) ERROR:", e);
+    console.error("ADMIN GUIDE GET(id) ERROR:", e);
     return NextResponse.json({ error: e?.message ?? "Server error" }, { status: 500 });
   }
 }
@@ -57,43 +61,44 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
     }
 
     const { id } = await ctx.params;
-    const postId = String(id ?? "").trim();
-    if (!postId) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    const guideId = String(id ?? "").trim();
+    if (!guideId) {
+      return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    }
 
     const body = await req.json().catch(() => ({}));
-
-    // Campos editables (todos opcionales)
     const data: any = {};
 
     if (body.title !== undefined) data.title = String(body.title ?? "").trim();
     if (body.slug !== undefined) data.slug = String(body.slug ?? "").trim();
-if (body.locale !== undefined) {
-  const locale = String(body.locale ?? "").trim().toLowerCase();
-  if (!["en", "es"].includes(locale)) {
-    return NextResponse.json({ error: "Invalid locale" }, { status: 400 });
-  }
-  data.locale = locale;
-}
+
+    if (body.locale !== undefined) {
+      const locale = String(body.locale ?? "").trim().toLowerCase();
+      if (!["en", "es"].includes(locale)) {
+        return NextResponse.json({ error: "Invalid locale" }, { status: 400 });
+      }
+      data.locale = locale;
+    }
+
     if (body.excerpt !== undefined) data.excerpt = String(body.excerpt ?? "").trim() || null;
     if (body.coverImage !== undefined) data.coverImage = String(body.coverImage ?? "").trim() || null;
     if (body.contentHtml !== undefined) data.contentHtml = String(body.contentHtml ?? "").trim();
 
-    // publish toggle
     if (body.published !== undefined) {
       const next = !!body.published;
       data.published = next;
       data.publishedAt = next ? new Date() : null;
     }
 
-    const updated = await prisma.post.update({
-      where: { id: postId },
+    const updated = await prisma.guide.update({
+      where: { id: guideId },
       data,
       select: { id: true },
     });
 
     return NextResponse.json({ ok: true, id: updated.id });
   } catch (e: any) {
-    console.error("ADMIN POSTS PATCH ERROR:", e);
+    console.error("ADMIN GUIDE PATCH ERROR:", e);
     return NextResponse.json({ error: e?.message ?? "Server error" }, { status: 500 });
   }
 }
@@ -109,14 +114,18 @@ export async function DELETE(req: Request, ctx: { params: Promise<{ id: string }
     }
 
     const { id } = await ctx.params;
-    const postId = String(id ?? "").trim();
-    if (!postId) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    const guideId = String(id ?? "").trim();
+    if (!guideId) {
+      return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    }
 
-    await prisma.post.delete({ where: { id: postId } });
+    await prisma.guide.delete({
+      where: { id: guideId },
+    });
 
     return NextResponse.json({ ok: true });
   } catch (e: any) {
-    console.error("ADMIN POSTS DELETE ERROR:", e);
+    console.error("ADMIN GUIDE DELETE ERROR:", e);
     return NextResponse.json({ error: e?.message ?? "Server error" }, { status: 500 });
   }
 }

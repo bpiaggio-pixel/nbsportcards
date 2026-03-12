@@ -2,13 +2,14 @@
   "Header": {
     "searchPlaceholder": "Buscar cards...",
     "blog": "Blog",
-    "favorites": "Favoritos",
+    "favorites": "Fav",
     "orders": "Pedidos",
     "cart": "Carrito",
     "login": "Ingresar",
     "register": "Crear cuenta",
     "help": "Ayuda",
-  "cards": "Tarjetas",
+    "cards": "Tarjetas",
+    "guide": "Guía",
     "logout": "Salir"
   },
 
@@ -38,6 +39,21 @@
     "prov": "Provincia / Estado"
   },
 
+
+  "GuidePage": {
+    "title": "Guía del Coleccionista",
+    "description": "Aprende a coleccionar, proteger y entender las sports cards.",
+    "searchPlaceholder": "Buscar guías...",
+    "resultsFor": "Resultados para:",
+    "empty": "No se encontraron guías."
+  },
+  "BlogPage": {
+    "title": "Blog",
+    "description": "Noticias, guías y destacados.",
+    "searchPlaceholder": "Buscar notas...",
+    "resultsFor": "Resultados para:",
+    "empty": "No se encontraron notas."
+  },
 
 
 

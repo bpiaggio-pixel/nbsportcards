@@ -18,14 +18,14 @@ function LocaleBadge({ locale }: { locale?: string }) {
   );
 }
 
-export default function AdminBlogPage() {
+export default function AdminGuidesPage() {
   const [secret, setSecret] = React.useState("");
   const [posts, setPosts] = React.useState<any[]>([]);
   const [msg, setMsg] = React.useState("");
 
   async function load() {
-    setMsg("Cargando posts...");
-    const res = await fetch("/api/admin/posts", {
+    setMsg("Cargando guides...");
+    const res = await fetch("/api/admin/guides", {
       headers: { "x-admin-secret": secret },
       cache: "no-store",
     });
@@ -36,13 +36,13 @@ export default function AdminBlogPage() {
       return;
     }
 
-    setPosts(Array.isArray(data.posts) ? data.posts : []);
+    setPosts(Array.isArray(data.guides) ? data.guides : []);
     setMsg("");
   }
 
   async function togglePublish(id: string, next: boolean) {
     setMsg(next ? "Publicando..." : "Pasando a draft...");
-    const res = await fetch(`/api/admin/posts/${encodeURIComponent(id)}`, {
+    const res = await fetch(`/api/admin/guides/${encodeURIComponent(id)}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json", "x-admin-secret": secret },
       body: JSON.stringify({ published: next }),
@@ -59,34 +59,34 @@ export default function AdminBlogPage() {
     setTimeout(() => setMsg(""), 1200);
   }
 
-async function duplicatePost(id: string) {
-  setMsg("Duplicando...");
-  const res = await fetch(`/api/admin/posts/${encodeURIComponent(id)}/duplicate`, {
-    method: "POST",
-    headers: { "x-admin-secret": secret },
-  });
+  async function duplicatePost(id: string) {
+    setMsg("Duplicando...");
+    const res = await fetch(`/api/admin/guides/${encodeURIComponent(id)}/duplicate`, {
+      method: "POST",
+      headers: { "x-admin-secret": secret },
+    });
 
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    setMsg("❌ " + (data?.error ?? "Error"));
-    return;
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      setMsg("❌ " + (data?.error ?? "Error"));
+      return;
+    }
+
+    setMsg("✅ Duplicado");
+    const newId = String(data?.id ?? "");
+    if (newId) {
+      window.location.href = `/admin/guides/${encodeURIComponent(newId)}?secret=${encodeURIComponent(secret)}`;
+      return;
+    }
+
+    await load();
   }
-
-  setMsg("✅ Duplicado");
-  const newId = String(data?.id ?? "");
-  if (newId) {
-    window.location.href = `/admin/blog/${encodeURIComponent(newId)}?secret=${encodeURIComponent(secret)}`;
-    return;
-  }
-
-  await load();
-}
 
   async function remove(id: string) {
-    if (!confirm("Delete this post?")) return;
+    if (!confirm("Delete this guide?")) return;
 
     setMsg("Eliminando...");
-    const res = await fetch(`/api/admin/posts/${encodeURIComponent(id)}`, {
+    const res = await fetch(`/api/admin/guides/${encodeURIComponent(id)}`, {
       method: "DELETE",
       headers: { "x-admin-secret": secret },
     });
@@ -106,7 +106,7 @@ async function duplicatePost(id: string) {
     <div className="min-h-screen bg-[#f6f7f8] text-gray-900">
       <div className="mx-auto max-w-5xl px-6 py-10">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold">📝 Admin Blog</h1>
+          <h1 className="text-2xl font-bold">📝 Admin Guides</h1>
           <div className="flex items-center gap-2">
             <a
               className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold hover:bg-gray-50"
@@ -142,9 +142,9 @@ async function duplicatePost(id: string) {
             </button>
             <a
               className="rounded-full border border-gray-200 bg-white px-6 py-3 text-sm font-semibold hover:bg-gray-50"
-              href="/admin/blog/new"
+              href="/admin/guides/new"
             >
-              + New post
+              + New guide
             </a>
           </div>
 
@@ -156,11 +156,11 @@ async function duplicatePost(id: string) {
             <div key={p.id} className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
               <div className="flex items-start justify-between gap-4">
                 <div>
-<div className="font-semibold flex items-center gap-2">
-  <span className="text-lg">{p.title}</span>
-  <LocaleBadge locale={p.locale} />
-  <Badge published={!!p.published} />
-</div>
+                  <div className="font-semibold flex items-center gap-2">
+                    <span className="text-lg">{p.title}</span>
+                    <LocaleBadge locale={p.locale} />
+                    <Badge published={!!p.published} />
+                  </div>
 
                   <div className="mt-1 text-sm text-gray-600">
                     Slug: <span className="font-mono text-gray-900">{p.slug}</span>
@@ -172,31 +172,31 @@ async function duplicatePost(id: string) {
                     </div>
                   )}
 
-                 <div className="mt-3 flex items-center gap-2">
-  <a
-    className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold hover:bg-gray-50"
-    href={`/admin/blog/${p.id}?secret=${encodeURIComponent(secret)}`}
-  >
-    Edit
-  </a>
+                  <div className="mt-3 flex items-center gap-2">
+                    <a
+                      className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold hover:bg-gray-50"
+                      href={`/admin/guides/${p.id}?secret=${encodeURIComponent(secret)}`}
+                    >
+                      Edit
+                    </a>
 
-  <button
-    type="button"
-    onClick={() => duplicatePost(p.id)}
-    className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold hover:bg-gray-50"
-  >
-    Duplicate
-  </button>
+                    <button
+                      type="button"
+                      onClick={() => duplicatePost(p.id)}
+                      className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold hover:bg-gray-50"
+                    >
+                      Duplicate
+                    </button>
 
-  <a
-    className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold hover:bg-gray-50"
-    href={`/${p.locale ?? "en"}/blog/${p.slug}`}
-    target="_blank"
-    rel="noreferrer"
-  >
-    View
-  </a>
-</div>
+                    <a
+                      className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold hover:bg-gray-50"
+                      href={`/${p.locale ?? "en"}/guide/${p.slug}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      View
+                    </a>
+                  </div>
                 </div>
 
                 <div className="flex flex-col gap-2 items-end">

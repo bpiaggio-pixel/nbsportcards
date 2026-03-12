@@ -25,15 +25,19 @@ export async function generateMetadata({
     };
   }
 
-  const post = await prisma.post.findFirst({
-    where: { published: true, slug: decoded },
-    select: {
-      title: true,
-      excerpt: true,
-      coverImage: true,
-      publishedAt: true,
-    },
-  });
+const post = await prisma.post.findFirst({
+  where: {
+    published: true,
+    slug: decoded,
+    locale: loc,
+  },
+  select: {
+    title: true,
+    excerpt: true,
+    coverImage: true,
+    publishedAt: true,
+  },
+});
 
   if (!post) {
     return {
@@ -73,30 +77,32 @@ export async function generateMetadata({
 export default async function PostPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale?: string; slug: string }>;
 }) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  const loc = (locale === "es" ? "es" : "en") as "es" | "en";
 
   const incoming = String(slug ?? "");
   const decoded = decodeURIComponent(incoming).trim();
 
   if (!decoded) return notFound();
 
-  const post = await prisma.post.findFirst({
-    where: {
-      published: true,
-      slug: decoded,
-    },
-    select: {
-      title: true,
-      coverImage: true,
-      excerpt: true,
-      contentHtml: true,
-      published: true,
-      publishedAt: true,
-      tags: { select: { tag: { select: { name: true, slug: true } } } },
-    },
-  });
+const post = await prisma.post.findFirst({
+  where: {
+    published: true,
+    slug: decoded,
+    locale: loc,
+  },
+  select: {
+    title: true,
+    coverImage: true,
+    excerpt: true,
+    contentHtml: true,
+    published: true,
+    publishedAt: true,
+    tags: { select: { tag: { select: { name: true, slug: true } } } },
+  },
+});
 
   if (!post) return notFound();
 

@@ -15,6 +15,7 @@ import {
   UserCircle2,
   ClipboardList,
   LogOut,
+  BookOpen,
 } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -287,6 +288,17 @@ export default function Header() {
                   <span className="relative z-10">{t("blog")}</span>
                 </Link>
 
+<Link
+  href="/guide"
+  className="group flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.57] transition relative"
+>
+  <span
+    className={`absolute inset-2 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
+  />
+  <BookOpen size={16} className="relative z-10 text-white/70" />
+  <span className="relative z-10">{t("guide")}</span>
+</Link>
+
                 <Link
                   href="/favorites"
                   className="group flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.57] transition relative"
@@ -332,19 +344,22 @@ export default function Header() {
 
                 <span title={user.email} className="hidden lg:block text-sm font-semibold text-white/75 max-w-[140px] truncate">
                   <UserCircle2 size={20} className="text-white/60 inline align-middle mr-1" />{" "}
-                  {user.email.length > 8 ? `${user.email.slice(0, 8)}…` : user.email}
+                  {user.email.length > 8 ? `${user.email.slice(0, 5)}…` : user.email}
                 </span>
-
-                <button
-                  type="button"
-                  onClick={logout}
-                  className="group relative rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.57] transition"
-                >
-                  <span
-                    className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
-                  />
-                  <span className="relative z-10">{t("logout")}</span>
-                </button>
+<button
+  type="button"
+  onClick={logout}
+  aria-label={t("logout")}
+  className="group relative h-9 w-9 flex items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/85 hover:bg-white/[0.57] transition cursor-pointer"
+>
+  <span
+    className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
+  />
+  <LogOut
+    size={18}
+    className="transition-transform duration-200 ease-out group-hover:translate-x-1 group-hover:rotate-6"
+  />
+</button>
               </>
             ) : (
               <>
@@ -355,7 +370,16 @@ export default function Header() {
                   <FileText size={16} className="text-white/70" />
                   {t("blog")}
                 </Link>
-
+<Link
+  href="/guide"
+  className="group relative rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.57] flex items-center gap-2 transition"
+>
+  <span
+    className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
+  />
+  <BookOpen size={16} className="relative z-10 text-white/70" />
+  <span className="relative z-10">{t("guide")}</span>
+</Link>
                 <Link
                   href="/login"
                   className="group relative rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.57] transition"
@@ -590,6 +614,15 @@ export default function Header() {
                     <FileText size={16} className="text-white/70" />
                     {t("blog")}
                   </Link>
+<Link
+  href="/guide"
+  onClick={() => setMobileMenuOpen(false)}
+  className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-semibold text-white/85 hover:bg-white/[0.07]"
+>
+  <BookOpen size={16} className="text-white/70" />
+  {t("guide")}
+</Link>
+
 
                   {user ? (
                     <>
