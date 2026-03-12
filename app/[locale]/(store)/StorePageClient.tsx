@@ -7,6 +7,7 @@ import { Heart, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
 import BannerFX from "@/components/BannerFX";
+import Image from "next/image";
 
 type Sport = "basketball" | "soccer" | "nfl";
 
@@ -118,7 +119,7 @@ function getBannerSrc(s: "all" | Sport) {
   if (s === "basketball") return "/banners/basketball1.png";
   if (s === "soccer") return "/banners/soccer.png";
   if (s === "nfl") return "/banners/nfl.png";
-  return "/banners/all7.png";
+  return "/banners/all9a.png";
 }
 
 
@@ -371,25 +372,26 @@ const mostViewed = React.useMemo(() => {
 // 2) Recommended = prioriza Great Deal, luego views, luego stock, luego lo que quede
 const recommended = React.useMemo(() => {
   const sorted = [...uniqueCards].sort((a, b) => {
-    // Great deal primero (true > false)
     const dealDiff = Number(isGreatDeal(b)) - Number(isGreatDeal(a));
     if (dealDiff !== 0) return dealDiff;
 
-    // Más vistas
     const viewsDiff = (b.views ?? 0) - (a.views ?? 0);
     if (viewsDiff !== 0) return viewsDiff;
 
-    // En stock primero
-    const stockA = (a.stock ?? 0) > 0 ? 1 : 0;
-    const stockB = (b.stock ?? 0) > 0 ? 1 : 0;
-    if (stockB !== stockA) return stockB - stockA;
+    const tA = Date.parse(a.updatedAt ?? a.createdAt ?? "");
+    const tB = Date.parse(b.updatedAt ?? b.createdAt ?? "");
+    const hasA = Number.isFinite(tA);
+    const hasB = Number.isFinite(tB);
 
-    return 0; // mantiene el orden original como fallback
+    if (hasA && hasB) return tB - tA;
+    if (hasB && !hasA) return 1;
+    if (hasA && !hasB) return -1;
+
+    return 0;
   });
 
   return sorted.find((c) => c.id !== mostViewed?.id) ?? null;
 }, [uniqueCards, mostViewed]);
-
 // 3) Great deal = mejor Great Deal disponible que no repita
 const greatDealPick = React.useMemo(() => {
   const dealsSorted = [...uniqueCards]
@@ -402,19 +404,19 @@ const greatDealPick = React.useMemo(() => {
   // ✅ 5) blog
   const [latestPost, setLatestPost] = React.useState<any>(null);
 
-  React.useEffect(() => {
-    async function loadLatestPost() {
-      try {
-        const res = await fetch("/api/blog/latest", { cache: "no-store" });
-        const data = await res.json();
+React.useEffect(() => {
+  async function loadLatestPost() {
+    try {
+      const res = await fetch("/api/blog/latest", {
+        next: { revalidate: 300 },
+      });
+      const data = await res.json();
+      setLatestPost(data?.post ?? null);
+    } catch {}
+  }
 
-        setLatestPost(data?.post ?? null);
-      } catch {}
-    }
-
-    loadLatestPost();
-  }, []);
-
+  loadLatestPost();
+}, []);
   // -----------------------
   // USER SESSION (MVP)
   // -----------------------
@@ -463,16 +465,21 @@ const greatDealPick = React.useMemo(() => {
   // ✅ mobile filters drawer
   const [filtersOpen, setFiltersOpen] = React.useState(false);
 
-  function clearFilters() {
-    setSport("all");
-    setPlayer("all");
-    setSort("recommended");
-    setPage(1);
-  }
+function clearFilters() {
+  setSport("all");
+  setPlayer("all");
+  setAutoFilter("all");
+  setSort("recommended");
+  setPage(1);
+}
 
   // pagination
   const pageSize = 9;
   const [page, setPage] = React.useState(1);
+
+React.useEffect(() => {
+  setPage(1);
+}, [search, sport, player, autoFilter, sort]);
 
 React.useEffect(() => {
   async function loadCards() {
@@ -708,52 +715,7 @@ const closeCard = React.useCallback(() => {
 // 2) Más views
 // 3) En stock primero
 // 4) Newest (fallback: createdAt/updatedAt si viene; si no, conserva orden del API)
-if (sort === "recommended") {
-  result = [...result].sort((a, b) => {
-    const dealA = parsePercent(a.greatDeal ?? a.great_deal, isGreatDeal(a) ? 1 : 0);
-    const dealB = parsePercent(b.greatDeal ?? b.great_deal, isGreatDeal(b) ? 1 : 0);
-    const dealDiff = dealB - dealA;
-    if (dealDiff !== 0) return dealDiff;
 
-    const viewsDiff = (b.views ?? 0) - (a.views ?? 0);
-    if (viewsDiff !== 0) return viewsDiff;
-
-    const stockA = (a.stock ?? 0) > 0 ? 1 : 0;
-    const stockB = (b.stock ?? 0) > 0 ? 1 : 0;
-    if (stockB !== stockA) return stockB - stockA;
-
-    const tA = Date.parse(a.updatedAt ?? a.createdAt ?? "");
-    const tB = Date.parse(b.updatedAt ?? b.createdAt ?? "");
-    const hasA = Number.isFinite(tA);
-    const hasB = Number.isFinite(tB);
-    if (hasA && hasB) return tB - tA;
-    if (hasB && !hasA) return 1;
-    if (hasA && !hasB) return -1;
-    return 0;
-  });
-}
-
-if (sort === "price_desc") {
-  result = [...result].sort((a, b) => {
-    const stockA = (a.stock ?? 0) > 0 ? 1 : 0;
-    const stockB = (b.stock ?? 0) > 0 ? 1 : 0;
-
-    if (stockB !== stockA) return stockB - stockA; // stock primero
-
-    return b.price - a.price;
-  });
-}
-
-if (sort === "price_asc") {
-  result = [...result].sort((a, b) => {
-    const stockA = (a.stock ?? 0) > 0 ? 1 : 0;
-    const stockB = (b.stock ?? 0) > 0 ? 1 : 0;
-
-    if (stockB !== stockA) return stockB - stockA; // stock primero
-
-    return a.price - b.price;
-  });
-}
     return result;
   }, [uniqueCards, search, sport, sort, player, autoFilter]);
 
@@ -1585,20 +1547,22 @@ function SidebarCard({
         <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{title}</p>
 
         <div className="mt-3 relative h-28 overflow-hidden rounded-xl border border-gray-200 bg-[#f3f4f6]">
-          <img
-            src={card.image?.trim() ? card.image : getFallback(card.sport)}
-            alt={card.title}
-            className="h-full w-full object-contain p-3 transition duration-300 group-hover:scale-[1.03]"
-            draggable={false}
-          />
-        </div>
+ 		 <Image
+  		  src={card.image?.trim() ? card.image : getFallback(card.sport)}
+ 		   alt={card.title}
+  		  fill
+  		  sizes="224px"
+   		 className="object-contain p-3 transition duration-300 group-hover:scale-[1.03]"
+ 		   draggable={false}
+		  />
+		</div>
 
         <p className="mt-3 line-clamp-2 text-sm font-semibold text-gray-900">{card.title}</p>
         <p className="mt-1 text-xs text-gray-500">{card.player}</p>
 
         <div className="mt-2 flex items-center gap-2">
           {(() => {
-const baseCents = getBaseCents(card);
+  const baseCents = getBaseCents(card);
   const discountedCents = applySalePrice(baseCents, card.sport);
   const percent = getSalePercentForSport(card.sport);
   const onSale = SALE_ACTIVE && percent > 0;
@@ -1704,13 +1668,14 @@ function CardTile({
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(255,255,255,0.95),rgba(255,255,255,0)_58%)]" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_55%,rgba(0,0,0,0.10),rgba(0,0,0,0)_65%)] opacity-40" />
             <div className="relative z-10 flex h-full items-center justify-center">
-              <img
-                src={img}
-                alt={card.title}
-                className="h-full object-contain p-6 transition duration-300 group-hover:scale-[1.03]"
-                loading="lazy"
-              />
-            </div>
+ 		 <Image
+   		 src={img}
+  		  alt={card.title}
+  		  fill
+  		  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+  		  className="object-contain p-6 transition duration-300 group-hover:scale-[1.03]"
+ 		 />
+		</div>
           </div>
 
           <div className="space-y-3 p-5">

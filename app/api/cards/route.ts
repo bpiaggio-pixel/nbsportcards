@@ -50,51 +50,124 @@ export async function GET(req: NextRequest) {
       ];
     }
 
-    let orderBy: any[] = [];
+let orderBy: any[] = [];
 
-    if (sort === "price_desc") {
-      orderBy = [
-        { stock: "desc" },
-        { priceCents: "desc" },
-      ];
-    } else if (sort === "price_asc") {
-      orderBy = [
-        { stock: "desc" },
-        { priceCents: "asc" },
-      ];
-    } else {
-      orderBy = [
-        { stock: "desc" },
-        { views: "desc" },
-        { updatedAt: "desc" },
-        { createdAt: "desc" },
-      ];
-    }
+if (sort === "price_desc") {
+  orderBy = [
+    { stock: "desc" },
+    { priceCents: "desc" },
+  ];
+} else if (sort === "price_asc") {
+  orderBy = [
+    { stock: "desc" },
+    { priceCents: "asc" },
+  ];
+} else {
+  orderBy = [
+    { views: "desc" },
+    { updatedAt: "desc" },
+    { createdAt: "desc" },
+  ];
+}
+const total = await prisma.card.count({ where });
 
-    const [total, rows] = await Promise.all([
-      prisma.card.count({ where }),
-      prisma.card.findMany({
-        where,
-        orderBy,
-        skip,
-        take: pageSize,
-        select: {
-          id: true,
-          sport: true,
-          title: true,
-          player: true,
-          priceCents: true,
-          image: true,
-          image2: true,
-          greatDeal: true,
-          stock: true,
-          auto: true,
-          views: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-      }),
-    ]);
+let rows: any[] = [];
+
+if (sort === "price_desc" || sort === "price_asc") {
+  const direction = sort === "price_desc" ? "DESC" : "ASC";
+
+  const conditions: string[] = [];
+  const values: any[] = [];
+
+  if (sport !== "all") {
+    values.push(sport);
+    conditions.push(`sport = $${values.length}`);
+  }
+
+  if (player !== "all") {
+    values.push(player);
+    conditions.push(`player = $${values.length}`);
+  }
+
+  if (auto === "yes") {
+    values.push(true);
+    conditions.push(`auto = $${values.length}`);
+  } else if (auto === "no") {
+    values.push(false);
+    conditions.push(`auto = $${values.length}`);
+  }
+
+  if (q) {
+    values.push(`%${q}%`);
+    const idx1 = values.length;
+    values.push(`%${q}%`);
+    const idx2 = values.length;
+    conditions.push(`(title ILIKE $${idx1} OR player ILIKE $${idx2})`);
+  }
+
+  const whereSql = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
+
+  values.push(pageSize);
+  const takeIdx = values.length;
+
+  values.push(skip);
+  const skipIdx = values.length;
+
+  rows = await prisma.$queryRawUnsafe(
+    `
+    SELECT
+      id,
+      sport,
+      title,
+      player,
+      "priceCents",
+      image,
+      image2,
+      "greatDeal",
+      stock,
+      auto,
+      views,
+      "createdAt",
+      "updatedAt"
+    FROM "Card"
+    ${whereSql}
+    ORDER BY
+      CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC,
+      "priceCents" ${direction},
+      "updatedAt" DESC
+    LIMIT $${takeIdx}
+    OFFSET $${skipIdx}
+    `,
+    ...values
+  );
+} else {
+  rows = await prisma.card.findMany({
+    where,
+    orderBy: [
+      { stock: "desc" },
+      { views: "desc" },
+      { updatedAt: "desc" },
+      { createdAt: "desc" },
+    ],
+    skip,
+    take: pageSize,
+    select: {
+      id: true,
+      sport: true,
+      title: true,
+      player: true,
+      priceCents: true,
+      image: true,
+      image2: true,
+      greatDeal: true,
+      stock: true,
+      auto: true,
+      views: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+}
 
     const cards = rows.map((c) => ({
       id: c.id,
