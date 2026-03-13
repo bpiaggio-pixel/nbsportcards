@@ -16,6 +16,7 @@ import {
   ClipboardList,
   LogOut,
   BookOpen,
+  Search,
 } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -229,44 +230,58 @@ export default function Header() {
       <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 sm:py-4">
         {/* ✅ DESKTOP (sm+): como antes, en una fila */}
         <div className="hidden sm:flex items-center gap-6">
-          <Link href="/" className="group relative flex items-center gap-2 text-xl font-bold tracking-tight">
-            <span
-              className={`absolute -inset-3 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-xl transition group-hover:opacity-40 -z-10`}
-            />
-            <Image src="/nb-logo3.png" alt="NB" width={40} height={40} className="h-10 w-10 object-contain" priority />
-            <span>
-              <span className="text-white">Sport</span>
-              <span className="text-white/55">Cards</span>
-            </span>
-          </Link>
+<Link href="/" className="group relative flex items-center gap-2 font-bold tracking-tight">
+  <span
+    className={`absolute -inset-3 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-xl transition group-hover:opacity-50 -z-10`}
+  />
+  <Image
+    src="/nb-logo3.png"
+    alt="NB"
+    width={40}
+    height={40}
+    className="h-10 w-10 object-contain"
+    priority
+  />
+
+  <span>
+    <span className="text-xl text-white">Cards</span>
+    <span className="text-xs text-white/55">   & collectibles</span>
+  </span>
+</Link>
 
           <div className="flex-1">
             {isHome ? (
-              <input
-                placeholder={t("searchPlaceholder")}
-                value={search}
-                onChange={(e) => {
-                  const v = e.target.value;
-                  setSearch(v);
+  <div className="relative w-full group">
+<Search
+  size={18}
+  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/45 transition group-hover:text-gray-600 group-focus-within:text-gray-600"
+/>
+    <input
+      placeholder={t("searchPlaceholder")}
+      value={search}
+      onChange={(e) => {
+        const v = e.target.value;
+        setSearch(v);
 
-                  const next = new URLSearchParams(params?.toString() ?? "");
-                  const q = v.trim();
-                  if (q) next.set("q", q);
-                  else next.delete("q");
+        const next = new URLSearchParams(params?.toString() ?? "");
+        const q = v.trim();
+        if (q) next.set("q", q);
+        else next.delete("q");
 
-                  const qs = next.toString();
-                  const safePath = pathname ?? "/";
-                  router.replace(qs ? `${safePath}?${qs}` : safePath);
-                }}
-                className="w-full rounded-full border border-white/10 bg-white/[0.04] px-5 py-2 text-sm text-white/90 placeholder:text-white/40 outline-none transition hover:bg-white hover:border-sky-400/40 focus:bg-white focus:text-gray-900 focus:placeholder:text-gray-400 focus:ring-2 focus:ring-sky-500/30"
-              />
-            ) : (
+        const qs = next.toString();
+        const safePath = pathname ?? "/";
+        router.replace(qs ? `${safePath}?${qs}` : safePath);
+      }}
+className="peer w-full rounded-full border border-white/10 bg-white/[0.04] py-2 pl-11 pr-5 text-sm text-white/90 placeholder:text-white/40 outline-none transition hover:bg-white hover:text-gray-900 hover:placeholder:text-gray-500 hover:border-sky-400/40 focus:bg-white focus:text-gray-900 focus:placeholder:text-gray-500 focus:ring-2 focus:ring-sky-500/30"
+    />
+  </div>
+) : (
               <Link
                 href="/"
                 className="group flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.07] transition relative"
               >
                 <span
-                  className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
+                  className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:bg-white/[0.27] transition relative -z-10`}
                 />
                 <LayoutGrid size={16} className="relative z-10 text-white/70" />
                 <span className="relative z-10">{t("cards")}</span>
@@ -470,29 +485,35 @@ export default function Header() {
     </Link>
 
     <div className="min-w-0 flex-1">
-      {isHome ? (
-        <input
-          placeholder={t("searchPlaceholder")}
-          value={search}
-          onChange={(e) => {
-            const v = e.target.value;
-            setSearch(v);
+{isHome ? (
+<div className="relative w-full group">
+<Search
+  size={17}
+  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/45 transition group-hover:text-gray-600 group-focus-within:text-gray-600"
+/>
+    <input
+      placeholder={t("searchPlaceholder")}
+      value={search}
+      onChange={(e) => {
+        const v = e.target.value;
+        setSearch(v);
 
-            const next = new URLSearchParams(params?.toString() ?? "");
-            const q = v.trim();
-            if (q) next.set("q", q);
-            else next.delete("q");
+        const next = new URLSearchParams(params?.toString() ?? "");
+        const q = v.trim();
+        if (q) next.set("q", q);
+        else next.delete("q");
 
-            const qs = next.toString();
-            const safePath = pathname ?? "/";
-            router.replace(qs ? `${safePath}?${qs}` : safePath);
-          }}
-          className="w-full rounded-full border border-white/10 bg-white/[0.04] px-5 py-2 text-sm text-white/90 placeholder:text-white/40 outline-none transition hover:bg-white hover:border-sky-400/40 hover:text-gray-900 hover:placeholder:text-gray-400 focus:bg-white focus:border-sky-400/40 focus:text-gray-900 focus:placeholder:text-gray-400 focus:ring-2 focus:ring-sky-500/30"
-        />
-      ) : (
+        const qs = next.toString();
+        const safePath = pathname ?? "/";
+        router.replace(qs ? `${safePath}?${qs}` : safePath);
+      }}
+      className="w-full rounded-full border border-white/10 bg-white/[0.04] py-2 pl-11 pr-5 text-sm text-white/90 placeholder:text-white/40 outline-none transition hover:bg-white hover:text-gray-900 hover:placeholder:text-gray-500 focus:bg-white focus:text-gray-900 focus:placeholder:text-gray-500 focus:ring-2 focus:ring-sky-500/30"
+/>
+  </div>
+) : (
         <Link
           href="/"
-          className="flex w-full items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.07] transition"
+          className="flex w-full items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.57] transition relative"
         >
           {t("cards")}
         </Link>

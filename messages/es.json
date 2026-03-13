@@ -99,8 +99,8 @@
     "loading": "Cargando…"
   },
   "Footer": {
-    "brand": "SportCards",
-    "tagline": "Comprá, coleccioná y descubrí las mejores sports cards.",
+    "brand": "Cards & Collectibles",
+    "tagline": "Comprá, coleccioná y descubrí las mejores cards.",
     "home": "Inicio",
     "blog": "Blog",
     "favorites": "Favoritos",
@@ -110,6 +110,19 @@
     "privacy": "Privacidad",
     "terms": "Términos",
     "help": "Ayuda",
-    "support": "Soporte"
+    "support": "Soporte",
+    "explore": "Explora",
+"guide": "Guía",
+"securePayments": "Secure payments",
+  "currencyNotice": "All prices are displayed in U.S. Dollars (USD).",
+  "shippingNotice": "Domestic and international shipping available.",
+"paymentMethods": "Medios de pago",
+"currencyNotice": "Todos los precios están expresados en dólares estadounidenses (USD).",
+"shippingNotice": "Envíos nacionales e internacionales disponibles.",
+"stayUpdated": "Mantente al día",
+"newsletterText": "Suscribite para recibir novedades y ofertas.",
+"newsletterPlaceholder": "Email",
+"subscribe": "Suscribirme",
+"shippingpol": "Política de Envíos y Devoluciones"
   }
 }

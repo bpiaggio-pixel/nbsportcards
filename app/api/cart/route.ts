@@ -52,19 +52,54 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing userId/cardId" }, { status: 400 });
     }
 
-    // ✅ prevent P2003 foreign key errors
     const okUser = await ensureUserExists(userId);
     if (!okUser) {
       return NextResponse.json({ error: "USER_NOT_FOUND" }, { status: 401 });
     }
 
-    const existing = await prisma.cartItem.findFirst({ where: { userId, cardId } });
+    // 🔴 BUSCAR LA CARD Y SU STOCK
+    const card = await prisma.card.findUnique({
+      where: { id: cardId },
+      select: { id: true, stock: true },
+    });
+
+    if (!card) {
+      return NextResponse.json({ error: "CARD_NOT_FOUND" }, { status: 404 });
+    }
+
+    const stock = Math.max(0, Number(card.stock ?? 0));
+
+    // 🔴 BLOQUEAR SI NO HAY STOCK
+    if (stock <= 0) {
+      return NextResponse.json(
+        { error: "OUT_OF_STOCK" },
+        { status: 400 }
+      );
+    }
+
+    // 🔴 BLOQUEAR SI PIDEN MÁS QUE EL STOCK
+    if (qty > stock) {
+      return NextResponse.json(
+        { error: "MAX_STOCK_EXCEEDED", stock },
+        { status: 400 }
+      );
+    }
+
+    const existing = await prisma.cartItem.findFirst({
+      where: { userId, cardId },
+    });
 
     const item = existing
-      ? await prisma.cartItem.update({ where: { id: existing.id }, data: { qty } })
-      : await prisma.cartItem.create({ data: { userId, cardId, qty } });
+      ? await prisma.cartItem.update({
+          where: { id: existing.id },
+          data: { qty },
+        })
+      : await prisma.cartItem.create({
+          data: { userId, cardId, qty },
+        });
 
     return NextResponse.json({ ok: true, item });
+
   } catch (e: any) {
     console.error("CART POST ERROR:", e);
     return NextResponse.json({ error: e?.message ?? "Server error" }, { status: 500 });

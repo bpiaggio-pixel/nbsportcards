@@ -3,13 +3,13 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { Heart, X } from "lucide-react";
+import { Heart, X, ShoppingCart, Check } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
 import BannerFX from "@/components/BannerFX";
 import Image from "next/image";
 
-type Sport = "basketball" | "soccer" | "nfl";
+type Sport = "basketball" | "soccer" | "nfl" | "pokemon";
 
 type Card = {
   id: string;
@@ -77,11 +77,11 @@ function applySalePrice(cents: number, sport?: Sport | string) {
 }
 
 function getFallback(sport: Sport) {
-  if (sport === "basketball")
-    return "https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=1200&q=80";
-  if (sport === "soccer")
-    return "https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=1200&q=80";
-  return "https://images.unsplash.com/photo-1508098682722-e99c643e7f0b?auto=format&fit=crop&w=1200&q=80";
+  if (sport === "basketball") return "/images/basketball.jpg";
+  if (sport === "soccer") return "/images/soccer.jpg";
+  if (sport === "nfl") return "/images/nfl.jpg";
+  if (sport === "pokemon") return "/images/pokemon.jpg";
+  return "/images/cards.jpg";
 }
 
 function isGreatDeal(card: Card) {
@@ -119,9 +119,9 @@ function getBannerSrc(s: "all" | Sport) {
   if (s === "basketball") return "/banners/basketball1.png";
   if (s === "soccer") return "/banners/soccer.png";
   if (s === "nfl") return "/banners/nfl.png";
+  if (s === "pokemon") return "/banners/pokemon.png";
   return "/banners/all9a.png";
 }
-
 
 /* -------------------------
    TOP SHOWCASE (rotating)
@@ -259,6 +259,8 @@ export default function StorePageClient() {
   const t = useTranslations("Store");
   const locale = useLocale();
   const router = useRouter();
+  const [addedToCartId, setAddedToCartId] = React.useState<string | null>(null);
+  const [maxStockId, setMaxStockId] = React.useState<string | null>(null);
   const pathname = usePathname();
   const [cards, setCards] = React.useState<Card[]>([]);
   const [total, setTotal] = React.useState(0);
@@ -742,41 +744,92 @@ const totalPages = Math.max(1, Math.ceil(total / pageSize));
 const safePage = Math.min(Math.max(page, 1), totalPages);
 const paged = cards;
 
-  async function addToCart(cardId: string) {
-if (!user?.id) {
-  const redirectTo = pathname ?? `/${locale}`;
-  router.push(`/${locale}/login?redirect=${encodeURIComponent(redirectTo)}`);
-  return;
-}
-
-    try {
-      const cartRes = await fetch(`/api/cart?userId=${encodeURIComponent(user.id)}`, { cache: "no-store" });
-      const cartData = await cartRes.json();
-
-      const existing = Array.isArray(cartData.items)
-        ? cartData.items.find((x: any) => x.cardId === cardId)
-        : null;
-
-      const nextQty = (existing?.qty ?? 0) + 1;
-
-      const res = await fetch("/api/cart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id, cardId, qty: nextQty }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        console.log("addToCart error:", data);
-        return;
-      }
-
-      window.dispatchEvent(new Event("cart:changed"));
-    } catch (e) {
-      console.log("addToCart error:", e);
-    }
+async function addToCart(cardId: string) {
+  if (!user?.id) {
+    const redirectTo = pathname ?? `/${locale}`;
+    router.push(`/${locale}/login?redirect=${encodeURIComponent(redirectTo)}`);
+    return { ok: false };
   }
 
+  try {
+    const safeId = normId(cardId);
+
+    const card = uniqueCards.find((c) => normId(c.id) === safeId);
+    const stock = Number(card?.stock ?? 0);
+
+    if (stock <= 0) {
+      return { ok: false, reason: "OUT_OF_STOCK" };
+    }
+
+    const cartRes = await fetch(`/api/cart?userId=${encodeURIComponent(user.id)}`, {
+      cache: "no-store",
+    });
+
+    const cartData = await cartRes.json();
+
+    const existing = Array.isArray(cartData.items)
+      ? cartData.items.find((x: any) => normId(x.cardId) === safeId)
+      : null;
+
+    const currentQty = Number(existing?.qty ?? 0);
+    const nextQty = currentQty + 1;
+
+    const res = await fetch("/api/cart", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: user.id,
+        cardId: safeId,
+        qty: nextQty,
+      }),
+    });
+
+
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      if (data?.error === "MAX_STOCK_EXCEEDED") {
+        return { ok: false, reason: "MAX_STOCK" };
+      }
+      if (data?.error === "OUT_OF_STOCK") {
+        return { ok: false, reason: "OUT_OF_STOCK" };
+      }
+
+      console.log("addToCart error:", data);
+      return { ok: false };
+    }
+
+    window.dispatchEvent(new Event("cart:changed"));
+
+    return { ok: true };
+  } catch (e) {
+    console.log("addToCart error:", e);
+    return { ok: false };
+  }
+}
+
+async function handleAddToCart(cardId: string) {
+  const safeId = normId(cardId);
+
+  const result = await addToCart(safeId);
+
+  if (!result?.ok) {
+    if (result?.reason === "MAX_STOCK" || result?.reason === "OUT_OF_STOCK") {
+      setMaxStockId(safeId);
+
+      window.setTimeout(() => {
+        setMaxStockId((id) => (id === safeId ? null : id));
+      }, 1500);
+    }
+    return;
+  }
+
+  setAddedToCartId(safeId);
+
+  window.setTimeout(() => {
+    setAddedToCartId((id) => (id === safeId ? null : id));
+  }, 900);
+}
 // ✅ Items para el showcase (Great Deal primero, completa si faltan)
 const topShowcaseItems = React.useMemo(() => {
   const deals = topShowcaseCards.filter((c) => isGreatDeal(c));
@@ -840,6 +893,10 @@ const topShowcaseItems = React.useMemo(() => {
                 <input type="radio" checked={sport === "nfl"} onChange={() => setSport("nfl")} />
                 NFL
               </label>
+	<label className="flex items-center gap-2">
+  		<input type="radio" checked={sport === "pokemon"} onChange={() => setSport("pokemon")} />
+  		Pokemon
+		</label>
             </div>
           </div>
 
@@ -983,6 +1040,10 @@ const topShowcaseItems = React.useMemo(() => {
               <input type="radio" checked={sport === "nfl"} onChange={() => setSport("nfl")} />
               NFL
             </label>
+		<label className="flex items-center gap-2">
+  		<input type="radio" checked={sport === "pokemon"} onChange={() => setSport("pokemon")} />
+  		Pokemon
+		</label>
           </div>
         </div>
 
@@ -1128,17 +1189,19 @@ const topShowcaseItems = React.useMemo(() => {
 
             {paged.map((card) => (
               <CardTile
-                key={card.id}
-                card={card}
-                wished={!!wishlist[normId(card.id)]}
-                onToggleWish={() => toggleWish(card.id)}
-                onOpen={() => {
-  openCard(card.id);
-  fetch(`/api/cards/${encodeURIComponent(card.id)}/view`, { method: "POST" }).catch(() => {});
-}}
-                onAddToCart={() => addToCart(card.id)}
-                t={t}
-              />
+  key={card.id}
+  card={card}
+  wished={!!wishlist[normId(card.id)]}
+  added={addedToCartId === normId(card.id)}
+  maxStock={maxStockId === normId(card.id)}
+  onToggleWish={() => toggleWish(card.id)}
+  onOpen={() => {
+    openCard(card.id);
+    fetch(`/api/cards/${encodeURIComponent(card.id)}/view`, { method: "POST" }).catch(() => {});
+  }}
+  onAddToCart={() => handleAddToCart(card.id)}
+  t={t}
+/>
             ))}
           </div>
 
@@ -1456,18 +1519,36 @@ onPointerCancel={(e) => {
         
                         <div className="mt-6 flex gap-2">
                           <button
-                            type="button"
-                            onClick={() => addToCart(selectedCard.id)}
-                            disabled={(selectedCard.stock ?? 0) <= 0}
-                            className={[
-                              "flex-1 rounded-full py-3 text-sm font-semibold",
-                              (selectedCard.stock ?? 0) <= 0
-                                ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                                : "bg-gradient-to-r from-sky-400 to-sky-600 text-white hover:from-sky-600 hover:to-sky-800 shadow-md  active:scale-[0.97]",
-                            ].join(" ")}
-                          >
-                            {(selectedCard.stock ?? 0) <= 0 ? "Sin stock" : t("addToCart")}
-                          </button>
+  type="button"
+  onClick={() => handleAddToCart(selectedCard.id)}
+  disabled={(selectedCard.stock ?? 0) <= 0}
+  className={[
+    "flex-1 rounded-full py-3 text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer",
+    (selectedCard.stock ?? 0) <= 0
+      ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+      : maxStockId === normId(selectedCard.id)
+      ? "bg-orange-500 text-white scale-[0.97]"
+      : addedToCartId === normId(selectedCard.id)
+      ? "bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.35)] scale-[0.97]"
+      : "bg-gradient-to-r from-sky-400 to-sky-600 text-white hover:from-sky-600 hover:to-sky-800 shadow-md active:scale-[0.97]",
+  ].join(" ")}
+>
+  {(selectedCard.stock ?? 0) <= 0 ? (
+    "Sin stock"
+  ) : maxStockId === normId(selectedCard.id) ? (
+    "Máximo disponible"
+  ) : addedToCartId === normId(selectedCard.id) ? (
+    <>
+      <Check size={18} />
+      Added!
+    </>
+  ) : (
+    <>
+      <ShoppingCart size={18} />
+      {t("addToCart")}
+    </>
+  )}
+</button>
         
                           <button
                             type="button"
@@ -1621,6 +1702,8 @@ function SidebarCard({
 function CardTile({
   card,
   wished,
+  added,
+  maxStock,
   onToggleWish,
   onOpen,
   onAddToCart,
@@ -1628,6 +1711,8 @@ function CardTile({
 }: {
   card: Card;
   wished: boolean;
+  added: boolean;
+  maxStock: boolean;
   onToggleWish: () => void;
   onOpen: () => void;
   onAddToCart: () => void;
@@ -1741,7 +1826,7 @@ function CardTile({
 
 </div>
 
-            {/* ✅ STOCK: deshabilitar agregar */}
+{/* ✅ STOCK: deshabilitar agregar */}
 <button
   type="button"
   onClick={(e) => {
@@ -1750,14 +1835,32 @@ function CardTile({
     onAddToCart();
   }}
   disabled={outOfStock}
-className={[
-  "w-full rounded-full py-3 text-sm font-semibold transition-all duration-200",
-  outOfStock
-    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-    : "bg-gradient-to-r from-sky-400 to-sky-600 text-white hover:from-sky-600 hover:to-sky-800 shadow-md active:scale-[0.97]",
-].join(" ")}
+  className={[
+    "w-full rounded-full py-3 text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2",
+    outOfStock
+      ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+      : maxStock
+      ? "bg-orange-500 text-white scale-[0.97] cursor-pointer"
+      : added
+      ? "bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.35)] scale-[0.97] cursor-pointer"
+      : "bg-gradient-to-r from-sky-400 to-sky-600 text-white hover:from-sky-600 hover:to-sky-800 shadow-md active:scale-[0.97] cursor-pointer",
+  ].join(" ")}
 >
-  {outOfStock ? "Sin stock" : t("addToCart")}
+  {outOfStock ? (
+    "Sin stock"
+  ) : maxStock ? (
+    "Máximo disponible"
+  ) : added ? (
+    <>
+      <Check size={18} />
+      Added!
+    </>
+  ) : (
+    <>
+      <ShoppingCart size={18} />
+      {t("addToCart")}
+    </>
+  )}
 </button>
           </div>
         </div>

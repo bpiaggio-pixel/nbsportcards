@@ -89,6 +89,8 @@ export default function FavoritesPage() {
   const [favIds, setFavIds] = React.useState<string[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState("");
+const [addedToCartId, setAddedToCartId] = React.useState<string | null>(null);
+const [maxStockId, setMaxStockId] = React.useState<string | null>(null);
 
   // modal
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
@@ -273,15 +275,20 @@ if (handleUserNotFound(res, data)) return;
 async function addToCart(cardId: string) {
   if (!user?.id) {
     window.location.href = "/login";
-    return;
+    return { ok: false };
   }
 
   try {
-    const cartRes = await fetch(`/api/cart?userId=${encodeURIComponent(user.id)}`, { cache: "no-store" });
+    const safeId = normId(cardId);
+
+    const cartRes = await fetch(`/api/cart?userId=${encodeURIComponent(user.id)}`, {
+      cache: "no-store",
+    });
+
     const cartData = await cartRes.json();
 
     const existing = Array.isArray(cartData.items)
-      ? cartData.items.find((x: any) => String(x.cardId) === String(cardId))
+      ? cartData.items.find((x: any) => normId(x.cardId) === safeId)
       : null;
 
     const nextQty = (existing?.qty ?? 0) + 1;
@@ -289,17 +296,58 @@ async function addToCart(cardId: string) {
     const res = await fetch("/api/cart", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: user.id, cardId, qty: nextQty }),
+      body: JSON.stringify({
+        userId: user.id,
+        cardId: safeId,
+        qty: nextQty,
+      }),
     });
 
-    if (!res.ok) return;
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      if (data?.error === "MAX_STOCK_EXCEEDED") {
+        return { ok: false, reason: "MAX_STOCK" };
+      }
+
+      if (data?.error === "OUT_OF_STOCK") {
+        return { ok: false, reason: "OUT_OF_STOCK" };
+      }
+
+      return { ok: false };
+    }
 
     window.dispatchEvent(new Event("cart:changed"));
+
+    return { ok: true };
   } catch (e) {
     console.log("addToCart error:", e);
+    return { ok: false };
   }
 }
 
+async function handleAddToCart(cardId: string) {
+  const safeId = normId(cardId);
+
+  const result = await addToCart(safeId);
+
+  if (!result?.ok) {
+    if (result?.reason === "MAX_STOCK" || result?.reason === "OUT_OF_STOCK") {
+      setMaxStockId(safeId);
+
+      setTimeout(() => {
+        setMaxStockId((id) => (id === safeId ? null : id));
+      }, 1500);
+    }
+    return;
+  }
+
+  setAddedToCartId(safeId);
+
+  setTimeout(() => {
+    setAddedToCartId((id) => (id === safeId ? null : id));
+  }, 900);
+}
 
   if (!user?.id) {
     return (
@@ -440,13 +488,25 @@ const onSale =
   type="button"
   onClick={(e) => {
     e.stopPropagation();
-    addToCart(String(card.id));
+    handleAddToCart(String(card.id));
   }}
-  className="w-full rounded-full py-3 text-sm font-semibold bg-sky-400 text-white hover:bg-sky-600"
+  className={[
+    "w-full rounded-full py-3 text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer",
+    maxStockId === normId(card.id)
+      ? "bg-orange-500 text-white scale-[0.97]"
+      : addedToCartId === normId(card.id)
+      ? "bg-emerald-500 text-white scale-[0.97]"
+      : "bg-sky-500 text-white hover:bg-sky-600",
+  ].join(" ")}
 >
-  Agregar al carrito
-</button>
-                    </div>
+  {maxStockId === normId(card.id) ? (
+    "Máximo disponible"
+  ) : addedToCartId === normId(card.id) ? (
+    "Added!"
+  ) : (
+    "Agregar al carrito"
+  )}
+</button>                    </div>
                   </div>
                 </div>
               );
@@ -672,7 +732,7 @@ const onSale =
                 })()}
                 <button
                   type="button"
-                  onClick={() => addToCart(String(selectedCard.id))}
+                  onClick={() => handleAddToCart(String(selectedCard.id))}
                   className="mt-6 w-full rounded-full bg-sky-500 py-3 text-sm font-semibold text-white hover:bg-sky-600"
                 >
                   Agregar al carrito

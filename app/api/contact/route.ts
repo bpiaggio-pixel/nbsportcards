@@ -4,7 +4,7 @@ import { Resend } from "resend";
 // ✅ Config
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const SUPPORT_TO = "scrups84@hotmail.com";
+const SUPPORT_TO = "support@nbcards.com";
 const FROM = "NBCards Support <contact@nbcards.com>"; // ✅ tu dominio verificado
 
 function escapeHtml(s: string) {
