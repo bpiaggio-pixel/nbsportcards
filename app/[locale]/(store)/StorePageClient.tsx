@@ -120,7 +120,7 @@ function getBannerSrc(s: "all" | Sport) {
   if (s === "soccer") return "/banners/soccer.png";
   if (s === "nfl") return "/banners/nfl.png";
   if (s === "pokemon") return "/banners/pokemon.png";
-  return "/banners/all9a.png";
+  return "/banners/all9b.png";
 }
 
 /* -------------------------
