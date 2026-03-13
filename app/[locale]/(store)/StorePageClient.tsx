@@ -266,6 +266,17 @@ export default function StorePageClient() {
   const [total, setTotal] = React.useState(0);
   const [topShowcaseCards, setTopShowcaseCards] = React.useState<Card[]>([]);
 
+ // ✅ NUEVO STATE PARA LOS HIGHLIGHTS
+const [highlights, setHighlights] = React.useState<{
+  mostViewed: Card | null;
+  recommended: Card | null;
+  greatDealPick: Card | null;
+}>({
+  mostViewed: null,
+  recommended: null,
+  greatDealPick: null,
+});
+
   // ✅ BUSCADOR: se lee desde la URL (?q=...)
   const searchParams = useSearchParams();
   const search = (searchParams?.get("q") ?? "").toLowerCase().trim();
@@ -366,43 +377,7 @@ const mid = (a: { x: number; y: number }, b: { x: number; y: number }) => ({
     return Array.from(map.values());
   }, [cards, normId]);
 
-// 1) Most viewed = realmente el mayor views (sin repetir)
-const mostViewed = React.useMemo(() => {
-  const sorted = [...uniqueCards].sort((a, b) => (b.views ?? 0) - (a.views ?? 0));
-  return sorted[0] ?? null;
-}, [uniqueCards]);
 
-// 2) Recommended = prioriza Great Deal, luego views, luego stock, luego lo que quede
-const recommended = React.useMemo(() => {
-  const sorted = [...uniqueCards].sort((a, b) => {
-    const dealDiff = Number(isGreatDeal(b)) - Number(isGreatDeal(a));
-    if (dealDiff !== 0) return dealDiff;
-
-    const viewsDiff = (b.views ?? 0) - (a.views ?? 0);
-    if (viewsDiff !== 0) return viewsDiff;
-
-    const tA = Date.parse(a.updatedAt ?? a.createdAt ?? "");
-    const tB = Date.parse(b.updatedAt ?? b.createdAt ?? "");
-    const hasA = Number.isFinite(tA);
-    const hasB = Number.isFinite(tB);
-
-    if (hasA && hasB) return tB - tA;
-    if (hasB && !hasA) return 1;
-    if (hasA && !hasB) return -1;
-
-    return 0;
-  });
-
-  return sorted.find((c) => c.id !== mostViewed?.id) ?? null;
-}, [uniqueCards, mostViewed]);
-// 3) Great deal = mejor Great Deal disponible que no repita
-const greatDealPick = React.useMemo(() => {
-  const dealsSorted = [...uniqueCards]
-    .filter((c) => isGreatDeal(c))
-    .sort((a, b) => (b.views ?? 0) - (a.views ?? 0)); // si hay varias great deals, elegí la más vista
-
-  return dealsSorted.find((c) => c.id !== mostViewed?.id && c.id !== recommended?.id) ?? null;
-}, [uniqueCards, mostViewed, recommended]);
 
   // ✅ 5) blog
   const [latestPost, setLatestPost] = React.useState<any>(null);
@@ -514,6 +489,39 @@ React.useEffect(() => {
 }, [search, sport, player, autoFilter, sort, page]);
 
 React.useEffect(() => {
+  async function loadHighlights() {
+    try {
+      const params = new URLSearchParams({
+        q: search,
+        sport,
+        player,
+        auto: autoFilter,
+      });
+
+      const res = await fetch(`/api/cards/highlights?${params.toString()}`, {
+        cache: "no-store",
+      });
+
+      const data = await res.json();
+
+      setHighlights({
+        mostViewed: data?.mostViewed ?? null,
+        recommended: data?.recommended ?? null,
+        greatDealPick: data?.greatDealPick ?? null,
+      });
+    } catch {
+      setHighlights({
+        mostViewed: null,
+        recommended: null,
+        greatDealPick: null,
+      });
+    }
+  }
+
+  loadHighlights();
+}, [search, sport, player, autoFilter]);
+
+React.useEffect(() => {
   async function loadTopShowcase() {
     try {
       const res = await fetch("/api/cards/top-showcase", {
@@ -572,12 +580,26 @@ const closeCard = React.useCallback(() => {
   window.addEventListener("keydown", onKey);
   return () => window.removeEventListener("keydown", onKey);
 }, [closeCard]);
-  const selectedCard = React.useMemo(
-    () => uniqueCards.find((c) => normId(c.id) === normId(selectedId)) ?? null,
-    [uniqueCards, selectedId, normId]
-  );
+const selectedCard = React.useMemo(() => {
+  if (!selectedId) return null;
 
-  const [activeSide, setActiveSide] = React.useState<"front" | "back">("front");
+  const safeId = normId(selectedId);
+
+  const highlightCards = [
+    highlights.mostViewed,
+    highlights.recommended,
+    highlights.greatDealPick,
+  ].filter(Boolean) as Card[];
+
+  return (
+    uniqueCards.find((c) => normId(c.id) === safeId) ??
+    topShowcaseCards.find((c) => normId(c.id) === safeId) ??
+    highlightCards.find((c) => normId(c.id) === safeId) ??
+    null
+  );
+}, [uniqueCards, topShowcaseCards, highlights, selectedId, normId]);
+
+const [activeSide, setActiveSide] = React.useState<"front" | "back">("front");
 
   // ✅ bloquear scroll del body cuando el modal está abierto
   React.useEffect(() => {
@@ -944,23 +966,35 @@ const topShowcaseItems = React.useMemo(() => {
 </h3>
 
             <div className="space-y-10">
-              {mostViewed && (
-                <div className="transition hover:-translate-y-[1px] hover:shadow-md">
-                  <SidebarCard title={t("mostViewed")} card={mostViewed} onOpen={() => openCard(mostViewed.id)} />
-                </div>
-              )}
+              {highlights.mostViewed && (
+  <div className="transition hover:-translate-y-[1px] hover:shadow-md">
+    <SidebarCard
+      title={t("mostViewed")}
+      card={highlights.mostViewed}
+      onOpen={() => openCard(highlights.mostViewed!.id)}
+    />
+  </div>
+)}
 
-              {recommended && (
-                <div className="transition hover:-translate-y-[1px] hover:shadow-md">
-                  <SidebarCard title={t("recommended")} card={recommended} onOpen={() => openCard(recommended.id)} />
-                </div>
-              )}
+{highlights.recommended && (
+  <div className="transition hover:-translate-y-[1px] hover:shadow-md">
+    <SidebarCard
+      title={t("recommended")}
+      card={highlights.recommended}
+      onOpen={() => openCard(highlights.recommended!.id)}
+    />
+  </div>
+)}
 
-              {greatDealPick && (
-                <div className="transition hover:-translate-y-[1px] hover:shadow-md">
-                  <SidebarCard title={t("greatDeal")} card={greatDealPick} onOpen={() => openCard(greatDealPick.id)} />
-                </div>
-              )}
+{highlights.greatDealPick && (
+  <div className="transition hover:-translate-y-[1px] hover:shadow-md">
+    <SidebarCard
+      title={t("greatDeal")}
+      card={highlights.greatDealPick}
+      onOpen={() => openCard(highlights.greatDealPick!.id)}
+    />
+  </div>
+)}
 
               {/* ✅ BLOG (última nota) */}
               <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
