@@ -116,11 +116,11 @@ function parsePercent(input: unknown, fallbackYes = 1) {
    BANNER (por deporte)
 -------------------------- */
 function getBannerSrc(s: "all" | Sport) {
-  if (s === "basketball") return "/banners/basketball1.png";
-  if (s === "soccer") return "/banners/soccer.png";
-  if (s === "nfl") return "/banners/nfl.png";
-  if (s === "pokemon") return "/banners/pokemon.png";
-  return "/banners/all9b.png";
+  if (s === "basketball") return "/banners/basketball1.webp";
+  if (s === "soccer") return "/banners/soccer.webp";
+  if (s === "nfl") return "/banners/nfl.webp";
+  if (s === "pokemon") return "/banners/pokemon.webp";
+  return "/banners/all9b.webp";
 }
 
 /* -------------------------
@@ -1183,13 +1183,18 @@ const topShowcaseItems = React.useMemo(() => {
 
 
     {/* PNG jugadores */}
-    <img
-      src={getBannerSrc(sport)}
-      alt="Category banner"
-      draggable={false}
-      className="relative z-10 h-full w-full object-contain select-none"
-      style={{ animation: "none" }}
-    />
+    <div className="relative z-10 h-full w-full">
+  <Image
+    src={getBannerSrc(sport)}
+    alt="Category banner"
+    fill
+    priority
+    fetchPriority="high"
+    sizes="100vw"
+    className="object-contain select-none"
+    draggable={false}
+  />
+</div>
 
 <style jsx>{`
   @keyframes bannerZoom {
