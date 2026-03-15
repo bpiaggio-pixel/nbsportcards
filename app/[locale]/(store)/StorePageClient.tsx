@@ -872,12 +872,12 @@ const topShowcaseItems = React.useMemo(() => {
   const others = topShowcaseCards.filter((c) => !isGreatDeal(c));
 
   return [...deals, ...others]
-    .slice(0, 7)
-    .map((c) => ({
-      id: c.id,
-      title: c.title,
-      image: c.image?.trim() ? c.image : getFallback(c.sport),
-    }));
+  .slice(0, 7)
+  .map((c) => ({
+    id: c.id,
+    title: c.title,
+    image: getCardThumb(c.image?.trim() ? c.image : getFallback(c.sport)),
+  }));
 }, [topShowcaseCards]);
 
   const favCount = React.useMemo(() => Object.values(wishlist).filter(Boolean).length, [wishlist]);
@@ -1703,14 +1703,14 @@ function SidebarCard({
 
 <div className="mt-3 relative h-28 overflow-hidden rounded-xl border border-gray-200 bg-[#f3f4f6]">
   <Image
-    src={card.image?.trim() ? card.image : getFallback(card.sport)}
-    alt={card.title}
-    fill
-    sizes="120px"
-    quality={70}
-    className="object-contain p-3 transition duration-300 group-hover:scale-[1.03]"
-    draggable={false}
-  />
+  src={getCardThumb(card.image?.trim() ? card.image : getFallback(card.sport))}
+  alt={card.title}
+  fill
+  sizes="120px"
+  quality={70}
+  className="object-contain p-3 transition duration-300 group-hover:scale-[1.03]"
+  draggable={false}
+/>
 </div>
         <p className="mt-3 line-clamp-2 text-sm font-semibold text-gray-900">{card.title}</p>
         <p className="mt-1 text-xs text-gray-500">{card.player}</p>
@@ -1848,7 +1848,7 @@ const gridImg = getCardThumb(img);
   alt={card.title}
   fill
   priority={index < 2}
-  sizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 260px"
+  sizes="(max-width: 640px) 46vw, (max-width: 1024px) 46vw, 260px"
   quality={70}
   className="object-contain p-6 transition duration-300 group-hover:scale-[1.03]"
 />
