@@ -1028,7 +1028,7 @@ const topShowcaseItems = React.useMemo(() => {
                     {latestPost.coverImage && (
   <div className="relative mb-5 h-32 w-full overflow-hidden rounded-xl border border-gray-200">
     <Image
-      src={latestPost.coverImage}
+      src={`/${latestPost.coverImage.replace(/^[/\\]+/, "").replace(/\\/g, "/")}`}
       alt={latestPost.title}
       fill
       sizes="300px"
@@ -1159,7 +1159,10 @@ const topShowcaseItems = React.useMemo(() => {
 
 
     {/* FX atrás */}
-    <BannerFX density={240} />
+
+<div className="pointer-events-none absolute inset-0 z-[7]">
+  <BannerFX density={240} />
+</div>
 
 
 
