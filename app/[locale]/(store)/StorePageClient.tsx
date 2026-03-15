@@ -1240,7 +1240,7 @@ const topShowcaseItems = React.useMemo(() => {
             </div>
           </div>
 
-          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 min-h-[980px]">
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 min-h-[3200px] sm:min-h-[1600px] lg:min-h-[980px]">
   {cardsLoading
   ? Array.from({ length: 9 }).map((_, i) => <CardTileSkeleton key={i} />)
   : paged.map((card, index) => (
