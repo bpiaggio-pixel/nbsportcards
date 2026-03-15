@@ -1149,7 +1149,7 @@ const topShowcaseItems = React.useMemo(() => {
         <main>
           {/* BANNER SOLO EN COLUMNA DE TARJETAS */}
           <div className="-mt-10 mb-6 overflow-hidden">
-  <div className="relative h-[220px] sm:h-[260px] md:h-[300px] w-full bg-gradient-to-b from-black via-gray-900 to-transparent">
+  <div className="relative h-[180px] sm:h-[230px] md:h-[300px] w-full bg-gradient-to-b from-black via-gray-900 to-transparent">
 
 
     {/* FX atrás */}
