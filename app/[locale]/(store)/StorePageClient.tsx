@@ -477,10 +477,9 @@ React.useEffect(() => {
         pageSize: String(pageSize),
       });
 
-      const res = await fetch(`/api/cards?${params.toString()}`, {
-        cache: "no-store",
-      });
-
+const res = await fetch(`/api/cards?${params.toString()}`, {
+  next: { revalidate: 60 },
+});
       const data = await res.json();
 
       if (cancelled) return;
@@ -514,8 +513,8 @@ React.useEffect(() => {
       });
 
       const res = await fetch(`/api/cards/highlights?${params.toString()}`, {
-        cache: "no-store",
-      });
+  next: { revalidate: 120 },
+});
 
       const data = await res.json();
 
@@ -540,8 +539,8 @@ React.useEffect(() => {
   async function loadTopShowcase() {
     try {
       const res = await fetch("/api/cards/top-showcase", {
-        cache: "no-store",
-      });
+  next: { revalidate: 300 },
+});
 
       const data = await res.json();
       setTopShowcaseCards(Array.isArray(data.cards) ? data.cards : []);
@@ -1024,12 +1023,16 @@ const topShowcaseItems = React.useMemo(() => {
                       {latestPost.title}
                     </a>
                     {latestPost.coverImage && (
-                      <img
-                        src={latestPost.coverImage}
-                        alt={latestPost.title}
-                        className="mb-5 h-32 w-full rounded-xl object-cover border border-gray-200"
-                      />
-                    )}
+  <div className="relative mb-5 h-32 w-full overflow-hidden rounded-xl border border-gray-200">
+    <Image
+      src={latestPost.coverImage}
+      alt={latestPost.title}
+      fill
+      sizes="300px"
+      className="object-cover"
+    />
+  </div>
+)}
 
                     <p className="mt-1 text-sm text-gray-500 line-clamp-4">{latestPost.excerpt}</p>
 
@@ -1183,13 +1186,16 @@ const topShowcaseItems = React.useMemo(() => {
 
 
     {/* PNG jugadores */}
-    <img
-      src={getBannerSrc(sport)}
-      alt="Category banner"
-      draggable={false}
-      className="relative z-10 h-full w-full object-contain select-none"
-      style={{ animation: "bannerZoom 10s ease-in-out infinite alternate" }}
-    />
+    <div className="relative h-[180px] sm:h-[230px] md:h-[300px] w-full bg-gradient-to-b from-black via-gray-900 to-transparent">
+  <Image
+    src={getBannerSrc(sport)}
+    alt="Category banner"
+    fill
+    priority
+    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 70vw, 900px"
+    className="relative z-10 object-contain select-none"
+  />
+</div>
 
 <style jsx>{`
   @keyframes bannerZoom {
