@@ -1153,7 +1153,7 @@ const topShowcaseItems = React.useMemo(() => {
 
 
     {/* FX atrás */}
-    <BannerFX density={0} />
+    <BannerFX density={10} />
 
 
 
