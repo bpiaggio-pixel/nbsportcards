@@ -1303,7 +1303,7 @@ const topShowcaseItems = React.useMemo(() => {
       </div>
 
       {/* CARROUSEL ABAJO */}
-      <TopCardsShowcase items={topShowcaseItems} onSelect={(id) => openCard(id)} />
+    {/*  <TopCardsShowcase items={topShowcaseItems} onSelect={(id) => openCard(id)} /> */}
 
 {/* MODAL */}
 {portalRoot && selectedCard && createPortal(
