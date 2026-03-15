@@ -1831,8 +1831,7 @@ function CardTile({
   priority={index < 2}
   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
   className="object-contain p-6 transition duration-300 group-hover:scale-[1.03]"
-/>sName="object-contain p-6 transition duration-300 group-hover:scale-[1.03]"
- 		 />
+/>
 		</div>
           </div>
 
