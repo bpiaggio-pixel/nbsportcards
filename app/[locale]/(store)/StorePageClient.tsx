@@ -1188,7 +1188,7 @@ const topShowcaseItems = React.useMemo(() => {
       alt="Category banner"
       draggable={false}
       className="relative z-10 h-full w-full object-contain select-none"
-      style={{ animation: "none" }}
+      style={{ animation: "bannerZoom 10s ease-in-out infinite alternate" }}
     />
 
 <style jsx>{`
@@ -1304,7 +1304,7 @@ const topShowcaseItems = React.useMemo(() => {
       </div>
 
       {/* CARROUSEL ABAJO */}
-    {/*  <TopCardsShowcase items={topShowcaseItems} onSelect={(id) => openCard(id)} /> */}
+      <TopCardsShowcase items={topShowcaseItems} onSelect={(id) => openCard(id)} />
 
 {/* MODAL */}
 {portalRoot && selectedCard && createPortal(
