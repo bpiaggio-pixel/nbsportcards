@@ -1750,6 +1750,18 @@ function SidebarCard({
   );
 }
 
+function getCardThumb(src?: string) {
+  if (!src) return "";
+  const clean = src.trim();
+
+  if (!clean.startsWith("/cards/")) return clean;
+
+  return clean.replace(
+    /^\/cards\/(.+)\.[a-zA-Z0-9]+$/,
+    "/cards/thumbs/$1.webp"
+  );
+}
+
 function CardTile({
   card,
   index,
@@ -1772,7 +1784,7 @@ function CardTile({
   t: (key: string) => string;
 }) {
   const img = card.image?.trim() ? card.image : getFallback(card.sport);
-
+const gridImg = getCardThumb(img);
 
 
   // ✅ STOCK
@@ -1826,7 +1838,7 @@ function CardTile({
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_55%,rgba(0,0,0,0.10),rgba(0,0,0,0)_65%)] opacity-40" />
             <div className="relative z-10 flex h-full items-center justify-center">
  		 <Image
-  src={img}
+  src={{gridImg}
   alt={card.title}
   fill
   priority={index < 2}
