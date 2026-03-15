@@ -1183,18 +1183,13 @@ const topShowcaseItems = React.useMemo(() => {
 
 
     {/* PNG jugadores */}
-    <div className="relative z-10 h-full w-full">
-  <Image
-    src={getBannerSrc(sport)}
-    alt="Category banner"
-    fill
-    priority
-    fetchPriority="high"
-    sizes="100vw"
-    className="object-contain select-none"
-    draggable={false}
-  />
-</div>
+    <img
+      src={getBannerSrc(sport)}
+      alt="Category banner"
+      draggable={false}
+      className="relative z-10 h-full w-full object-contain select-none"
+      style={{ animation: "none" }}
+    />
 
 <style jsx>{`
   @keyframes bannerZoom {
