@@ -1237,7 +1237,7 @@ const topShowcaseItems = React.useMemo(() => {
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 min-h-[980px]">
   {cardsLoading
     ? Array.from({ length: 9 }).map((_, i) => <CardTileSkeleton key={i} />)
-    : paged.map((card) => (
+    : paged.map((card, index) => (
         <CardTile
           key={card.id}
           card={card}
@@ -1751,6 +1751,7 @@ function SidebarCard({
 
 function CardTile({
   card,
+  index,
   wished,
   added,
   maxStock,
@@ -1760,6 +1761,7 @@ function CardTile({
   t,
 }: {
   card: Card;
+  index: number;
   wished: boolean;
   added: boolean;
   maxStock: boolean;
@@ -1823,11 +1825,13 @@ function CardTile({
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_55%,rgba(0,0,0,0.10),rgba(0,0,0,0)_65%)] opacity-40" />
             <div className="relative z-10 flex h-full items-center justify-center">
  		 <Image
-   		 src={img}
-  		  alt={card.title}
-  		  fill
-  		  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-  		  className="object-contain p-6 transition duration-300 group-hover:scale-[1.03]"
+  src={img}
+  alt={card.title}
+  fill
+  priority={index < 2}
+  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+  className="object-contain p-6 transition duration-300 group-hover:scale-[1.03]"
+/>sName="object-contain p-6 transition duration-300 group-hover:scale-[1.03]"
  		 />
 		</div>
           </div>
