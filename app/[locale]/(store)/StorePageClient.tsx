@@ -265,6 +265,7 @@ export default function StorePageClient() {
   const [cards, setCards] = React.useState<Card[]>([]);
   const [total, setTotal] = React.useState(0);
   const [topShowcaseCards, setTopShowcaseCards] = React.useState<Card[]>([]);
+  const [cardsLoading, setCardsLoading] = React.useState(true);
 
  // ✅ NUEVO STATE PARA LOS HIGHLIGHTS
 const [highlights, setHighlights] = React.useState<{
@@ -460,7 +461,11 @@ React.useEffect(() => {
 }, [search, sport, player, autoFilter, sort]);
 
 React.useEffect(() => {
+  let cancelled = false;
+
   async function loadCards() {
+    setCardsLoading(true);
+
     try {
       const params = new URLSearchParams({
         q: search,
@@ -477,17 +482,27 @@ React.useEffect(() => {
       });
 
       const data = await res.json();
+
+      if (cancelled) return;
+
       setCards(Array.isArray(data.cards) ? data.cards : []);
       setTotal(Number(data.total ?? 0));
     } catch {
-      setCards([]);
+      if (!cancelled) {
+        setCards([]);
+        setTotal(0);
+      }
+    } finally {
+      if (!cancelled) setCardsLoading(false);
     }
   }
 
-
   loadCards();
-}, [search, sport, player, autoFilter, sort, page]);
 
+  return () => {
+    cancelled = true;
+  };
+}, [search, sport, player, autoFilter, sort, page]);
 React.useEffect(() => {
   async function loadHighlights() {
     try {
@@ -965,7 +980,7 @@ const topShowcaseItems = React.useMemo(() => {
   {t("highlights")}
 </h3>
 
-            <div className="space-y-10">
+            <div className="space-y-10 min-h-[760px]">
               {highlights.mostViewed && (
   <div className="transition hover:-translate-y-[1px] hover:shadow-md">
     <SidebarCard
@@ -997,7 +1012,7 @@ const topShowcaseItems = React.useMemo(() => {
 )}
 
               {/* ✅ BLOG (última nota) */}
-              <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+              <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm min-h-[320px]">
                 <div className="text-sm font-bold text-gray-900 mb-3">Blog</div>
 
                 {latestPost ? (
@@ -1219,25 +1234,26 @@ const topShowcaseItems = React.useMemo(() => {
             </div>
           </div>
 
-          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-
-            {paged.map((card) => (
-              <CardTile
-  key={card.id}
-  card={card}
-  wished={!!wishlist[normId(card.id)]}
-  added={addedToCartId === normId(card.id)}
-  maxStock={maxStockId === normId(card.id)}
-  onToggleWish={() => toggleWish(card.id)}
-  onOpen={() => {
-    openCard(card.id);
-    fetch(`/api/cards/${encodeURIComponent(card.id)}/view`, { method: "POST" }).catch(() => {});
-  }}
-  onAddToCart={() => handleAddToCart(card.id)}
-  t={t}
-/>
-            ))}
-          </div>
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 min-h-[980px]">
+  {cardsLoading
+    ? Array.from({ length: 9 }).map((_, i) => <CardTileSkeleton key={i} />)
+    : paged.map((card) => (
+        <CardTile
+          key={card.id}
+          card={card}
+          wished={!!wishlist[normId(card.id)]}
+          added={addedToCartId === normId(card.id)}
+          maxStock={maxStockId === normId(card.id)}
+          onToggleWish={() => toggleWish(card.id)}
+          onOpen={() => {
+            openCard(card.id);
+            fetch(`/api/cards/${encodeURIComponent(card.id)}/view`, { method: "POST" }).catch(() => {});
+          }}
+          onAddToCart={() => handleAddToCart(card.id)}
+          t={t}
+        />
+      ))}
+</div>
 
           <div className="mt-10 flex flex-col items-center justify-between gap-3 sm:flex-row">
             <div className="text-sm text-gray-600">
@@ -1754,6 +1770,8 @@ function CardTile({
 }) {
   const img = card.image?.trim() ? card.image : getFallback(card.sport);
 
+
+
   // ✅ STOCK
   const outOfStock = (card.stock ?? 0) <= 0;
 
@@ -1898,6 +1916,20 @@ function CardTile({
 </button>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function CardTileSkeleton() {
+  return (
+    <div className="relative overflow-hidden rounded-[20px] border border-gray-200 bg-white shadow-sm">
+      <div className="h-[280px] border-b border-gray-200 bg-[#f3f4f6] animate-pulse" />
+      <div className="space-y-3 p-5">
+        <div className="h-4 w-full rounded bg-gray-200 animate-pulse" />
+        <div className="h-4 w-2/3 rounded bg-gray-200 animate-pulse" />
+        <div className="h-6 w-24 rounded bg-gray-200 animate-pulse" />
+        <div className="h-11 w-full rounded-full bg-gray-200 animate-pulse" />
       </div>
     </div>
   );
