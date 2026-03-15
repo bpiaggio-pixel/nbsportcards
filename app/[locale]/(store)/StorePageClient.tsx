@@ -1838,7 +1838,7 @@ const gridImg = getCardThumb(img);
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_55%,rgba(0,0,0,0.10),rgba(0,0,0,0)_65%)] opacity-40" />
             <div className="relative z-10 flex h-full items-center justify-center">
  		 <Image
-  src={{gridImg}
+  src={gridImg}
   alt={card.title}
   fill
   priority={index < 2}
