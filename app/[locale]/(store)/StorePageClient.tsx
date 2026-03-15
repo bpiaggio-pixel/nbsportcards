@@ -1153,7 +1153,8 @@ const topShowcaseItems = React.useMemo(() => {
 
 
     {/* FX atrás */}
-{/* <BannerFX density={240} /> */}
+    <BannerFX density={240} />
+
 
 
 {/* Glow azul detrás de los jugadores */}
