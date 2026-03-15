@@ -144,7 +144,7 @@ export default async function StoreLayout({
       </div>
 
      {/* derecha - newsletter */}
-<div className="w-full max-w-sm">
+<div className="w-full max-w-sm min-h-[140px]">
   <p className="text-sm font-semibold text-gray-900">{t("stayUpdated")}</p>
   <p className="mt-1 text-sm text-gray-500">{t("newsletterText")}</p>
 
