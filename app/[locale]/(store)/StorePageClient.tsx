@@ -1695,17 +1695,17 @@ function SidebarCard({
       <div className="relative rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition group-hover:shadow-md">
         <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{title}</p>
 
-        <div className="mt-3 relative h-28 overflow-hidden rounded-xl border border-gray-200 bg-[#f3f4f6]">
- 		 <Image
-  		  src={card.image?.trim() ? card.image : getFallback(card.sport)}
- 		   alt={card.title}
-  		  fill
-  		  sizes="224px"
-   		 className="object-contain p-3 transition duration-300 group-hover:scale-[1.03]"
- 		   draggable={false}
-		  />
-		</div>
-
+<div className="mt-3 relative h-28 overflow-hidden rounded-xl border border-gray-200 bg-[#f3f4f6]">
+  <Image
+    src={card.image?.trim() ? card.image : getFallback(card.sport)}
+    alt={card.title}
+    fill
+    sizes="120px"
+    quality={70}
+    className="object-contain p-3 transition duration-300 group-hover:scale-[1.03]"
+    draggable={false}
+  />
+</div>
         <p className="mt-3 line-clamp-2 text-sm font-semibold text-gray-900">{card.title}</p>
         <p className="mt-1 text-xs text-gray-500">{card.player}</p>
 
@@ -1830,7 +1830,8 @@ function CardTile({
   alt={card.title}
   fill
   priority={index < 2}
-  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+  sizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 260px"
+  quality={70}
   className="object-contain p-6 transition duration-300 group-hover:scale-[1.03]"
 />
 		</div>
