@@ -1160,47 +1160,31 @@ const topShowcaseItems = React.useMemo(() => {
 
     {/* FX atrás */}
 
-<div className="pointer-events-none absolute inset-0 z-[7]">
+<div className="pointer-events-none absolute inset-0 z-[7] hidden md:block">
   <BannerFX density={240} />
 </div>
 
 
 
 {/* Glow azul detrás de los jugadores */}
-<div
-  className="pointer-events-none absolute inset-0"
-  style={{ zIndex: 5 }}
->
-  <div
-    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-    style={{
-      width: "900px",
-      height: "360px",
-      borderRadius: "9999px",
-      filter: "blur(110px)",
-      opacity: 0.9,
-      background:
-        "radial-gradient(circle, rgba(0,200,255,1) 0%, rgba(0,200,255,0.95) 8%, rgba(0,200,255,0.65) 18%, rgba(0,200,255,0.25) 32%, rgba(0,200,255,0.08) 45%, transparent 58%)",
-    }}
-  />
-</div>
 
 
-<div className="pointer-events-none absolute top-0 left-0 h-full w-16 bg-gradient-to-r from-black via-gray/80 to-transparent" />
-<div className="pointer-events-none absolute top-0 right-0 h-full w-16 bg-gradient-to-l from-black via-gray/80 to-transparent" />
+
+<div className="pointer-events-none absolute top-0 left-0 h-full w-16 bg-gradient-to-r from-black via-gray/90 to-transparent z-20" />
+<div className="pointer-events-none absolute top-0 right-0 h-full w-16 bg-gradient-to-l from-black via-gray/0 to-transparent z-20" />
 <div className="pointer-events-none absolute bottom-0 left-0 w-full h-18 bg-gradient-to-t from-black via-gray/95 to-transparent z-20" />
 
 
     {/* PNG jugadores */}
     <div className="relative h-[180px] sm:h-[230px] md:h-[300px] w-full bg-gradient-to-b from-black via-gray-900 to-transparent">
-  <Image
-    src={getBannerSrc(sport)}
-    alt="Category banner"
-    fill
-    priority
-    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 900px"
-    className="relative z-10 object-contain select-none"
-  />
+<Image
+  src={getBannerSrc(sport)}
+  alt="Category banner"
+  fill
+  priority
+  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 900px"
+  className="relative z-10 object-contain select-none md:animate-[bannerZoom_10s_ease-in-out_infinite_alternate]"
+/>
 </div>
 
 <style jsx>{`
