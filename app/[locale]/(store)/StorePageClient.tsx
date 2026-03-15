@@ -149,11 +149,11 @@ function TopCardsShowcase({
     setOrder(baseSeven);
   }, [baseSeven]);
 
-  React.useEffect(() => {
-    if (order.length < 2) return;
-    const t = setInterval(() => setOrder((prev) => rotateLeft(prev)), intervalMs);
-    return () => clearInterval(t);
-  }, [order.length, intervalMs]);
+// React.useEffect(() => {
+//   if (order.length < 2) return;
+//   const t = setInterval(() => setOrder((prev) => rotateLeft(prev)), intervalMs);
+//   return () => clearInterval(t);
+// }, [order.length, intervalMs]);
 
   const slotX = [-480, -320, -160, 0, 160, 320, 480];
   const centerIdx = 3;
@@ -1188,7 +1188,7 @@ const topShowcaseItems = React.useMemo(() => {
       alt="Category banner"
       draggable={false}
       className="relative z-10 h-full w-full object-contain select-none"
-      style={{ animation: "bannerZoom 10s ease-in-out infinite alternate" }}
+      style={{ animation: "none" }}
     />
 
 <style jsx>{`
