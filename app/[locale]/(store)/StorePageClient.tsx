@@ -1222,10 +1222,10 @@ const topShowcaseItems = React.useMemo(() => {
 
 
 
-          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-lg font-semibold">
-              {total} {t("results")}
-            </h2>
+          <div className="mb-6 flex min-h-[44px] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+  <h2 className="min-h-[28px] text-lg font-semibold">
+    {total} {t("results")}
+  </h2>
 
             <div className="flex items-center gap-2">
       {/* ✅ Mobile: abrir menú de filtros */}
@@ -1249,7 +1249,7 @@ const topShowcaseItems = React.useMemo(() => {
             </div>
           </div>
 
-          <div className="grid gap-4 grid-cols-2 min-h-[2200px] sm:min-h-[1800px] lg:gap-6 lg:grid-cols-3 lg:min-h-[980px]">
+          <div className="grid gap-4 grid-cols-2 items-start min-h-[2200px] sm:min-h-[1800px] lg:gap-6 lg:grid-cols-3 lg:min-h-[980px]">
   {cardsLoading
   ? Array.from({ length: 9 }).map((_, i) => <CardTileSkeleton key={i} />)
   : paged.map((card, index) => (
@@ -1964,9 +1964,9 @@ const inventoryBadge = getInventoryBadge(card);
 
 function CardTileSkeleton() {
   return (
-    <div className="relative overflow-hidden rounded-[20px] border border-gray-200 bg-white shadow-sm">
+    <div className="relative h-[410px] overflow-hidden rounded-[20px] border border-gray-200 bg-white shadow-sm">
       <div className="h-[280px] border-b border-gray-200 bg-[#f3f4f6] animate-pulse" />
-      <div className="space-y-3 p-5">
+      <div className="flex h-[130px] flex-col justify-between p-5">
         <div className="h-4 w-full rounded bg-gray-200 animate-pulse" />
         <div className="h-4 w-2/3 rounded bg-gray-200 animate-pulse" />
         <div className="h-6 w-24 rounded bg-gray-200 animate-pulse" />
