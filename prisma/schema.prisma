@@ -32,6 +32,8 @@ model Card {
   views      Int      @default(0)   
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  inventory_location String?
+  ships_from         String?
 }
 
 model Post {

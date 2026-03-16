@@ -127,7 +127,9 @@ if (sort === "price_desc" || sort === "price_asc") {
       auto,
       views,
       "createdAt",
-      "updatedAt"
+      "updatedAt",
+  "inventory_location",
+  "ships_from"
     FROM "Card"
     ${whereSql}
     ORDER BY
@@ -164,6 +166,8 @@ if (sort === "price_desc" || sort === "price_asc") {
       views: true,
       createdAt: true,
       updatedAt: true,
+  inventory_location: true,
+  ships_from: true,
     },
   });
 }
@@ -183,6 +187,8 @@ if (sort === "price_desc" || sort === "price_asc") {
       views: c.views,
       createdAt: c.createdAt,
       updatedAt: c.updatedAt,
+  inventory_location: c.inventory_location ?? null,
+  ships_from: c.ships_from ?? null,
     }));
 
     return NextResponse.json({ cards, total, page, pageSize });

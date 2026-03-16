@@ -32,6 +32,8 @@ type Card = {
 
   great_deal?: string;
   greatDeal?: string;
+  inventory_location?: string;   
+  ships_from?: string;          
 };
 
 type SessionUser = { id: string; email: string } | null;
@@ -91,6 +93,45 @@ function isGreatDeal(card: Card) {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
   return raw === "si" || raw === "true" || raw === "1" || raw === "x" || raw === "yes";
+}
+
+function getInventoryLocation(card: Card) {
+  return String(card.inventory_location ?? "")
+    .trim()
+    .toLowerCase();
+}
+
+function getShipsFrom(card: Card) {
+  return String(card.ships_from ?? "")
+    .trim()
+    .toLowerCase();
+}
+
+function getInventoryBadge(card: Card) {
+  const location = getInventoryLocation(card);
+
+  if (location === "comc") {
+    return {
+      label: "Stored at COMC",
+      className: "bg-blue-100 text-blue-600",
+    };
+  }
+
+  if (location === "fanatics") {
+    return {
+      label: "Stored at Fanatics",
+      className: "bg-blue-100 text-blue-600",
+    };
+  }
+
+  if (location === "argentina") {
+    return {
+      label: "Stored in Argentina",
+      className: "bg-blue-100 text-blue-600",
+    };
+  }
+
+  return null;
 }
 
 function parsePercent(input: unknown, fallbackYes = 1) {
@@ -755,29 +796,7 @@ const [activeSide, setActiveSide] = React.useState<"front" | "back">("front");
   }, [sport, players, player]);
 
   // ✅ filtros
-  const filtered = React.useMemo(() => {
-    const q = search.trim().toLowerCase();
 
-    let result = uniqueCards.filter((c) => {
-      const matchesSport = sport === "all" ? true : c.sport === sport;
-      const matchesPlayer = player === "all" ? true : c.player === player;
-      const matchesAuto =
-        autoFilter === "all" ? true : autoFilter === "yes" ? Boolean(c.auto) : !Boolean(c.auto);
-
-      const matchesSearch =
-        q.length === 0 ? true : c.title.toLowerCase().includes(q) || c.player.toLowerCase().includes(q);
-
-      return matchesSport && matchesPlayer && matchesAuto && matchesSearch;
-    });
-
-// ✅ Orden "Recommended"
-// 1) Great Deal (mayor % primero)
-// 2) Más views
-// 3) En stock primero
-// 4) Newest (fallback: createdAt/updatedAt si viene; si no, conserva orden del API)
-
-    return result;
-  }, [uniqueCards, search, sport, sort, player, autoFilter]);
 
 const totalPages = Math.max(1, Math.ceil(total / pageSize));
 const safePage = Math.min(Math.max(page, 1), totalPages);
@@ -1505,58 +1524,61 @@ onPointerCancel={(e) => {
                       <div className="p-6">
                         <h3 className="text-lg font-semibold leading-snug text-gray-900">{selectedCard.title}</h3>
                         <p className="mt-2 text-sm text-gray-600">{selectedCard.player}</p>
+
         
 {(() => {
   const baseCents = getBaseCents(selectedCard);
   const discountedCents = applySalePrice(baseCents, selectedCard.sport);
   const percent = getSalePercentForSport(selectedCard.sport);
-  const onSale = SALE_ACTIVE && percent > 0 && discountedCents !== baseCents;
+  const onSale = SALE_ACTIVE && percent > 0;
+  const badge = getInventoryBadge(selectedCard);
+  const shipsFrom = getShipsFrom(selectedCard);
 
   return (
     <div className="flex flex-col gap-1">
-      {/* Badges */}
       <div className="flex flex-wrap items-center gap-2">
         {onSale && (
-          <span className="shrink-0 whitespace-nowrap rounded-full bg-gray-200 text-gray-800 px-2 py-1 text-xs font-bold">
+          <span className="rounded-full bg-gray-200 text-gray-800 px-2 py-0.5 text-[10px] font-bold">
             -{percent}%
           </span>
         )}
 
         {isGreatDeal(selectedCard) && (
-          <span className="shrink-0 whitespace-nowrap rounded-full bg-green-200 px-2 py-1 text-xs font-semibold text-green-700">
+          <span className="rounded-full bg-green-200 px-2 py-0.5 text-[10px] font-semibold text-green-700">
             Great Deal
+          </span>
+        )}
+
+        {badge && (
+          <span className={`shrink-0 whitespace-nowrap rounded-full px-2 py-1 text-xs font-semibold ${badge.className}`}>
+            {badge.label}
           </span>
         )}
       </div>
 
-      {/* Precio */}
       <div className="flex flex-wrap items-end gap-2">
         {onSale && (
-          <span className="text-sm text-gray-400 line-through whitespace-nowrap">
+          <span className="text-xs text-gray-400 line-through">
             {formatUSD(baseCents / 100)}
           </span>
         )}
-        <span className={`text-lg font-bold whitespace-nowrap ${onSale ? "text-sky-600" : "text-gray-900"}`}>
+
+        <span className={`text-sm font-bold ${onSale ? "text-sky-600" : "text-gray-900"}`}>
           {formatUSD(discountedCents / 100)}
         </span>
       </div>
 
-<div className="mt-3">
-  {(selectedCard.stock ?? 0) > 0 ? (
-    <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
-      Stock: {selectedCard.stock}
-    </span>
-  ) : (
-    <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">
-      Sin stock
-    </span>
-  )}
-</div>
-
+      {shipsFrom && (
+        <p className="mt-2 text-xs text-gray-500">
+          This card ships from {shipsFrom}.
+        </p>
+      )}
     </div>
   );
-})()}
-        
+})()} 
+
+
+   
                         {/* ✅ STOCK: modal */}
                         {((selectedCard.stock ?? 0) <= 0) && (
                           <div className="mt-3 inline-flex rounded-full bg-gray-200 px-3 py-1 text-xs font-semibold text-gray-700">
@@ -1685,61 +1707,67 @@ function SidebarCard({
   card: Card;
   onOpen: () => void;
 }) {
-  return (
-    <button type="button" onClick={onOpen} className="group relative w-full rounded-2xl p-[2px] text-left transition">
-<div className="pointer-events-none absolute -inset-0 rounded-2xl bg-gradient-to-r from-sky-400 via-cyan-300 to-blue-500 opacity-0 blur-lg transition duration-300 group-hover:opacity-80" />
-      <div className="relative rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition group-hover:shadow-md">
-        <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{title}</p>
-
-<div className="mt-3 relative h-28 overflow-hidden rounded-xl border border-gray-200 bg-[#f3f4f6]">
-  <Image
-  src={getCardThumb(card.image?.trim() ? card.image : getFallback(card.sport))}
-  alt={card.title}
-  fill
-  sizes="120px"
-  quality={70}
-  className="object-contain p-3 transition duration-300 group-hover:scale-[1.03]"
-  draggable={false}
-/>
-</div>
-        <p className="mt-3 line-clamp-2 text-sm font-semibold text-gray-900">{card.title}</p>
-        <p className="mt-1 text-xs text-gray-500">{card.player}</p>
-
-        <div className="mt-2 flex items-center gap-2">
-          {(() => {
   const baseCents = getBaseCents(card);
   const discountedCents = applySalePrice(baseCents, card.sport);
   const percent = getSalePercentForSport(card.sport);
   const onSale = SALE_ACTIVE && percent > 0;
+  const badge = getInventoryBadge(card);
+
   return (
-    <div className="flex flex-col gap-1">
-      <div className="flex flex-wrap items-center gap-2">
-        {onSale && (
-          <span className="rounded-full bg-gray-200 text-gray-800 px-2 py-0.5 text-[10px] font-bold ">
-            -{percent}%
-          </span>
-        )}
-        {isGreatDeal(card) && (
-          <span className="rounded-full bg-green-200 px-2 py-0.5 text-[10px] font-semibold text-green-700">
-            Great Deal
-          </span>
-        )}
-      </div>
+    <button type="button" onClick={onOpen} className="group relative w-full rounded-2xl p-[2px] text-left transition">
+      <div className="pointer-events-none absolute -inset-0 rounded-2xl bg-gradient-to-r from-sky-400 via-cyan-300 to-blue-500 opacity-0 blur-lg transition duration-300 group-hover:opacity-80" />
+      <div className="relative rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition group-hover:shadow-md">
+        <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{title}</p>
 
-      <div className="flex flex-wrap items-end gap-2">
-        {onSale && (
-          <span className="text-xs text-gray-400 line-through">
-            {formatUSD(baseCents / 100)}
-          </span>
-        )}
-        <span className={`text-sm font-bold ${onSale ? "text-sky-600" : "text-gray-900"}`}>
-          {formatUSD(discountedCents / 100)}
-        </span>
-      </div>
-    </div>
-  );
-})()}
+        <div className="mt-3 relative h-28 overflow-hidden rounded-xl border border-gray-200 bg-[#f3f4f6]">
+          <Image
+            src={getCardThumb(card.image?.trim() ? card.image : getFallback(card.sport))}
+            alt={card.title}
+            fill
+            sizes="120px"
+            quality={70}
+            className="object-contain p-3 transition duration-300 group-hover:scale-[1.03]"
+            draggable={false}
+          />
+        </div>
 
+        <p className="mt-3 line-clamp-2 text-sm font-semibold text-gray-900">{card.title}</p>
+        <p className="mt-1 text-xs text-gray-500">{card.player}</p>
+
+        <div className="mt-2 flex items-center gap-2">
+          <div className="flex flex-col gap-1">
+            <div className="flex flex-wrap items-center gap-2">
+              {onSale && (
+                <span className="rounded-full bg-gray-200 text-gray-800 px-2 py-0.5 text-[10px] font-bold">
+                  -{percent}%
+                </span>
+              )}
+
+              {isGreatDeal(card) && (
+                <span className="rounded-full bg-green-200 px-2 py-0.5 text-[10px] font-semibold text-green-700">
+                  Great Deal
+                </span>
+              )}
+
+              {badge && (
+                <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${badge.className}`}>
+                  {badge.label}
+                </span>
+              )}
+            </div>
+
+            <div className="flex flex-wrap items-end gap-2">
+              {onSale && (
+                <span className="text-xs text-gray-400 line-through">
+                  {formatUSD(baseCents / 100)}
+                </span>
+              )}
+
+              <span className={`text-sm font-bold ${onSale ? "text-sky-600" : "text-gray-900"}`}>
+                {formatUSD(discountedCents / 100)}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </button>
@@ -1779,12 +1807,17 @@ function CardTile({
   onAddToCart: () => void;
   t: (key: string) => string;
 }) {
-  const img = card.image?.trim() ? card.image : getFallback(card.sport);
+const img = card.image?.trim() ? card.image : getFallback(card.sport);
 const gridImg = getCardThumb(img);
 
+// ✅ STOCK
+const outOfStock = (card.stock ?? 0) <= 0;
 
-  // ✅ STOCK
-  const outOfStock = (card.stock ?? 0) <= 0;
+const baseCents = getBaseCents(card);
+const discountedCents = applySalePrice(baseCents, card.sport);
+const percent = getSalePercentForSport(card.sport);
+const onSale = SALE_ACTIVE && percent > 0;
+const inventoryBadge = getInventoryBadge(card);
 
   return (
     <div className="group relative rounded-[22px] p-[2px] transition">
@@ -1845,90 +1878,85 @@ const gridImg = getCardThumb(img);
 		</div>
           </div>
 
-          <div className="space-y-2 p-3 sm:space-y-3 sm:p-5">
-            <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-gray-900">{card.title}</h3>
-            <p className="text-sm text-gray-500">{card.player}</p>
+<div className="flex flex-col justify-between h-[260px] p-3 sm:p-5">
+  <h3 className="h-[40px] line-clamp-2 text-sm font-semibold leading-snug text-gray-900">{card.title}</h3>
+  <p className="text-sm text-gray-500">{card.player}</p>
 
-            <div className="flex items-center gap-2">
- {(() => {
-  const baseCents = getBaseCents(card);
-  const discountedCents = applySalePrice(baseCents, card.sport);
-  const percent = getSalePercentForSport(card.sport);
-  const onSale = SALE_ACTIVE && percent > 0;
-
-  return (
+  <div className="flex items-center gap-2">
     <div className="flex flex-col gap-1">
-      {/* Badges en su propia fila */}
-      <div className="flex flex-wrap items-center gap-2">
-  {onSale && (
-    <span className="shrink-0 whitespace-nowrap rounded-full bg-gray-200 text-gray-800 px-2 py-1 text-xs font-bold ">
-      -{percent}%
-    </span>
-  )}
+      <div className="flex flex-wrap items-center gap-2 min-h-[26px]">
+        {onSale && (
+          <span className="shrink-0 whitespace-nowrap rounded-full bg-gray-200 text-gray-800 px-2 py-1 text-xs font-bold">
+            -{percent}%
+          </span>
+        )}
 
-  {isGreatDeal(card) && (
-    <span className="shrink-0 whitespace-nowrap rounded-full bg-green-200 px-2 py-1 text-xs font-semibold text-green-700">
-      Great Deal
-    </span>
-  )}
-</div>
+        {isGreatDeal(card) && (
+          <span className="shrink-0 whitespace-nowrap rounded-full bg-green-200 px-2 py-1 text-xs font-semibold text-green-700">
+            Great Deal
+          </span>
+        )}
 
-      {/* Precio en su propia fila */}
-     <div className="flex flex-wrap items-end gap-2">
-  {onSale && (
-    <span className="text-sm text-gray-400 line-through whitespace-nowrap">
-      {formatUSD(baseCents / 100)}
-    </span>
-  )}
-  <span className={`text-lg font-bold whitespace-nowrap ${onSale ? "text-sky-600" : "text-gray-900"}`}>
-    {formatUSD(discountedCents / 100)}
-  </span>
-</div>
+        {inventoryBadge && (
+          <span
+            className={`shrink-0 whitespace-nowrap rounded-full px-2 py-1 text-xs font-semibold ${inventoryBadge.className}`}
+          >
+            {inventoryBadge.label}
+          </span>
+        )}
+      </div>
+
+      <div className="flex flex-wrap items-end gap-2">
+        {onSale && (
+          <span className="text-sm text-gray-400 line-through whitespace-nowrap">
+            {formatUSD(baseCents / 100)}
+          </span>
+        )}
+
+        <span className={`text-lg font-bold whitespace-nowrap ${onSale ? "text-sky-600" : "text-gray-900"}`}>
+          {formatUSD(discountedCents / 100)}
+        </span>
+      </div>
     </div>
-  );
-})()}
+  </div>
 
-
-</div>
-
-{/* ✅ STOCK: deshabilitar agregar */}
-<button
-  type="button"
-  onClick={(e) => {
-    e.stopPropagation();
-    if (outOfStock) return;
-    onAddToCart();
-  }}
-  disabled={outOfStock}
-  className={[
-    "w-full rounded-full py-3 text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2",
-    outOfStock
-      ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-      : maxStock
-      ? "bg-orange-500 text-white scale-[0.97] cursor-pointer"
-      : added
-      ? "bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.35)] scale-[0.97] cursor-pointer"
-      : "bg-gradient-to-r from-sky-400 to-sky-600 text-white hover:from-sky-600 hover:to-sky-800 shadow-md active:scale-[0.97] cursor-pointer",
-  ].join(" ")}
->
-  {outOfStock ? (
-    "Sin stock"
-  ) : maxStock ? (
-    "Máximo disponible"
-  ) : added ? (
-    <>
-      <Check size={18} />
-      Added!
-    </>
-  ) : (
-    <>
-      <ShoppingCart size={18} />
-      {t("addToCart")}
-    </>
-  )}
-</button>
-          </div>
-        </div>
+  <button
+    type="button"
+    onClick={(e) => {
+      e.stopPropagation();
+      if (outOfStock) return;
+      onAddToCart();
+    }}
+    disabled={outOfStock}
+    className={[
+      "w-full rounded-full py-3 text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2",
+      outOfStock
+        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+        : maxStock
+        ? "bg-orange-500 text-white scale-[0.97] cursor-pointer"
+        : added
+        ? "bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.35)] scale-[0.97] cursor-pointer"
+        : "bg-gradient-to-r from-sky-400 to-sky-600 text-white hover:from-sky-600 hover:to-sky-800 shadow-md active:scale-[0.97] cursor-pointer",
+    ].join(" ")}
+  >
+    {outOfStock ? (
+      "Sin stock"
+    ) : maxStock ? (
+      "Máximo disponible"
+    ) : added ? (
+      <>
+        <Check size={18} />
+        Added!
+      </>
+    ) : (
+      <>
+        <ShoppingCart size={18} />
+        {t("addToCart")}
+      </>
+    )}
+  </button>
+</div>       
+      </div>
       </div>
     </div>
   );

@@ -58,6 +58,8 @@ async function main() {
     const priceCents = Math.round(price * 100);
     const image = String(r.image ?? "").trim() || null;
     const image2 = String(r.image2 ?? "").trim() || null;
+const inventory_location = String(r.inventory_location ?? "").trim().toLowerCase() || null;
+const ships_from = String(r.ships_from ?? "").trim().toLowerCase() || null;
 
     // ✅ acepta ambos nombres de columna
     const greatDeal = normalizeYes(r.greatDeal ?? r.great_deal);
@@ -70,8 +72,21 @@ async function main() {
 
     if (!exists.has(id)) {
       await prisma.card.create({
-        data: { id, sport, title, player, priceCents, image, image2, stock, greatDeal, auto },
-      });
+  data: {
+    id,
+    sport,
+    title,
+    player,
+    priceCents,
+    image,
+    image2,
+    stock,
+    greatDeal,
+    auto,
+    inventory_location,
+    ships_from,
+  },
+});
       exists.add(id);
       created++;
     } else {
@@ -87,6 +102,8 @@ async function main() {
     greatDeal,
     stock,
     auto,
+inventory_location,
+ships_from,
   },
   create: {
     id,
@@ -99,6 +116,8 @@ async function main() {
     greatDeal,
     stock,
     auto,
+inventory_location,
+ships_from,
   },
 });
 
