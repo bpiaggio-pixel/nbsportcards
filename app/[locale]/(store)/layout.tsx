@@ -28,9 +28,9 @@ export default async function StoreLayout({
       <Header />
       <main className="flex-1">{children}</main>
 
-      <footer className="border-t border-gray-200 bg-gray-100">
+      <footer className="border-t border-gray-200 bg-gray-100 min-h-[320px]">
   <div className="mx-auto max-w-7xl px-6 py-10">
-    <div className="flex flex-col gap-16 lg:flex-row lg:items-start lg:justify-between">
+    <div className="flex flex-col gap-16 lg:min-h-[200px] lg:flex-row lg:items-start lg:justify-between">
       
       {/* izquierda */}
       <div className="max-w-md">
@@ -58,27 +58,57 @@ export default async function StoreLayout({
         <div className="mt-7">
           <p className="text-sm font-semibold text-gray-900">{t("paymentMethods")}</p>
 
-          <div className="mt-3 flex flex-wrap items-center gap-2">
-            <div className="rounded-md border border-gray-200 bg-white px-2.5 py-1.5 shadow-sm">
-              <Image src="/payments/visa.svg" alt="Visa" width={42} height={18} className="h-4 w-auto object-contain"/>
-            </div>
+         <div className="mt-3 flex flex-wrap items-center gap-2">
+  <div className="flex h-[34px] w-[72px] items-center justify-center rounded-md border border-gray-200 bg-white px-2.5 py-1.5 shadow-sm">
+    <Image
+      src="/payments/visa.svg"
+      alt="Visa"
+      width={42}
+      height={18}
+      className="h-[18px] w-[42px] object-contain"
+    />
+  </div>
 
-            <div className="rounded-md border border-gray-200 bg-white px-2.5 py-1.5 shadow-sm">
-              <Image src="/payments/mastercard.svg" alt="Mastercard" width={42} height={18} className="h-4 w-auto object-contain"/>
-            </div>
+  <div className="flex h-[34px] w-[72px] items-center justify-center rounded-md border border-gray-200 bg-white px-2.5 py-1.5 shadow-sm">
+    <Image
+      src="/payments/mastercard.svg"
+      alt="Mastercard"
+      width={42}
+      height={18}
+      className="h-[18px] w-[42px] object-contain"
+    />
+  </div>
 
-            <div className="rounded-md border border-gray-200 bg-white px-2.5 py-1.5 shadow-sm">
-              <Image src="/payments/amex.svg" alt="Amex" width={42} height={18} className="h-4 w-auto object-contain"/>
-            </div>
+  <div className="flex h-[34px] w-[72px] items-center justify-center rounded-md border border-gray-200 bg-white px-2.5 py-1.5 shadow-sm">
+    <Image
+      src="/payments/amex.svg"
+      alt="Amex"
+      width={42}
+      height={18}
+      className="h-[18px] w-[42px] object-contain"
+    />
+  </div>
 
-            <div className="rounded-md border border-gray-200 bg-white px-2.5 py-1.5 shadow-sm">
-              <Image src="/payments/paypal.svg" alt="PayPal" width={42} height={18} className="h-4 w-auto object-contain"/>
-            </div>
+  <div className="flex h-[34px] w-[72px] items-center justify-center rounded-md border border-gray-200 bg-white px-2.5 py-1.5 shadow-sm">
+    <Image
+      src="/payments/paypal.svg"
+      alt="PayPal"
+      width={42}
+      height={18}
+      className="h-[18px] w-[42px] object-contain"
+    />
+  </div>
 
-            <div className="rounded-md border border-gray-200 bg-white px-2.5 py-1.5 shadow-sm">
-              <Image src="/payments/mercadopago.svg" alt="Mercado Pago" width={58} height={18} className="h-4 w-auto object-contain"/>
-            </div>
-          </div>
+  <div className="flex h-[34px] w-[88px] items-center justify-center rounded-md border border-gray-200 bg-white px-2.5 py-1.5 shadow-sm">
+    <Image
+      src="/payments/mercadopago.svg"
+      alt="Mercado Pago"
+      width={58}
+      height={18}
+      className="h-[18px] w-[58px] object-contain"
+    />
+  </div>
+</div>
         </div>
       </div>
 
@@ -144,7 +174,7 @@ export default async function StoreLayout({
       </div>
 
      {/* derecha - newsletter */}
-<div className="w-full max-w-sm min-h-[140px]">
+<div className="w-full max-w-sm min-h-[190px]">
   <p className="text-sm font-semibold text-gray-900">{t("stayUpdated")}</p>
   <p className="mt-1 text-sm text-gray-500">{t("newsletterText")}</p>
 
