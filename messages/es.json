@@ -96,6 +96,13 @@
     "autono": "Sin Autógrafo",
     "first": "Incio",
     "last": "Fin",
+    "shipsFrom": "Este artículo se envía desde",
+    "badges": {
+    "comc": "Almacenado en COMC",
+    "fanatics": "Almacenado en Fanatics",
+    "argentina": "Almacenado en Argentina"
+     },
+    "storedAt": "Almacenado en",
     "loading": "Cargando…"
   },
   "Footer": {

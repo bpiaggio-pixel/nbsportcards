@@ -388,7 +388,7 @@ async function checkout() {
     <div className="min-h-screen bg-[#f6f7f8] text-gray-900">
       <div className="mx-auto max-w-4xl px-6 py-10">
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-23">
             <div className="rounded-full border border-gray-200 bg-white p-2">
               <ShoppingCart size={18} />
             </div>

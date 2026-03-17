@@ -236,7 +236,7 @@ export default function OrdersPage() {
             <p className="text-sm text-gray-700">You haven't made any purchases yet.</p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-10">
             {orders.map((o) => {
               const status = String(o.status ?? "PENDING").toUpperCase();
 
@@ -334,7 +334,7 @@ export default function OrdersPage() {
                     </div>
                   </div>
 
-                  <div className="mt-4 space-y-4">
+                  <div className="mt-8 space-y-4">
                     {(o.shipments ?? []).map((shipment: any) => {
                       const shipmentId = String(shipment.id);
                       const shipmentStatus = String(shipment.status ?? "PENDING").toUpperCase();

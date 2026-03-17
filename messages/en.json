@@ -93,6 +93,13 @@
     "autono": "without Autograph",
     "first": "First",
     "last": "Last",
+    "shipsFrom": "This item ships from",
+    "badges": {
+    "comc": "Stored at COMC",
+    "fanatics": "Stored at Fanatics",
+    "argentina": "Stored in Argentina"
+     },
+    "storedAt": "Stored at",
     "loading": "Loading…"
   },
 "Footer": {
