@@ -1278,7 +1278,7 @@ const topShowcaseItems = React.useMemo(() => {
             </div>
           </div>
 
-          <div className="grid gap-4 grid-cols-2 items-start min-h-[2200px] sm:min-h-[1800px] lg:gap-6 lg:grid-cols-3 lg:min-h-[980px]">
+          <div className="grid gap-4 grid-cols-2 items-start min-h-[2200px] sm:min-h-[1800px] gap-2 sm:gap-4 lg:gap-6 lg:grid-cols-3 lg:min-h-[980px]">
   {cardsLoading
   ? Array.from({ length: 9 }).map((_, i) => <CardTileSkeleton key={i} />)
   : paged.map((card, index) => (
@@ -1891,7 +1891,7 @@ const inventoryBadge = getInventoryBadge(card);
           }}
           className="block w-full text-left"
         >
-          <div className="relative h-[130px] sm:h-[280px] overflow-hidden border-b border-gray-200 bg-[#f3f4f6]">
+          <div className="relative h-[160px] sm:h-[280px] overflow-hidden border-b border-gray-200 bg-[#f3f4f6]">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(255,255,255,0.95),rgba(255,255,255,0)_58%)]" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_55%,rgba(0,0,0,0.10),rgba(0,0,0,0)_65%)] opacity-40" />
             <div className="relative z-10 flex h-full items-center justify-center">
@@ -1907,7 +1907,7 @@ const inventoryBadge = getInventoryBadge(card);
 		</div>
           </div>
 
-<div className="flex flex-col justify-between h-[200px] sm:h-[260px] p-3 sm:p-5">
+<div className="flex flex-col justify-between h-[230px] sm:h-[260px] p-3 sm:p-5">
   <h3 className="h-[40px] line-clamp-2 text-sm font-semibold leading-snug text-gray-900">{card.title}</h3>
   <p className="text-sm text-gray-500">{card.player}</p>
 
