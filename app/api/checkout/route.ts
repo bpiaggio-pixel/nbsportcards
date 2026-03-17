@@ -3,12 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
-// ✅ normaliza ids ("Card-011" -> "11")
-const normId = (v: any) => {
-  const s = String(v ?? "").trim();
-  const m = s.match(/\d+/);
-  return m ? String(parseInt(m[0], 10)) : s;
-};
+const normId = (v: any) => String(v ?? "").trim();
 
 const ALLOWED_COUNTRIES = ["AR", "US", "ES", "IT", "DE", "FR"] as const;
 type AllowedCountry = (typeof ALLOWED_COUNTRIES)[number];
@@ -59,6 +54,14 @@ function applySportDiscount(unitCents: number, sport?: string | null) {
   return Math.round(unitCents * (1 - percent / 100));
 }
 
+function mapInventoryLocation(value: unknown): "COMC" | "FANATICS" | "ARGENTINA" {
+  const v = String(value ?? "").trim().toLowerCase();
+
+  if (v === "comc") return "COMC";
+  if (v === "fanatics") return "FANATICS";
+  return "ARGENTINA";
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
@@ -107,7 +110,14 @@ export async function POST(req: Request) {
     const cardIds = Array.from(new Set(cartItems.map((it) => it.cardId)));
 const cards = await prisma.card.findMany({
   where: { id: { in: cardIds } },
-  select: { id: true, title: true, priceCents: true, stock: true, sport: true },
+  select: {
+    id: true,
+    title: true,
+    priceCents: true,
+    stock: true,
+    sport: true,
+    inventory_location: true,
+  },
 });
 
     const byId = new Map(cards.map((c) => [c.id, c]));
@@ -127,35 +137,82 @@ const cards = await prisma.card.findMany({
 const orderItems = cartItems.map((it) => {
   const c = byId.get(it.cardId)!;
   const baseUnitCents = Number(c.priceCents ?? 0);
-
   const unitCents = applySportDiscount(baseUnitCents, c.sport);
+  const inventoryLocation = mapInventoryLocation(c.inventory_location);
 
-  return { cardId: c.id, title: c.title, unitCents, qty: it.qty };
+  return {
+    cardId: c.id,
+    title: c.title,
+    unitCents,
+    qty: it.qty,
+    inventoryLocation,
+  };
 });
+
+const groupedByLocation: Record<string, typeof orderItems> = {};
+
+for (const item of orderItems) {
+  const key = item.inventoryLocation;
+  if (!groupedByLocation[key]) groupedByLocation[key] = [];
+  groupedByLocation[key].push(item);
+}
 
     const subtotalCents = orderItems.reduce((acc, it) => acc + it.unitCents * it.qty, 0);
     const shippingCents = SHIPPING_USD_CENTS[country];
     const totalCents = subtotalCents + shippingCents;
 
     // crear order PENDING
-    const order = await prisma.order.create({
+    const order = await prisma.$transaction(async (tx) => {
+  const createdOrder = await tx.order.create({
+    data: {
+      userId,
+      totalCents,
+      currency: "USD",
+      status: "PENDING" as any,
+      fullName,
+      phone,
+      address1,
+      address2: address2 || null,
+      city,
+      state,
+      zip,
+      country,
+    },
+  });
+
+  const shipmentByLocation = new Map<string, string>();
+
+  for (const location of Object.keys(groupedByLocation)) {
+    const shipment = await tx.orderShipment.create({
       data: {
-        userId,
-        totalCents,
-        currency: "USD",
+        orderId: createdOrder.id,
+        inventoryLocation: location as "COMC" | "FANATICS" | "ARGENTINA",
         status: "PENDING" as any,
-        fullName,
-        phone,
-        address1,
-        address2: address2 || null,
-        city,
-        state,
-        zip,
-        country,
-        items: { create: orderItems },
       },
-      include: { items: true },
     });
+
+    shipmentByLocation.set(location, shipment.id);
+  }
+
+  await tx.orderItem.createMany({
+    data: orderItems.map((item) => ({
+      orderId: createdOrder.id,
+      shipmentId: shipmentByLocation.get(item.inventoryLocation) ?? null,
+      cardId: item.cardId,
+      title: item.title,
+      unitCents: item.unitCents,
+      qty: item.qty,
+    })),
+  });
+
+  return tx.order.findUniqueOrThrow({
+    where: { id: createdOrder.id },
+    include: {
+      items: true,
+      shipments: true,
+    },
+  });
+});
 
 return NextResponse.json({
   ok: true,
@@ -165,10 +222,18 @@ return NextResponse.json({
     shippingCents,
     subtotalCents,
     totalCents,
+    shipmentCount: order.shipments?.length ?? 0,
+    shipments: (order.shipments ?? []).map((s) => ({
+      id: s.id,
+      orderId: s.orderId,
+      inventoryLocation: s.inventoryLocation,
+      status: s.status,
+    })),
     items: orderItems.map((it) => ({
       cardId: it.cardId,
       qty: it.qty,
       unitCents: it.unitCents,
+      inventoryLocation: it.inventoryLocation,
     })),
   },
 });

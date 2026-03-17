@@ -26,6 +26,19 @@ export default async function ShippingPage({
                   "Los pedidos suelen procesarse dentro de 1 a 3 días hábiles después de la confirmación del pago.",
                 ],
               },
+               {
+		title: "Origen de los envíos (Importante)",
+paragraphs: [
+  "Los productos pueden enviarse desde diferentes ubicaciones según su disponibilidad:",
+  "En algunos casos, un mismo pedido puede dividirse en múltiples envíos si los artículos se encuentran en diferentes ubicaciones. Cada envío tendrá su propio seguimiento cuando corresponda.",
+],
+bullets: [
+  "Argentina",
+  "COMC (Check Out My Cards, EE.UU.)",
+  "Fanatics (EE.UU.)",
+],
+              },
+
               {
                 title: "Envíos",
                 paragraphs: [
@@ -98,6 +111,19 @@ export default async function ShippingPage({
                 paragraphs: [
                   "Orders are typically processed within 1–3 business days after payment is confirmed.",
                 ],
+              },
+
+               {
+		title: "Shipping Origin (Important)",
+paragraphs: [
+"Products may be shipped from different locations depending on availability:",
+    "In some cases, a single order may be split into multiple shipments if items are stored in different locations. Each shipment will have its own tracking information when applicable.",
+  ],
+bullets: [
+  "Argentina",
+  "COMC (Check Out My Cards, EE.UU.)",
+  "Fanatics (EE.UU.)",
+],
               },
               {
                 title: "Shipping",

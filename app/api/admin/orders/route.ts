@@ -18,12 +18,15 @@ export async function GET(req: Request) {
 
     const orders = await prisma.order.findMany({
       include: {
-        items: true,
-        user: { select: { email: true } },
-      },
-      orderBy: { createdAt: "desc" },
-      take: 200,
-    });
+    items: true,
+    shipments: {
+      orderBy: { createdAt: "asc" },
+    },
+    user: { select: { email: true } },
+  },
+  orderBy: { createdAt: "desc" },
+  take: 200,
+});
 
     return NextResponse.json({ orders });
   } catch (e: any) {

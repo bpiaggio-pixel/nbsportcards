@@ -31,13 +31,13 @@ export default function AdminOrdersPage() {
   const [orders, setOrders] = React.useState<any[]>([]);
   const [msg, setMsg] = React.useState("");
 
-  // form por orden (tracking)
   const [form, setForm] = React.useState<
     Record<string, { carrier: string; code: string; url: string }>
   >({});
 
   async function load() {
     setMsg("Cargando órdenes...");
+
     const res = await fetch("/api/admin/orders", {
       headers: { "x-admin-secret": secret },
       cache: "no-store",
@@ -53,8 +53,8 @@ export default function AdminOrdersPage() {
     setMsg("");
   }
 
-  async function ship(orderId: string) {
-    const f = form[orderId] || { carrier: "", code: "", url: "" };
+  async function ship(shipmentId: string) {
+    const f = form[shipmentId] || { carrier: "", code: "", url: "" };
 
     if (!f.code.trim()) {
       setMsg("❌ Falta trackingCode");
@@ -62,6 +62,7 @@ export default function AdminOrdersPage() {
     }
 
     setMsg("Guardando tracking...");
+
     const res = await fetch("/api/admin/orders/ship", {
       method: "POST",
       headers: {
@@ -69,7 +70,7 @@ export default function AdminOrdersPage() {
         "x-admin-secret": secret,
       },
       body: JSON.stringify({
-        orderId,
+        shipmentId,
         trackingCarrier: f.carrier,
         trackingCode: f.code,
         trackingUrl: f.url,
@@ -82,13 +83,13 @@ export default function AdminOrdersPage() {
       return;
     }
 
-    setMsg("✅ Tracking guardado! (SHIPPED)");
+    setMsg("✅ Tracking guardado!");
     await load();
     setTimeout(() => setMsg(""), 1500);
   }
 
-  async function deliver(orderId: string) {
-    setMsg("Marcando como entregada...");
+  async function deliver(shipmentId: string) {
+    setMsg("Marcando shipment como entregado...");
 
     const res = await fetch("/api/admin/orders/deliver", {
       method: "POST",
@@ -96,7 +97,7 @@ export default function AdminOrdersPage() {
         "Content-Type": "application/json",
         "x-admin-secret": secret,
       },
-      body: JSON.stringify({ orderId }),
+      body: JSON.stringify({ shipmentId }),
     });
 
     const data = await res.json().catch(() => ({}));
@@ -105,7 +106,7 @@ export default function AdminOrdersPage() {
       return;
     }
 
-    setMsg("✅ Marcada como entregada! (DELIVERED)");
+    setMsg("✅ Shipment marcado como entregado!");
     await load();
     setTimeout(() => setMsg(""), 1500);
   }
@@ -113,7 +114,7 @@ export default function AdminOrdersPage() {
   return (
     <div className="min-h-screen bg-[#f6f7f8] text-gray-900">
       <div className="mx-auto max-w-5xl px-6 py-10">
-        <div className="flex items-center justify-between mb-6">
+        <div className="mb-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold">🔧 Admin Orders</h1>
           <a
             className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold hover:bg-gray-50"
@@ -124,10 +125,10 @@ export default function AdminOrdersPage() {
         </div>
 
         <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-          <div className="text-sm font-semibold mb-2">Clave admin</div>
+          <div className="mb-2 text-sm font-semibold">Clave admin</div>
           <div className="flex gap-2">
             <input
-              className="flex-1 border p-3 rounded"
+              className="flex-1 rounded border p-3"
               placeholder="ADMIN_SECRET"
               value={secret}
               onChange={(e) => setSecret(e.target.value)}
@@ -147,32 +148,26 @@ export default function AdminOrdersPage() {
 
         <div className="mt-6 space-y-3">
           {orders.map((o) => {
-            const id = o.id as string;
+            const id = String(o.id);
             const status = String(o.status ?? "PENDING").toUpperCase();
-
-            const current = form[id] || {
-              carrier: o.trackingCarrier ?? "",
-              code: o.trackingCode ?? "",
-              url: o.trackingUrl ?? "",
-            };
 
             return (
               <div key={id} className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <div className="font-semibold flex items-center gap-2">
+                    <div className="flex items-center gap-2 font-semibold">
                       <span>Orden #{id}</span>
                       <StatusBadge status={status} />
                     </div>
 
-                    <div className="text-sm text-gray-600 mt-1">
+                    <div className="mt-1 text-sm text-gray-600">
                       Cliente:{" "}
                       <span className="font-semibold text-gray-900">
                         {o.user?.email ?? "-"}
                       </span>
                     </div>
 
-                    <div className="text-sm text-gray-600 mt-1">
+                    <div className="mt-1 text-sm text-gray-600">
                       Total:{" "}
                       <span className="font-bold text-gray-900">
                         {formatUSD((o.totalCents ?? 0) / 100)}
@@ -183,13 +178,13 @@ export default function AdminOrdersPage() {
                     </div>
 
                     {o.createdAt && (
-                      <div className="text-xs text-gray-500 mt-1">
+                      <div className="mt-1 text-xs text-gray-500">
                         Creada: {new Date(o.createdAt).toLocaleString()}
                       </div>
                     )}
 
                     {o.shippedAt && (
-                      <div className="text-xs text-gray-500 mt-1">
+                      <div className="mt-1 text-xs text-gray-500">
                         Enviada: {new Date(o.shippedAt).toLocaleString()}
                       </div>
                     )}
@@ -202,84 +197,149 @@ export default function AdminOrdersPage() {
                   ) : null}
                 </div>
 
-                {/* items */}
-                <div className="mt-4 border-t border-gray-200 pt-4 space-y-2">
-                  {o.items?.map((it: any) => (
-                    <div key={it.id} className="flex items-center justify-between text-sm">
-                      <div className="text-gray-800">
-                        {it.title} <span className="text-gray-500">x{it.qty}</span>
+                <div className="mt-4 border-t border-gray-200 pt-4">
+                  <div className="mb-3 text-sm font-semibold">Items de la orden</div>
+
+                  <div className="space-y-2">
+                    {o.items?.map((it: any) => (
+                      <div key={it.id} className="flex items-center justify-between text-sm">
+                        <div className="text-gray-800">
+                          {it.title} <span className="text-gray-500">x{it.qty}</span>
+                        </div>
+                        <div className="font-semibold text-gray-900">
+                          {formatUSD(((it.unitCents ?? 0) * (it.qty ?? 0)) / 100)}
+                        </div>
                       </div>
-                      <div className="font-semibold text-gray-900">
-                        {formatUSD(((it.unitCents ?? 0) * (it.qty ?? 0)) / 100)}
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
 
-                {/* tracking form */}
-                <div className="mt-4 rounded-xl border border-gray-200 bg-gray-50 p-4">
-                  <div className="text-sm font-semibold mb-3">🚚 Cargar seguimiento</div>
+                <div className="mt-4 space-y-4">
+                  {(o.shipments ?? []).length > 0 ? (
+                    o.shipments.map((shipment: any) => {
+                      const shipmentId = String(shipment.id);
+                      const shipmentStatus = String(shipment.status ?? "PENDING").toUpperCase();
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <input
-                      className="border p-3 rounded"
-                      placeholder="Carrier (opcional)"
-                      value={current.carrier}
-                      onChange={(e) =>
-                        setForm((m) => ({
-                          ...m,
-                          [id]: { ...current, carrier: e.target.value },
-                        }))
-                      }
-                    />
+                      const currentShipment = form[shipmentId] || {
+                        carrier: shipment.trackingCarrier ?? "",
+                        code: shipment.trackingCode ?? "",
+                        url: shipment.trackingUrl ?? "",
+                      };
 
-                    <input
-                      className="border p-3 rounded"
-                      placeholder="Tracking code (obligatorio)"
-                      value={current.code}
-                      onChange={(e) =>
-                        setForm((m) => ({
-                          ...m,
-                          [id]: { ...current, code: e.target.value },
-                        }))
-                      }
-                    />
+                      const shipmentItems = (o.items ?? []).filter(
+                        (it: any) => String(it.shipmentId ?? "") === shipmentId
+                      );
 
-                    <input
-                      className="border p-3 rounded"
-                      placeholder="Tracking URL (opcional)"
-                      value={current.url}
-                      onChange={(e) =>
-                        setForm((m) => ({
-                          ...m,
-                          [id]: { ...current, url: e.target.value },
-                        }))
-                      }
-                    />
-                  </div>
+                      return (
+                        <div
+                          key={shipmentId}
+                          className="rounded-xl border border-gray-200 bg-gray-50 p-4"
+                        >
+                          <div className="mb-3 flex items-center justify-between gap-3">
+                            <div>
+                              <div className="text-sm font-semibold">
+                                🚚 Shipment · {String(shipment.inventoryLocation ?? "")}
+                              </div>
+                              <div className="mt-1 text-xs text-gray-500">
+                                ID: <span className="font-mono">{shipmentId}</span>
+                              </div>
+                            </div>
 
-                  <div className="mt-3 flex items-center justify-end gap-2">
-                    <button
-                      className="rounded-full bg-black px-6 py-3 text-sm font-semibold text-white hover:bg-gray-900"
-                      onClick={() => ship(id)}
-                      type="button"
-                    >
-                      Guardar tracking
-                    </button>
+                            <StatusBadge status={shipmentStatus} />
+                          </div>
 
-                    <button
-                      className="rounded-full border border-gray-200 bg-white px-6 py-3 text-sm font-semibold hover:bg-gray-50"
-                      onClick={() => deliver(id)}
-                      type="button"
-                    >
-                      Marcar entregada
-                    </button>
-                  </div>
+                          {shipment.shippedAt && (
+                            <div className="mb-2 text-xs text-gray-500">
+                              Enviada: {new Date(shipment.shippedAt).toLocaleString()}
+                            </div>
+                          )}
 
-                  <div className="mt-2 text-xs text-gray-500">
-                    Guardar tracking marca la orden como <span className="font-semibold">SHIPPED</span>.{" "}
-                    Marcar entregada la pone como <span className="font-semibold">DELIVERED</span>.
-                  </div>
+                          {shipment.deliveredAt && (
+                            <div className="mb-2 text-xs text-gray-500">
+                              Entregada: {new Date(shipment.deliveredAt).toLocaleString()}
+                            </div>
+                          )}
+
+                          <div className="mb-4 space-y-2">
+                            {shipmentItems.map((it: any) => (
+                              <div key={it.id} className="flex items-center justify-between text-sm">
+                                <div className="text-gray-800">
+                                  {it.title} <span className="text-gray-500">x{it.qty}</span>
+                                </div>
+                                <div className="font-semibold text-gray-900">
+                                  {formatUSD(((it.unitCents ?? 0) * (it.qty ?? 0)) / 100)}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                            <input
+                              className="rounded border p-3"
+                              placeholder="Carrier (opcional)"
+                              value={currentShipment.carrier}
+                              onChange={(e) =>
+                                setForm((m) => ({
+                                  ...m,
+                                  [shipmentId]: { ...currentShipment, carrier: e.target.value },
+                                }))
+                              }
+                            />
+
+                            <input
+                              className="rounded border p-3"
+                              placeholder="Tracking code (obligatorio)"
+                              value={currentShipment.code}
+                              onChange={(e) =>
+                                setForm((m) => ({
+                                  ...m,
+                                  [shipmentId]: { ...currentShipment, code: e.target.value },
+                                }))
+                              }
+                            />
+
+                            <input
+                              className="rounded border p-3"
+                              placeholder="Tracking URL (opcional)"
+                              value={currentShipment.url}
+                              onChange={(e) =>
+                                setForm((m) => ({
+                                  ...m,
+                                  [shipmentId]: { ...currentShipment, url: e.target.value },
+                                }))
+                              }
+                            />
+                          </div>
+
+                          <div className="mt-3 flex items-center justify-end gap-2">
+                            <button
+                              className="rounded-full bg-black px-6 py-3 text-sm font-semibold text-white hover:bg-gray-900"
+                              onClick={() => ship(shipmentId)}
+                              type="button"
+                            >
+                              Guardar tracking
+                            </button>
+
+                            <button
+                              className="rounded-full border border-gray-200 bg-white px-6 py-3 text-sm font-semibold hover:bg-gray-50"
+                              onClick={() => deliver(shipmentId)}
+                              type="button"
+                            >
+                              Marcar entregada
+                            </button>
+                          </div>
+
+                          <div className="mt-2 text-xs text-gray-500">
+                            Este tracking afecta solo este shipment.
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+                      Esta orden no tiene shipments nuevos. Puede ser una orden vieja del sistema anterior.
+                    </div>
+                  )}
                 </div>
               </div>
             );

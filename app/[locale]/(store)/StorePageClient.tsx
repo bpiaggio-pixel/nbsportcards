@@ -326,17 +326,7 @@ const [highlights, setHighlights] = React.useState<{
   const searchParams = useSearchParams();
   const search = (searchParams?.get("q") ?? "").toLowerCase().trim();
 
-// ✅ NORMALIZADOR DE ID (CLAVE) — FIX: no “recortar” IDs tipo cuid/uuid
-const normId = React.useCallback((v: any) => {
-  const s = String(v ?? "").trim();
-
-  // Si el id es puramente numérico, lo normalizamos (quita ceros, etc.)
-  if (/^\d+$/.test(s)) return String(parseInt(s, 10));
-
-  // Si no es numérico (cuid/uuid/etc), lo devolvemos tal cual
-  return s;
-}, []);
-
+const normId = React.useCallback((v: any) => String(v ?? "").trim(), []);
 
   // ✅ ZOOM + PAN (solo para el modal)
   const [zoom, setZoom] = React.useState(1);
@@ -409,18 +399,28 @@ const mid = (a: { x: number; y: number }, b: { x: number; y: number }) => ({
 
   // ✅ 1) Normaliza IDs y elimina duplicados por id (NORMALIZADO)
   // ✅ + Normaliza stock a number
-  const uniqueCards = React.useMemo(() => {
-    const map = new Map<string, Card>();
-    for (const c of cards) {
-      const id = normId(c.id);
-      if (!id) continue;
+const uniqueCards = React.useMemo(() => {
+  const map = new Map<string, Card>();
 
-      const stock = Math.max(0, Math.floor(Number((c as any).stock ?? 0)));
+  for (const c of cards) {
+    const id = normId(c.id);
 
-      if (!map.has(id)) map.set(id, { ...c, id, stock });
-    }
-    return Array.from(map.values());
-  }, [cards, normId]);
+    if (!id) continue;
+
+    const stock = Math.max(0, Math.floor(Number((c as any).stock ?? 0)));
+
+    // 🔥 IMPORTANTE: forzar ID limpio SIEMPRE
+    const normalizedCard = {
+      ...c,
+      id, // 👈 esto es clave
+      stock,
+    };
+
+    map.set(id, normalizedCard);
+  }
+
+  return Array.from(map.values());
+}, [cards, normId]);
 
 
 
@@ -483,6 +483,7 @@ React.useEffect(() => {
   const [sport, setSport] = React.useState<"all" | Sport>("all");
   const [player, setPlayer] = React.useState<"all" | string>("all");
   const [autoFilter, setAutoFilter] = React.useState<"all" | "yes" | "no">("all");
+  const [inventoryLocationFilter, setInventoryLocationFilter] = React.useState<"all" | "comc" | "fanatics" | "argentina">("all");
   const [sort, setSort] = React.useState<"recommended" | "price_desc" | "price_asc">("recommended");
 
   // ✅ mobile filters drawer
@@ -492,6 +493,7 @@ function clearFilters() {
   setSport("all");
   setPlayer("all");
   setAutoFilter("all");
+  setInventoryLocationFilter("all");
   setSort("recommended");
   setPage(1);
 }
@@ -502,7 +504,7 @@ function clearFilters() {
 
 React.useEffect(() => {
   setPage(1);
-}, [search, sport, player, autoFilter, sort]);
+}, [search, sport, player, autoFilter, inventoryLocationFilter, sort]);
 
 React.useEffect(() => {
   let cancelled = false;
@@ -516,6 +518,7 @@ React.useEffect(() => {
         sport,
         player,
         auto: autoFilter,
+        inventory_location: inventoryLocationFilter,
         sort,
         page: String(page),
         pageSize: String(pageSize),
@@ -545,7 +548,7 @@ const res = await fetch(`/api/cards?${params.toString()}`, {
   return () => {
     cancelled = true;
   };
-}, [search, sport, player, autoFilter, sort, page]);
+}, [search, sport, player, autoFilter, inventoryLocationFilter, sort, page]);
 React.useEffect(() => {
   async function loadHighlights() {
     try {
@@ -554,6 +557,7 @@ React.useEffect(() => {
         sport,
         player,
         auto: autoFilter,
+  inventory_location: inventoryLocationFilter,
       });
 
       const res = await fetch(`/api/cards/highlights?${params.toString()}`, {
@@ -577,7 +581,7 @@ React.useEffect(() => {
   }
 
   loadHighlights();
-}, [search, sport, player, autoFilter]);
+}, [search, sport, player, autoFilter, inventoryLocationFilter]);
 
 React.useEffect(() => {
   async function loadTopShowcase() {
@@ -986,6 +990,19 @@ const topShowcaseItems = React.useMemo(() => {
               <option value="no">{t("autono")}</option>
             </select>
           </div>
+<div>
+  <p className="mb-3 text-sm font-semibold text-gray-800">Stored at</p>
+  <select
+    value={inventoryLocationFilter}
+    onChange={(e) => setInventoryLocationFilter(e.target.value as any)}
+    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-black/10"
+  >
+    <option value="all">{t("all")}</option>
+    <option value="comc">COMC</option>
+    <option value="fanatics">Fanatics</option>
+    <option value="argentina">Argentina</option>
+  </select>
+</div>
 
           <div>
             <p className="mb-3 text-sm font-semibold text-gray-800">{t("wishlist")}</p>
@@ -1149,6 +1166,19 @@ const topShowcaseItems = React.useMemo(() => {
   </select>
 </div>
 
+<div>
+  <p className="mb-3 text-sm font-semibold text-gray-800">Stored at</p>
+  <select
+    value={inventoryLocationFilter}
+    onChange={(e) => setInventoryLocationFilter(e.target.value as any)}
+    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-black/10"
+  >
+    <option value="all">{t("all")}</option>
+    <option value="comc">COMC</option>
+    <option value="fanatics">Fanatics</option>
+    <option value="argentina">Argentina</option>
+  </select>
+</div>
         <div>
           <p className="mb-3 text-sm font-semibold text-gray-800">{t("wishlist")}</p>
           <div className="text-sm text-gray-600">

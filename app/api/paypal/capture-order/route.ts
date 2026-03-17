@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { paypalFetch } from "@/lib/paypal";
-import { applySaleCents } from "@/lib/discounts";
 export const runtime = "nodejs";
 
 function centsFromUSD(value: any): number {
@@ -10,44 +9,6 @@ function centsFromUSD(value: any): number {
   return Math.round(n * 100);
 }
 
-async function computeExpectedTotalDiscountedCents(orderId: string) {
-  const order = await prisma.order.findUnique({
-    where: { id: orderId },
-    include: { items: true },
-  });
-  if (!order) return null;
-
-  const itemsSubtotalBaseCents = (order as any).items.reduce((acc: number, it: any) => {
-    return acc + Number(it.unitCents ?? 0) * Number(it.qty ?? 0);
-  }, 0);
-
-  const shippingCents = Number((order as any).totalCents ?? 0) - itemsSubtotalBaseCents;
-
-  const cardIds: string[] = Array.from(
-  new Set(
-    (order as any).items
-      .map((it: any) => String(it.cardId))
-      .filter(Boolean)
-  )
-);
-  const cards = await prisma.card.findMany({
-    where: { id: { in: cardIds } },
-    select: { id: true, sport: true },
-  });
-  const sportById = new Map(cards.map((c) => [c.id, c.sport]));
-
-  const itemsSubtotalDiscountedCents = (order as any).items.reduce((acc: number, it: any) => {
-    const unit = Number(it.unitCents ?? 0);
-    const qty = Number(it.qty ?? 0);
-    const sport = sportById.get(it.cardId);
-    const discountedUnit = applySaleCents(unit, sport);
-    return acc + discountedUnit * qty;
-  }, 0);
-
-  const expectedTotalDiscountedCents = itemsSubtotalDiscountedCents + Math.max(0, shippingCents);
-
-  return { expectedTotalDiscountedCents };
-}
 
 async function markPaidAndFulfill(orderId: string, paypalOrderId: string, captureId?: string | null, payerEmail?: string | null) {
   await prisma.$transaction(async (tx) => {
@@ -124,18 +85,15 @@ export async function POST(req: Request) {
     const capturedValue = capture?.purchase_units?.[0]?.payments?.captures?.[0]?.amount?.value;
     const capturedCents = centsFromUSD(capturedValue);
 
-    const computed = await computeExpectedTotalDiscountedCents(orderId);
-    if (!computed) return NextResponse.json({ error: "Order not found" }, { status: 404 });
+const expectedCents = Number(order.totalCents ?? 0);
 
-    const expectedCents = computed.expectedTotalDiscountedCents;
-
-    // tolerancia mínima por redondeos (1 cent)
-    if (Math.abs(capturedCents - expectedCents) > 1) {
-      return NextResponse.json(
-        { error: "Captured amount mismatch", capturedCents, expectedCents },
-        { status: 400 }
-      );
-    }
+// tolerancia mínima por redondeos (1 cent)
+if (Math.abs(capturedCents - expectedCents) > 1) {
+  return NextResponse.json(
+    { error: "Captured amount mismatch", capturedCents, expectedCents },
+    { status: 400 }
+  );
+}
 
     if (status === "COMPLETED") {
       await markPaidAndFulfill(orderId, paypalOrderId, captureId, payerEmail);

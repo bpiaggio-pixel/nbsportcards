@@ -98,12 +98,7 @@ function applySalePrice(cents: number, sport?: string) {
 }
 
 
-// ✅ normaliza IDs: "Card-011" -> "11"
-const normId = (v: any) => {
-  const s = String(v ?? "").trim();
-  const m = s.match(/\d+/);
-  return m ? String(parseInt(m[0], 10)) : s;
-};
+const normId = (v: any) => String(v ?? "").trim();
 
 const ALLOWED_COUNTRIES = [
   { code: "AR", label: "Argentina" },
@@ -147,7 +142,6 @@ export default function CartPage() {
   const router = useRouter();
 
   const [user, setUser] = React.useState<any>(null);
-  const [cards, setCards] = React.useState<Card[]>([]);
   const [items, setItems] = React.useState<{ cardId: string; qty: number }[]>([]);
   const [msg, setMsg] = React.useState("");
 const pathname = usePathname() || "";
@@ -176,78 +170,54 @@ const ordersUrl = `/${locale}/orders`;
   }, []);
 
   // ✅ carga cards desde Excel (API)
-  async function loadCards() {
-    try {
-      const res = await fetch("/api/cards", { cache: "no-store" });
-      const data = await res.json();
-      if (!res.ok) return;
-
-      const list: Card[] = Array.isArray(data.cards) ? data.cards : [];
-
-      setCards(
-        list.map((c) => ({
-          ...c,
-          id: normId(c.id),
-          stock: Math.max(0, Math.floor(Number(c.stock ?? 0))),
-        }))
-      );
-    } catch {}
-  }
-
-  React.useEffect(() => {
-    loadCards();
-  }, []);
 
   async function loadCart(uid: string) {
   const res = await fetch(`/api/cart?userId=${encodeURIComponent(uid)}`, { cache: "no-store" });
   const data = await res.json().catch(() => ({}));
 
-  // ✅ NUEVO: si user no existe, limpiar y login
   if (handleUserNotFound(res, data, router)) return;
 
   const list = Array.isArray(data.items) ? data.items : [];
 
-  const map = new Map<string, number>();
-  for (const x of list) {
-    const id = normId(x.cardId);
-    const qty = Number(x.qty ?? 0);
-    map.set(id, (map.get(id) ?? 0) + qty);
-  }
-
-  setItems(Array.from(map.entries()).map(([cardId, qty]) => ({ cardId, qty })));
+  setItems(
+    list.map((x: any) => ({
+      cardId: normId(x.cardId),
+      qty: Number(x.qty ?? 0),
+      card: x.card ?? null,
+    }))
+  );
 }
 
+React.useEffect(() => {
+  if (!user?.id) return;
+  loadCart(user.id);
+}, [user?.id]);
 
-  React.useEffect(() => {
-    if (!user?.id) return;
-    loadCart(user.id);
-  }, [user?.id]);
-
-  const cardsById = React.useMemo(() => {
-    const m = new Map<string, Card>();
-    for (const c of cards) m.set(normId(c.id), c);
-    return m;
-  }, [cards]);
-
-  const enriched = React.useMemo(() => {
-    return items.map((it) => {
-      const c = cardsById.get(normId(it.cardId));
-      return {
-        ...it,
-        card:
-          c ??
-          ({
+const enriched = React.useMemo(() => {
+  return items.map((it: any) => ({
+    ...it,
+    card:
+      it.card
+        ? {
+            id: normId(it.card.id),
+            sport: it.card.sport,
+            title: it.card.title,
+            player: it.card.player,
+            price: Number((Number(it.card.priceCents ?? 0) / 100).toFixed(2)),
+            image: it.card.image ?? undefined,
+            stock: Math.max(0, Math.floor(Number(it.card.stock ?? 0))),
+          }
+        : {
             id: it.cardId,
-            sport: "basketball",
+            sport: "basketball" as Sport,
             title: `Card ${it.cardId}`,
             player: "-",
             price: 0,
             image: undefined,
             stock: 0,
-          } as Card),
-      };
-    });
-  }, [items, cardsById]);
+          },
+  }));
+}, [items]);
 
   const subtotalBase = enriched.reduce((acc, it) => acc + Number(it.card.price) * it.qty, 0);
 

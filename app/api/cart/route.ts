@@ -3,11 +3,9 @@ import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
-const normId = (v: any) => {
-  const s = String(v ?? "").trim();
-  const m = s.match(/\d+/);
-  return m ? String(parseInt(m[0], 10)) : s;
-};
+const normId = (v: any) => String(v ?? "").trim();
+
+
 
 async function ensureUserExists(userId: string) {
   const user = await prisma.user.findUnique({
@@ -29,10 +27,13 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "USER_NOT_FOUND" }, { status: 401 });
     }
 
-    const items = await prisma.cartItem.findMany({
-      where: { userId },
-      orderBy: { updatedAt: "desc" },
-    });
+const items = await prisma.cartItem.findMany({
+  where: { userId },
+  orderBy: { updatedAt: "desc" },
+  include: {
+    card: true,
+  },
+});
 
     return NextResponse.json({ items });
   } catch (e: any) {

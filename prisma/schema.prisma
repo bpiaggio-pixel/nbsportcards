@@ -34,6 +34,7 @@ model Card {
   updatedAt  DateTime @updatedAt
   inventory_location String?
   ships_from         String?
+  cartItems CartItem[]
 }
 
 model Post {
@@ -106,6 +107,7 @@ model CartItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
 
   @@unique([userId, cardId])
   @@index([userId])
@@ -122,10 +124,7 @@ model Order {
   mpMerchantOrderId String?
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
-  trackingCarrier   String?
-  trackingCode      String?
-  trackingUrl       String?
-  shippedAt         DateTime?
+
   fullName          String?
   phone             String?
   address1          String?
@@ -134,27 +133,67 @@ model Order {
   state             String?
   zip               String?
   country           String?
+
   paypalOrderId     String?
   paypalCaptureId   String?
   paypalPayerEmail  String?
+
   user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   items             OrderItem[]
+  shipments         OrderShipment[]
 
   @@index([userId])
 }
 
-model OrderItem {
-  id        String @id @default(cuid())
-  orderId   String
-  cardId    String
-  title     String
-  unitCents Int
-  qty       Int
-  order     Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+model OrderShipment {
+  id                String              @id @default(cuid())
+  orderId           String
+  inventoryLocation InventoryLocation
+  status            ShipmentStatus      @default(PENDING)
+
+  trackingCarrier   String?
+  trackingCode      String?
+  trackingUrl       String?
+  shippedAt         DateTime?
+  deliveredAt       DateTime?
+
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  order             Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  items             OrderItem[]
 
   @@index([orderId])
+  @@unique([orderId, inventoryLocation])
 }
 
+model OrderItem {
+  id          String         @id @default(cuid())
+  orderId     String
+  shipmentId  String?
+  cardId      String
+  title       String
+  unitCents   Int
+  qty         Int
+
+  order       Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  shipment    OrderShipment? @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+  @@index([shipmentId])
+}
+
+enum InventoryLocation {
+  COMC
+  FANATICS
+  ARGENTINA
+}
+
+enum ShipmentStatus {
+  PENDING
+  SHIPPED
+  DELIVERED
+}
 enum OrderStatus {
   PENDING
   PAID

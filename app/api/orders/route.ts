@@ -2,15 +2,28 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const userId = searchParams.get("userId");
-  if (!userId) return NextResponse.json({ error: "Missing userId" }, { status: 400 });
+  try {
+    const { searchParams } = new URL(req.url);
+    const userId = String(searchParams.get("userId") ?? "").trim();
 
-  const orders = await prisma.order.findMany({
-    where: { userId },
-    include: { items: true },
-    orderBy: { createdAt: "desc" },
-  });
+    if (!userId) {
+      return NextResponse.json({ error: "Missing userId" }, { status: 400 });
+    }
 
-  return NextResponse.json({ orders });
+    const orders = await prisma.order.findMany({
+      where: { userId },
+      include: {
+        items: true,
+        shipments: {
+          orderBy: { createdAt: "asc" },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return NextResponse.json({ orders });
+  } catch (e: any) {
+    console.error("ORDERS GET ERROR:", e);
+    return NextResponse.json({ error: e?.message ?? "Server error" }, { status: 500 });
+  }
 }

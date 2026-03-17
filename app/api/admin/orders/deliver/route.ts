@@ -11,30 +11,67 @@ export async function POST(req: Request) {
     if (!process.env.ADMIN_SECRET) {
       return NextResponse.json({ error: "Missing ADMIN_SECRET in env" }, { status: 500 });
     }
+
     if (!isAuthorized(req)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await req.json().catch(() => ({}));
-    const orderId = String(body?.orderId ?? "").trim();
-    if (!orderId) return NextResponse.json({ error: "Missing orderId" }, { status: 400 });
+    const shipmentId = String(body?.shipmentId ?? "").trim();
 
-    const order = await prisma.order.findUnique({
-      where: { id: orderId },
-      select: { status: true },
-    });
-
-    if (!order) return NextResponse.json({ error: "Order not found" }, { status: 404 });
-    if (order.status === "CANCELLED") {
-      return NextResponse.json({ error: "No podés entregar una orden CANCELLED" }, { status: 400 });
+    if (!shipmentId) {
+      return NextResponse.json({ error: "Missing shipmentId" }, { status: 400 });
     }
 
-    const updated = await prisma.order.update({
-      where: { id: orderId },
-      data: { status: "DELIVERED" },
+    const shipment = await prisma.orderShipment.findUnique({
+      where: { id: shipmentId },
+      select: {
+        id: true,
+        orderId: true,
+        order: { select: { status: true } },
+      },
     });
 
-    return NextResponse.json({ ok: true, order: updated });
+    if (!shipment) {
+      return NextResponse.json({ error: "Shipment not found" }, { status: 404 });
+    }
+
+    if (shipment.order.status === "CANCELLED") {
+      return NextResponse.json(
+        { error: "No podés entregar un shipment de una orden CANCELLED" },
+        { status: 400 }
+      );
+    }
+
+    const result = await prisma.$transaction(async (tx) => {
+      const updatedShipment = await tx.orderShipment.update({
+        where: { id: shipmentId },
+        data: {
+          deliveredAt: new Date(),
+          status: "DELIVERED",
+        },
+      });
+
+      const allShipments = await tx.orderShipment.findMany({
+        where: { orderId: shipment.orderId },
+        select: { status: true },
+      });
+
+      const allDelivered =
+        allShipments.length > 0 &&
+        allShipments.every((s) => String(s.status).toUpperCase() === "DELIVERED");
+
+      await tx.order.update({
+        where: { id: shipment.orderId },
+        data: {
+          status: allDelivered ? "DELIVERED" : "SHIPPED",
+        },
+      });
+
+      return updatedShipment;
+    });
+
+    return NextResponse.json({ ok: true, shipment: result });
   } catch (e: any) {
     console.error("ADMIN DELIVER ERROR:", e);
     return NextResponse.json({ error: e?.message ?? "Server error" }, { status: 500 });

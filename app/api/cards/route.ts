@@ -20,6 +20,7 @@ export async function GET(req: NextRequest) {
     const sport = (searchParams.get("sport") ?? "all").trim();
     const player = (searchParams.get("player") ?? "all").trim();
     const auto = (searchParams.get("auto") ?? "all").trim();
+    const inventoryLocation = (searchParams.get("inventory_location") ?? "all").trim().toLowerCase();
     const sort = (searchParams.get("sort") ?? "recommended").trim();
 
     const page = Math.max(1, Number(searchParams.get("page") ?? 1));
@@ -41,6 +42,10 @@ export async function GET(req: NextRequest) {
     } else if (auto === "no") {
       where.auto = false;
     }
+
+if (inventoryLocation !== "all") {
+  where.inventory_location = inventoryLocation;
+}
 
     if (q) {
       where.OR = [
@@ -95,6 +100,10 @@ if (sort === "price_desc" || sort === "price_asc") {
     values.push(false);
     conditions.push(`auto = $${values.length}`);
   }
+if (inventoryLocation !== "all") {
+  values.push(inventoryLocation);
+  conditions.push(`inventory_location = $${values.length}`);
+}
 
   if (q) {
     values.push(`%${q}%`);
