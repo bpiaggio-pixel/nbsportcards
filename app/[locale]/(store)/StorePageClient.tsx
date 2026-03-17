@@ -1013,11 +1013,11 @@ const topShowcaseItems = React.useMemo(() => {
           <div className="my-8 border-t border-gray-200" />
 
           <div className="pt-2">
-            <h3 className="mb-6 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">
+            <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">
   {t("highlights")}
 </h3>
 
-            <div className="space-y-10 min-h-[760px]">
+            <div className="space-y-5 min-h-[760px]">
               {highlights.mostViewed && (
   <div className="transition hover:-translate-y-[1px] hover:shadow-md">
     <SidebarCard
@@ -1278,7 +1278,7 @@ const topShowcaseItems = React.useMemo(() => {
             </div>
           </div>
 
-          <div className="grid gap-2 sm:gap-4 lg:gap-6 grid-cols-2 items-start min-h-[2200px] sm:min-h-[1800px] gap-2 sm:gap-4 lg:gap-6 lg:grid-cols-3 lg:min-h-[980px]">
+          <div className="grid grid-cols-2 items-start gap-x-4 gap-y-1 sm:gap-x-4 sm:gap-y-3 lg:gap-x-6 lg:gap-y-6 min-h-[2200px] sm:min-h-[1800px] lg:grid-cols-3 lg:min-h-[980px]">
   {cardsLoading
   ? Array.from({ length: 9 }).map((_, i) => <CardTileSkeleton key={i} />)
   : paged.map((card, index) => (
