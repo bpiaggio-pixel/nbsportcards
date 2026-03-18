@@ -485,6 +485,7 @@ React.useEffect(() => {
   const [inventoryLocationFilter, setInventoryLocationFilter] = React.useState<"all" | "comc" | "fanatics" | "argentina">("all");
   const [sort, setSort] = React.useState<"recommended" | "price_desc" | "price_asc">("recommended");
   const playerFilterLabel = sport === "pokemon" ? "Product Type" : "Player";
+const [playerOptions, setPlayerOptions] = React.useState<string[]>([]);
 
   // ✅ mobile filters drawer
   const [filtersOpen, setFiltersOpen] = React.useState(false);
@@ -507,8 +508,34 @@ React.useEffect(() => {
 }, [search, sport, player, autoFilter, inventoryLocationFilter, sort]);
 
 React.useEffect(() => {
-  setPage(1);
-}, [search, sport, player, autoFilter, inventoryLocationFilter, sort]);
+  let cancelled = false;
+
+  async function loadPlayerOptions() {
+    try {
+      const params = new URLSearchParams({
+        sport,
+      });
+
+      const res = await fetch(`/api/cards/filter-options?${params.toString()}`, {
+        next: { revalidate: 120 },
+      });
+
+      const data = await res.json();
+
+      if (!cancelled) {
+        setPlayerOptions(Array.isArray(data.players) ? data.players : []);
+      }
+    } catch {
+      if (!cancelled) setPlayerOptions([]);
+    }
+  }
+
+  loadPlayerOptions();
+
+  return () => {
+    cancelled = true;
+  };
+}, [sport]);
 
 React.useEffect(() => {
   if (sport === "pokemon" && autoFilter !== "all") {
@@ -803,11 +830,11 @@ const [activeSide, setActiveSide] = React.useState<"front" | "back">("front");
   }, [uniqueCards, sport]);
 
   // ✅ resetear player si ya no existe en el sport seleccionado
-  React.useEffect(() => {
-    if (player === "all") return;
-    if (players.includes(player)) return;
-    setPlayer("all");
-  }, [sport, players, player]);
+React.useEffect(() => {
+  if (player === "all") return;
+  if (playerOptions.includes(player)) return;
+  setPlayer("all");
+}, [sport, playerOptions, player]);
 
   // ✅ filtros
 
@@ -977,11 +1004,14 @@ const topShowcaseItems = React.useMemo(() => {
   <select
     value={player}
     onChange={(e) => setPlayer(e.target.value)}
-    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-black/10"
+    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-black/10"
   >
-    <option value="all">{t("all")}</option>
-    {players.map((p) => (
-      <option key={p} value={p}>
+    <option value="all" className="text-gray-900">
+      {t("all")}
+    </option>
+
+    {playerOptions.map((p) => (
+      <option key={p} value={p} className="text-gray-900">
         {p}
       </option>
     ))}
@@ -1155,11 +1185,14 @@ const topShowcaseItems = React.useMemo(() => {
   <select
     value={player}
     onChange={(e) => setPlayer(e.target.value)}
-    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-black/10"
+    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-black/10"
   >
-    <option value="all">{t("all")}</option>
-    {players.map((p) => (
-      <option key={p} value={p}>
+    <option value="all" className="text-gray-900">
+      {t("all")}
+    </option>
+
+    {playerOptions.map((p) => (
+      <option key={p} value={p} className="text-gray-900">
         {p}
       </option>
     ))}
