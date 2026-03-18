@@ -484,6 +484,7 @@ React.useEffect(() => {
   const [autoFilter, setAutoFilter] = React.useState<"all" | "yes" | "no">("all");
   const [inventoryLocationFilter, setInventoryLocationFilter] = React.useState<"all" | "comc" | "fanatics" | "argentina">("all");
   const [sort, setSort] = React.useState<"recommended" | "price_desc" | "price_asc">("recommended");
+  const playerFilterLabel = sport === "pokemon" ? "Product Type" : "Player";
 
   // ✅ mobile filters drawer
   const [filtersOpen, setFiltersOpen] = React.useState(false);
@@ -504,6 +505,16 @@ function clearFilters() {
 React.useEffect(() => {
   setPage(1);
 }, [search, sport, player, autoFilter, inventoryLocationFilter, sort]);
+
+React.useEffect(() => {
+  setPage(1);
+}, [search, sport, player, autoFilter, inventoryLocationFilter, sort]);
+
+React.useEffect(() => {
+  if (sport === "pokemon" && autoFilter !== "all") {
+    setAutoFilter("all");
+  }
+}, [sport, autoFilter]);
 
 React.useEffect(() => {
   let cancelled = false;
@@ -962,33 +973,35 @@ const topShowcaseItems = React.useMemo(() => {
           </div>
 
           <div>
-            <p className="mb-3 text-sm font-semibold text-gray-800">Player</p>
-            <select
-              value={player}
-              onChange={(e) => setPlayer(e.target.value)}
-              className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-black/10"
-            >
-              <option value="all">{t("all")}</option>
-              {players.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </select>
-          </div>
+  <p className="mb-3 text-sm font-semibold text-gray-800">{playerFilterLabel}</p>
+  <select
+    value={player}
+    onChange={(e) => setPlayer(e.target.value)}
+    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-black/10"
+  >
+    <option value="all">{t("all")}</option>
+    {players.map((p) => (
+      <option key={p} value={p}>
+        {p}
+      </option>
+    ))}
+  </select>
+</div>
 
-          <div>
-            <p className="mb-3 text-sm font-semibold text-gray-800">{t("auto")}</p>
-            <select
-              value={autoFilter}
-              onChange={(e) => setAutoFilter(e.target.value as any)}
-              className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-black/10"
-            >
-              <option value="all">{t("all")}</option>
-              <option value="yes">{t("autosi")}</option>
-              <option value="no">{t("autono")}</option>
-            </select>
-          </div>
+         {sport !== "pokemon" && (
+  <div>
+    <p className="mb-3 text-sm font-semibold text-gray-800">{t("auto")}</p>
+    <select
+      value={autoFilter}
+      onChange={(e) => setAutoFilter(e.target.value as any)}
+      className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-black/10"
+    >
+      <option value="all">{t("all")}</option>
+      <option value="yes">{t("autosi")}</option>
+      <option value="no">{t("autono")}</option>
+    </select>
+  </div>
+)}
 <div>
   <p className="mb-3 text-sm font-semibold text-gray-800">{t("storedAt")}</p>
   <select
@@ -1138,32 +1151,34 @@ const topShowcaseItems = React.useMemo(() => {
         </div>
 
         <div>
-          <p className="mb-3 text-sm font-semibold text-gray-800">Player</p>
-          <select
-            value={player}
-            onChange={(e) => setPlayer(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-black/10"
-          >
-            <option value="all">{t("all")}</option>
-            {players.map((p) => (
-              <option key={p} value={p}>
-                {p}
-              </option>
-            ))}
-          </select>
-        </div>
-<div>
-  <p className="mb-3 text-sm font-semibold text-gray-800">{t("auto")}</p>
+  <p className="mb-3 text-sm font-semibold text-gray-800">{playerFilterLabel}</p>
   <select
-    value={autoFilter}
-    onChange={(e) => setAutoFilter(e.target.value as any)}
+    value={player}
+    onChange={(e) => setPlayer(e.target.value)}
     className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-black/10"
   >
     <option value="all">{t("all")}</option>
-    <option value="yes">{t("autosi")}</option>
-    <option value="no">{t("autono")}</option>
+    {players.map((p) => (
+      <option key={p} value={p}>
+        {p}
+      </option>
+    ))}
   </select>
 </div>
+{sport !== "pokemon" && (
+  <div>
+    <p className="mb-3 text-sm font-semibold text-gray-800">{t("auto")}</p>
+    <select
+      value={autoFilter}
+      onChange={(e) => setAutoFilter(e.target.value as any)}
+      className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-black/10"
+    >
+      <option value="all">{t("all")}</option>
+      <option value="yes">{t("autosi")}</option>
+      <option value="no">{t("autono")}</option>
+    </select>
+  </div>
+)}
 
 <div>
   <p className="mb-3 text-sm font-semibold text-gray-800">Stored at</p>
