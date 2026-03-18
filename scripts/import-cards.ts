@@ -14,8 +14,8 @@ const normId = (v: any) => {
 
 function toSport(v: any) {
   const s = String(v ?? "").trim().toLowerCase();
-  if (s === "basketball" || s === "soccer" || s === "nfl") return s;
-  return "basketball";
+  const validSports = ["basketball", "soccer", "nfl", "pokemon"];
+  return validSports.includes(s) ? s : "basketball";
 }
 
 function normalizeYes(v: unknown) {
