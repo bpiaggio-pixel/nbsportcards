@@ -27,24 +27,37 @@ function normalizeYes(v: unknown) {
 }
 
 async function main() {
+  console.log("📦 Iniciando importación de cards...");
+
   const filePath = path.join(process.cwd(), "data", "cards.xlsx");
+  console.log(`📄 Buscando archivo: ${filePath}`);
+
   if (!fs.existsSync(filePath)) throw new Error(`No existe: ${filePath}`);
 
+  console.log("📖 Leyendo Excel...");
   const buffer = fs.readFileSync(filePath);
   const workbook = XLSX.read(buffer, { type: "buffer" });
   const sheetName = workbook.SheetNames[0];
   const sheet = workbook.Sheets[sheetName];
   const rows = XLSX.utils.sheet_to_json<any>(sheet, { defval: "" });
 
-  // Para NO pisar stock de cards existentes:
+  console.log(`📑 Hoja detectada: ${sheetName}`);
+  console.log(`🔢 Filas encontradas: ${rows.length}`);
+
+  console.log("🗃️ Leyendo cards existentes en la base...");
   const existing = await prisma.card.findMany({ select: { id: true } });
   const exists = new Set(existing.map((x) => x.id));
+  console.log(`📚 IDs existentes: ${exists.size}`);
 
   let created = 0;
   let updated = 0;
   let skipped = 0;
+  let processed = 0;
 
   for (const r of rows) {
+    processed++;
+    process.stdout.write(`\rProcesando ${processed}/${rows.length}`);
+
     const id = normId(r.id);
     if (!id) {
       skipped++;
@@ -58,74 +71,75 @@ async function main() {
     const priceCents = Math.round(price * 100);
     const image = String(r.image ?? "").trim() || null;
     const image2 = String(r.image2 ?? "").trim() || null;
-const inventory_location = String(r.inventory_location ?? "").trim().toLowerCase() || null;
-const ships_from = String(r.ships_from ?? "").trim().toLowerCase() || null;
+    const inventory_location =
+      String(r.inventory_location ?? "").trim().toLowerCase() || null;
+    const ships_from =
+      String(r.ships_from ?? "").trim().toLowerCase() || null;
 
-    // ✅ acepta ambos nombres de columna
     const greatDeal = normalizeYes(r.greatDeal ?? r.great_deal);
+    const auto = ["si", "yes", "true", "1"].includes(
+      normalizeYes((r as any).auto)
+    );
 
-    // ✅ autógrafo: columna "auto" (si / vacío)
-    const auto = ["si", "yes", "true", "1"].includes(normalizeYes((r as any).auto));
-
-    // stock SOLO para nuevas
     const stock = Math.max(0, Math.floor(Number(r.stock ?? 0)));
 
     if (!exists.has(id)) {
       await prisma.card.create({
-  data: {
-    id,
-    sport,
-    title,
-    player,
-    priceCents,
-    image,
-    image2,
-    stock,
-    greatDeal,
-    auto,
-    inventory_location,
-    ships_from,
-  },
-});
+        data: {
+          id,
+          sport,
+          title,
+          player,
+          priceCents,
+          image,
+          image2,
+          stock,
+          greatDeal,
+          auto,
+          inventory_location,
+          ships_from,
+        },
+      });
+
       exists.add(id);
       created++;
     } else {
-   await prisma.card.upsert({
-  where: { id },
-  update: {
-    sport,
-    title,
-    player,
-    priceCents,
-    image,
-    image2,
-    greatDeal,
-    stock,
-    auto,
-inventory_location,
-ships_from,
-  },
-  create: {
-    id,
-    sport,
-    title,
-    player,
-    priceCents,
-    image,
-    image2,
-    greatDeal,
-    stock,
-    auto,
-inventory_location,
-ships_from,
-  },
-});
+      await prisma.card.upsert({
+        where: { id },
+        update: {
+          sport,
+          title,
+          player,
+          priceCents,
+          image,
+          image2,
+          greatDeal,
+          stock,
+          auto,
+          inventory_location,
+          ships_from,
+        },
+        create: {
+          id,
+          sport,
+          title,
+          player,
+          priceCents,
+          image,
+          image2,
+          greatDeal,
+          stock,
+          auto,
+          inventory_location,
+          ships_from,
+        },
+      });
 
       updated++;
     }
   }
 
-  console.log("✅ Import terminado");
+  console.log("\n✅ Import terminado");
   console.log("   - Nuevas:", created);
   console.log("   - Actualizadas:", updated);
   console.log("   - Omitidas:", skipped);
@@ -133,7 +147,7 @@ ships_from,
 
 main()
   .catch((e) => {
-    console.error("IMPORT ERROR:", e);
+    console.error("\nIMPORT ERROR:", e);
     process.exit(1);
   })
   .finally(async () => {

@@ -29,6 +29,15 @@ async function main() {
     const baseName = path.parse(file).name;
     const outputPath = path.join(outputDir, `${baseName}.webp`);
 
+    // 👇 agregado (igual que el otro script)
+    const inputStat = await fs.promises.stat(inputPath);
+    const outputStat = await fs.promises.stat(outputPath).catch(() => null);
+
+    if (outputStat && outputStat.mtime >= inputStat.mtime) {
+      console.log(`SKIP ${file} (actualizado)`);
+      continue;
+    }
+
     try {
       await sharp(inputPath)
         .resize({
