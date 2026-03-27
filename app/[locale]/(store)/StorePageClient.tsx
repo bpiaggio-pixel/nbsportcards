@@ -9,7 +9,7 @@ import { useLocale, useTranslations } from "next-intl";
 import BannerFX from "@/components/BannerFX";
 import Image from "next/image";
 
-type Sport = "basketball" | "soccer" | "nfl" | "pokemon";
+type Sport = "basketball" | "soccer" | "nfl" | "pokemon" | "other";
 
 type Card = {
   id: string;
@@ -83,6 +83,7 @@ function getFallback(sport: Sport) {
   if (sport === "soccer") return "/images/soccer.jpg";
   if (sport === "nfl") return "/images/nfl.jpg";
   if (sport === "pokemon") return "/images/pokemon.jpg";
+  if (sport === "other") return "/images/cards.jpg";
   return "/images/cards.jpg";
 }
 
@@ -160,6 +161,7 @@ function getBannerSrc(s: "all" | Sport) {
   if (s === "soccer") return "/banners/soccer.webp";
   if (s === "nfl") return "/banners/nfl.webp";
   if (s === "pokemon") return "/banners/pokemon.webp";
+  if (s === "other") return "/banners/others.webp";
   return "/banners/all9d.webp";
 }
 
@@ -1000,6 +1002,10 @@ const topShowcaseItems = React.useMemo(() => {
   		<input type="radio" checked={sport === "pokemon"} onChange={() => setSport("pokemon")} />
   		Pokemon
 		</label>
+              <label className="flex items-center gap-2">
+  		<input type="radio" checked={sport === "other"} onChange={() => setSport("other")} />
+ 		 Otros
+		</label>
             </div>
           </div>
 
@@ -1181,6 +1187,10 @@ const topShowcaseItems = React.useMemo(() => {
   		<input type="radio" checked={sport === "pokemon"} onChange={() => setSport("pokemon")} />
   		Pokemon
 		</label>
+	<label className="flex items-center gap-2">
+  		<input type="radio" checked={sport === "other"} onChange={() => setSport("other")} />
+  		Others
+	</label>
           </div>
         </div>
 
