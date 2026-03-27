@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "url": "https://app.fanaticscollect.com/graphql?webListingsQuery",
+  "headers": {
+    "x-request-id": "GJ5Dfikoox3-Cn0C6PEI",
+    "cache-control": "max-age=0, private, must-revalidate",
+    "content-encoding": "gzip",
+    "cf-cache-status": "DYNAMIC",
+    "access-control-allow-credentials": "true",
+    "cf-ray": "9ded119b7afa9c09-EZE",
+    "access-control-allow-origin": "https://www.fanaticscollect.com",
+    "date": "Thu, 19 Mar 2026 14:11:52 GMT",
+    "content-type": "application/json; charset=utf-8",
+    "vary": "origin",
+    "server": "cloudflare"
+  }
+}

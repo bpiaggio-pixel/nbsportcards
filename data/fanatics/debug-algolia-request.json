@@ -1,0 +1,59 @@
+{
+  "url": "https://3xt9c4x62i-dsn.algolia.net/1/indexes/*/queries?x-algolia-agent=Algolia%20for%20JavaScript%20(5.13.0)%3B%20Search%20(5.13.0)%3B%20Browser&x-algolia-api-key=NzljYjFlOWJkNTBjZTgwNWYzYzc0Nzg3MzM4OTk5NWRhYmQyMjlkNmIwMzFiYjEyZmQxYmU2YThmODFiYjRkY2ZpbHRlcnM9JTI4bWFya2V0cGxhY2VTb3VyY2UlM0Fjb2xsZWN0K09SK21hcmtldHBsYWNlU291cmNlJTNBYm8lMjkrQU5EKyUyOG1hcmtldHBsYWNlJTNBV0VFS0xZK09SK21hcmtldHBsYWNlJTNBUFJFTUlFUitPUittYXJrZXRwbGFjZSUzQUZJWEVEJTI5K0FORCslMjhOT1QrbWFya2V0cGxhY2VTb3VyY2UlM0FibytPUitOT1QrbWFya2V0cGxhY2UlM0FXRUVLTFklMjkrQU5EKyUyOE5PVCttYXJrZXRwbGFjZVNvdXJjZSUzQWJvK09SK05PVCttYXJrZXRwbGFjZSUzQVBSRU1JRVIlMjkrQU5EKyUyOE5PVCttYXJrZXRwbGFjZVNvdXJjZSUzQWNvbGxlY3QrT1IrTk9UK21hcmtldHBsYWNlJTNBRklYRUQlMjkmdmFsaWRVbnRpbD0xNzc0NDY5MzQx&x-algolia-application-id=3XT9C4X62I",
+  "headers": {
+    "sec-ch-ua-platform": "\"Windows\"",
+    "referer": "https://www.fanaticscollect.com/",
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36",
+    "accept": "application/json",
+    "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+    "content-type": "text/plain",
+    "sec-ch-ua-mobile": "?0"
+  },
+  "body": {
+    "requests": [
+      {
+        "indexName": "prod_item_state_v1",
+        "query": "",
+        "type": "default",
+        "page": 0,
+        "hitsPerPage": 24,
+        "facets": [
+          "*"
+        ],
+        "clickAnalytics": true,
+        "attributesToRetrieve": [
+          "listingUuid",
+          "marketplace",
+          "marketplaceSource",
+          "title",
+          "subtitle",
+          "currentPrice",
+          "status",
+          "images.primary",
+          "allowOffers"
+        ],
+        "attributesToHighlight": [],
+        "filters": "(marketplace:\"FIXED\") AND (sellerId:\"a72ca462-242f-42c0-9f62-01568c73e9a8\" OR sellerTenantId:\"a72ca462-242f-42c0-9f62-01568c73e9a8\") AND (status:\"Live\") AND (marketplaceSource:\"bo\") AND NOT listingUuid:\"30eb88a3-0c4e-4210-a9b8-b4f82487cf07\"",
+        "numericFilters": []
+      },
+      {
+        "indexName": "prod_item_state_v1",
+        "query": "",
+        "type": "facet",
+        "facet": "status",
+        "maxFacetHits": 100,
+        "filters": "(marketplace:\"FIXED\") AND (sellerId:\"a72ca462-242f-42c0-9f62-01568c73e9a8\" OR sellerTenantId:\"a72ca462-242f-42c0-9f62-01568c73e9a8\") AND (marketplaceSource:\"bo\") AND NOT listingUuid:\"30eb88a3-0c4e-4210-a9b8-b4f82487cf07\"",
+        "numericFilters": []
+      },
+      {
+        "indexName": "prod_item_state_v1",
+        "query": "",
+        "type": "facet",
+        "facet": "marketplaceSource",
+        "maxFacetHits": 100,
+        "filters": "(marketplace:\"FIXED\") AND (sellerId:\"a72ca462-242f-42c0-9f62-01568c73e9a8\" OR sellerTenantId:\"a72ca462-242f-42c0-9f62-01568c73e9a8\") AND (status:\"Live\") AND NOT listingUuid:\"30eb88a3-0c4e-4210-a9b8-b4f82487cf07\"",
+        "numericFilters": []
+      }
+    ]
+  }
+}

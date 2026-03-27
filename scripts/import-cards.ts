@@ -56,7 +56,11 @@ async function main() {
 
   for (const r of rows) {
     processed++;
-    process.stdout.write(`\rProcesando ${processed}/${rows.length}`);
+    const percent = ((processed / rows.length) * 100).toFixed(1);
+
+process.stdout.write(
+  `\r⏳ ${processed}/${rows.length} (${percent}%) | ✔ ${created} | 🔄 ${updated} | ⏭ ${skipped}`
+);
 
     const id = normId(r.id);
     if (!id) {

@@ -1,0 +1,18 @@
+{
+  "method": "POST",
+  "url": "https://app.fanaticscollect.com/graphql?webGetCollectSalesQuery",
+  "headers": {
+    "x-platform": "web",
+    "authorization": "",
+    "x-platform-app": "collect",
+    "sec-ch-ua-platform": "\"Windows\"",
+    "referer": "https://www.fanaticscollect.com/",
+    "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"HeadlessChrome\";v=\"145\", \"Chromium\";v=\"145\"",
+    "sec-ch-ua-mobile": "?0",
+    "x-cache-key": "webGetCollectSalesQuery-3b8c6d0a407802ad96215473af03f57fddc81ff27c6a44aaf3d36d153b770ec1",
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36",
+    "accept": "*/*",
+    "content-type": "application/json",
+    "x-session-id": "67171e98-edd9-46e4-b9f2-7d17e6917943"
+  }
+}

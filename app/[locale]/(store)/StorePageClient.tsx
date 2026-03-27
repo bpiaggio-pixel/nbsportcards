@@ -726,12 +726,16 @@ const [activeSide, setActiveSide] = React.useState<"front" | "back">("front");
     setActiveSide("front");
   }, [selectedId]);
 
-  const frontImg =
-    selectedCard?.image?.trim() ? selectedCard.image : selectedCard ? getFallback(selectedCard.sport) : "";
+const frontImg =
+  selectedCard?.image?.trim() ? selectedCard.image : selectedCard ? getFallback(selectedCard.sport) : "";
 
-  const backImg = selectedCard?.image2?.trim() ? selectedCard.image2 : "";
+const backImg = selectedCard?.image2?.trim() ? selectedCard.image2 : "";
 
-  const activeImg = activeSide === "back" && backImg ? backImg : frontImg;
+const activeImg = activeSide === "back" && backImg ? backImg : frontImg;
+
+const webpImg = activeImg
+  .replace("/cards/", "/cards/webp/")
+  .replace(/\.(jpg|jpeg)$/i, ".webp");
 
   // wishlist (favoritos)
   const [wishlist, setWishlist] = React.useState<Record<string, boolean>>({});
@@ -1585,16 +1589,20 @@ onPointerCancel={(e) => {
 
                         >
                           <img
-                            ref={mediaRef}
-                            src={activeImg}
-                            alt={`${selectedCard.title} - ${activeSide}`}
-                            draggable={false}
-                            style={{
-                              transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-                              transformOrigin: "center",
-                            }}
-                            className="h-full w-full select-none object-contain transition-transform"
-                          />
+  ref={mediaRef}
+  src={webpImg}
+  onError={(e) => {
+    e.currentTarget.onerror = null;
+    e.currentTarget.src = activeImg;
+  }}
+  alt={`${selectedCard.title} - ${activeSide}`}
+  draggable={false}
+  style={{
+    transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+    transformOrigin: "center",
+  }}
+  className="h-full w-full select-none object-contain transition-transform"
+/>
                         </div>
                       </div>
         

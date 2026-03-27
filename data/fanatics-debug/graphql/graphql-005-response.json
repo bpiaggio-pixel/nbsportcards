@@ -1,0 +1,1666 @@
+{
+  "data": {
+    "collectListings": [
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 3420000,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 27,
+        "id": "132c303f-46a7-4709-976d-dc0b3a2c7115",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009541519R_27.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009541519R_27.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009541519R_27.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009541647R_28.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009541647R_28.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009541647R_28.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/1/10/rc1/large/v535574_2023011009541519R_27.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/1/10/rc1/large/v535574_2023011009541647R_28.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 3350000,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "2004-sp-authentic-fabrics-michael-jordan-patch-auto-50-aaf-mj-bgs-85-nm-mt",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": true,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "",
+        "title": "2004 SP Authentic Fabrics Michael Jordan PATCH AUTO /50 #AAF-MJ BGS 8.5 NM-MT+"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 78000,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 23,
+        "id": "3fa95df5-82fb-4f45-9299-53bd37d9672b",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2021/4/5/2/medium/v140057_2021040508271556R_1.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2021/4/5/2/medium/v140057_2021040508271556R_1.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2021/4/5/2/medium/v140057_2021040508271556R_1.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2021/4/5/2/medium/v140057_2021040508271681R_2.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2021/4/5/2/medium/v140057_2021040508271681R_2.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2021/4/5/2/medium/v140057_2021040508271681R_2.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2021/4/5/2/large/v140057_2021040508271556R_1.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2021/4/5/2/large/v140057_2021040508271681R_2.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 48000,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "2009-upper-deck-stephen-curry-rookie-rc-234-bgs-95-gem-mint",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": false,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "",
+        "title": "2009 Upper Deck Stephen Curry ROOKIE RC #234 BGS 9.5 GEM MINT"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 2790000,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 27,
+        "id": "414b0d66-ce7f-489f-b66d-e10fb37ba56d",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009522672R_1.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009522672R_1.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009522672R_1.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009522806R_2.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009522806R_2.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009522806R_2.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/1/10/rc1/large/v535574_2023011009522672R_1.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/1/10/rc1/large/v535574_2023011009522806R_2.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 2390000,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "2019-exquisite-collection-signature-kicks-michael-jordan-shoe-patch-auto-bgs-75",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": false,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "BGS Population 1 of 1 - Just One Graded Higher",
+        "title": "2019 Exquisite Collection Signature Kicks Michael Jordan SHOE PATCH AUTO BGS 7.5"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 29800,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 9,
+        "id": "53bf481c-23b9-42da-806a-5ebd14211f0d",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2024/8/23/rm4/medium/v935790_2024082315084403M_9.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2024/8/23/rm4/small/v935790_2024082315084403M_9.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2024/8/23/rm4/small/v935790_2024082315084403M_9.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2024/8/23/rm4/medium/v935790_2024082315084666M_10.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2024/8/23/rm4/small/v935790_2024082315084666M_10.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2024/8/23/rm4/small/v935790_2024082315084666M_10.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2024/8/23/rm4/large/v935790_2024082315084403M_9.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2024/8/23/rm4/large/v935790_2024082315084666M_10.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "2009-upper-deck-first-edition-stephen-curry-rookie-196-bgs-9-mint",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": false,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "",
+        "title": "2009 Upper Deck First Edition Stephen Curry ROOKIE #196 BGS 9 MINT"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 49000,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 11,
+        "id": "ccfd6710-e531-4fea-b0e6-89902ef1ba15",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/12/21/rm3/medium/v781663_2023122112061425R_79.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/12/21/rm3/medium/v781663_2023122112061425R_79.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/12/21/rm3/medium/v781663_2023122112061425R_79.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/12/21/rm3/medium/v781663_2023122112061556R_80.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/12/21/rm3/medium/v781663_2023122112061556R_80.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/12/21/rm3/medium/v781663_2023122112061556R_80.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/12/21/rm3/large/v781663_2023122112061425R_79.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/12/21/rm3/large/v781663_2023122112061556R_80.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 37900,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "1998-ultra-gold-medallion-michael-jordan-85g-bgs-9-mint",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": false,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "",
+        "title": "1998 Ultra Gold Medallion Michael Jordan #85G BGS 9 MINT"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 360000,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 4,
+        "id": "32b83812-ab18-434b-bf1d-5d3d1f3f6fb1",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2021/8/7/2/medium/v211868_2021080714543168R_45.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2021/8/7/2/medium/v211868_2021080714543168R_45.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2021/8/7/2/medium/v211868_2021080714543168R_45.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2021/8/7/2/medium/v211868_2021080714543300R_46.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2021/8/7/2/medium/v211868_2021080714543300R_46.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2021/8/7/2/medium/v211868_2021080714543300R_46.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2021/8/7/2/large/v211868_2021080714543168R_45.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2021/8/7/2/large/v211868_2021080714543300R_46.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 390000,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "2017-panini-encased-red-jayson-tatum-rookie-auto-25-171-bgs-95-gem-mint",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": false,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "",
+        "title": "2017 Panini Encased Red Jayson Tatum ROOKIE AUTO /25 #171 BGS 9.5 GEM MINT"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 85000,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 13,
+        "id": "42bca18e-2fd3-44f9-a8b7-1eaa2945f6ee",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/12/21/rm3/medium/v781663_2023122112043424R_53.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/12/21/rm3/medium/v781663_2023122112043424R_53.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/12/21/rm3/medium/v781663_2023122112043424R_53.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/12/21/rm3/medium/v781663_2023122112043554R_54.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/12/21/rm3/medium/v781663_2023122112043554R_54.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/12/21/rm3/medium/v781663_2023122112043554R_54.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/12/21/rm3/large/v781663_2023122112043424R_53.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/12/21/rm3/large/v781663_2023122112043554R_54.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "1997-skybox-z-force-star-gazing-kobe-bryant-2-bgs-9-mint",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": false,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "",
+        "title": "1997 Skybox Z-Force Star Gazing Kobe Bryant #2 BGS 9 MINT"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 78000,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 13,
+        "id": "0b2b0c46-bba4-445d-8b19-13207cc276e4",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2021/8/7/2/medium/v211868_2021080714524314R_21.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2021/8/7/2/medium/v211868_2021080714524314R_21.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2021/8/7/2/medium/v211868_2021080714524314R_21.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2021/8/7/2/medium/v211868_2021080714524447R_22.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2021/8/7/2/medium/v211868_2021080714524447R_22.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2021/8/7/2/medium/v211868_2021080714524447R_22.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2021/8/7/2/large/v211868_2021080714524314R_21.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2021/8/7/2/large/v211868_2021080714524447R_22.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 98000,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "1996-flair-showcase-class-of-96-kobe-bryant-rookie-4-psa-9-mint",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": false,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "",
+        "title": "1996 Flair Showcase Class Of '96 Kobe Bryant ROOKIE #4 PSA 9 MINT"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 29800,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 9,
+        "id": "6fa5e3bf-e1ba-4ad3-a6f2-3a7dd10f544a",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/12/21/rm3/medium/v781663_2023122112040377R_45.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/12/21/rm3/medium/v781663_2023122112040377R_45.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/12/21/rm3/medium/v781663_2023122112040377R_45.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/12/21/rm3/medium/v781663_2023122112040511R_46.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/12/21/rm3/medium/v781663_2023122112040511R_46.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/12/21/rm3/medium/v781663_2023122112040511R_46.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/12/21/rm3/large/v781663_2023122112040377R_45.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/12/21/rm3/large/v781663_2023122112040511R_46.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 22900,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "1996-stadium-club-showcase-kobe-bryant-rookie-rs11-bgs-85-nm-mt",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": false,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "",
+        "title": "1996 Stadium Club Showcase Kobe Bryant ROOKIE #RS11 BGS 8.5 NM-MT+"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 285000,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 7,
+        "id": "fde2f067-980e-4f7d-833c-02dff6dd3497",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2021/8/8/2/medium/v212477_2021080812121308R_29.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2021/8/8/2/medium/v212477_2021080812121308R_29.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2021/8/8/2/medium/v212477_2021080812121308R_29.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2021/8/8/2/medium/v212477_2021080812121440R_30.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2021/8/8/2/medium/v212477_2021080812121440R_30.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2021/8/8/2/medium/v212477_2021080812121440R_30.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2021/8/8/2/large/v212477_2021080812121308R_29.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2021/8/8/2/large/v212477_2021080812121440R_30.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "2003-topps-chrome-lebron-james-rookie-111-bgs-9-mint",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": false,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "",
+        "title": "2003 Topps Chrome LeBron James ROOKIE #111 BGS 9 MINT"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 69000,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 6,
+        "id": "ed9ba2cb-81ed-4b65-8770-5a04963f12f3",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2021/7/28/4/medium/v203091_2021072814450673R_11.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2021/7/28/4/medium/v203091_2021072814450673R_11.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2021/7/28/4/medium/v203091_2021072814450673R_11.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2021/7/28/4/medium/v203091_2021072814450800R_12.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2021/7/28/4/medium/v203091_2021072814450800R_12.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2021/7/28/4/medium/v203091_2021072814450800R_12.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2021/7/28/4/large/v203091_2021072814450673R_11.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2021/7/28/4/large/v203091_2021072814450800R_12.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 48900,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "2009-upper-deck-basketball-stephen-curry-sp-rookie-rc-234-bgs-95-gem-mint",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": true,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "",
+        "title": "2009 Upper Deck Basketball Stephen Curry SP ROOKIE RC #234 BGS 9.5 GEM MINT"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 17900,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 4,
+        "id": "99a33735-348a-472f-a893-59e90a564e41",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2022/3/11/rm2/medium/v315317_2022031113212141M_1.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2022/3/11/rm2/medium/v315317_2022031113212141M_1.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2022/3/11/rm2/medium/v315317_2022031113212141M_1.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2022/3/11/rm2/medium/v315317_2022031113212612M_2.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2022/3/11/rm2/medium/v315317_2022031113212612M_2.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2022/3/11/rm2/medium/v315317_2022031113212612M_2.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2022/3/11/rm2/large/v315317_2022031113212141M_1.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2022/3/11/rm2/large/v315317_2022031113212612M_2.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "2020-panini-encased-emerald-dandre-swift-rookie-patch-auto-5-109-bgs-9-mint",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": true,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "BGS Population 1 of 4 - Just One Graded Higher",
+        "title": "2020 Panini Encased Emerald D'Andre Swift ROOKIE PATCH AUTO /5 #109 BGS 9 MINT"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 68000,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 5,
+        "id": "4a414155-9816-4000-b466-eba05b2d704d",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2022/10/28/raw/medium/2027480_auth-front.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2022/10/28/raw/small/2027480_auth-front.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2022/10/28/raw/thumbnail/2027480_auth-front.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2022/10/28/raw/medium/2027480_auth-back.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2022/10/28/raw/small/2027480_auth-back.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2022/10/28/raw/thumbnail/2027480_auth-back.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2022/10/28/raw/medium/2027480_front.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2022/10/28/raw/small/2027480_front.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2022/10/28/raw/thumbnail/2027480_front.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2022/10/28/raw/medium/2027480_back.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2022/10/28/raw/small/2027480_back.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2022/10/28/raw/thumbnail/2027480_back.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2022/10/28/raw/medium/2027480_heat-map-front.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2022/10/28/raw/small/2027480_heat-map-front.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2022/10/28/raw/thumbnail/2027480_heat-map-front.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2022/10/28/raw/medium/2027480_heat-map-back.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2022/10/28/raw/small/2027480_heat-map-back.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2022/10/28/raw/thumbnail/2027480_heat-map-back.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2022/10/28/raw/large/2027480_auth-front.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2022/10/28/raw/large/2027480_auth-back.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2022/10/28/raw/large/2027480_front.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2022/10/28/raw/large/2027480_back.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2022/10/28/raw/large/2027480_heat-map-front.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2022/10/28/raw/large/2027480_heat-map-back.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 89000,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "2021-panini-flawless-collegiate-dual-ruby-justin-herbert-patch-auto-15-mba-auth",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": false,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "",
+        "title": "2021 Panini Flawless Collegiate Dual Ruby Justin Herbert PATCH AUTO /15 MBA AUTH"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 75000,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 6,
+        "id": "b4793f3e-fb44-4667-81f1-12403602331a",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2021/7/28/4/medium/v203091_2021072814463025R_31.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2021/7/28/4/medium/v203091_2021072814463025R_31.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2021/7/28/4/medium/v203091_2021072814463025R_31.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2021/7/28/4/medium/v203091_2021072814463153R_32.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2021/7/28/4/medium/v203091_2021072814463153R_32.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2021/7/28/4/medium/v203091_2021072814463153R_32.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2021/7/28/4/large/v203091_2021072814463025R_31.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2021/7/28/4/large/v203091_2021072814463153R_32.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 54000,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "2009-upper-deck-basketball-stephen-curry-sp-rookie-rc-234-bgs-95-gem-mint",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": false,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "",
+        "title": "2009 Upper Deck Basketball Stephen Curry SP ROOKIE RC #234 BGS 9.5 GEM MINT"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 220000,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 4,
+        "id": "b989864f-9ea0-4732-97c4-6fd39963af76",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2021/4/5/2/medium/v140057_2021040508310028R_53.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2021/4/5/2/medium/v140057_2021040508310028R_53.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2021/4/5/2/medium/v140057_2021040508310028R_53.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2021/4/5/2/medium/v140057_2021040508310152R_54.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2021/4/5/2/medium/v140057_2021040508310152R_54.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2021/4/5/2/medium/v140057_2021040508310152R_54.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2021/4/5/2/large/v140057_2021040508310028R_53.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2021/4/5/2/large/v140057_2021040508310152R_54.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "1996-topps-chrome-kobe-bryant-rookie-138-psa-8-nm-mt",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": false,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "",
+        "title": "1996 Topps Chrome Kobe Bryant ROOKIE #138 PSA 8 NM-MT"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 175000,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 7,
+        "id": "c9b8d3ff-d626-44a0-aacc-dd5c43188c6a",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009553424R_45.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009553424R_45.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009553424R_45.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009553551R_46.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009553551R_46.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009553551R_46.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/1/10/rc1/large/v535574_2023011009553424R_45.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/1/10/rc1/large/v535574_2023011009553551R_46.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "2018-panini-flawless-momentous-jayson-tatum-auto-25-ma-jtt-bgs-85-nm-mt",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": false,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "BGS Population 1 of 1 - Just Two Graded Higher",
+        "title": "2018 Panini Flawless Momentous Jayson Tatum AUTO /25 #MA-JTT BGS 8.5 NM-MT+"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 198000,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 7,
+        "id": "f285686e-5ed7-485d-bd45-3e942672ee55",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/1/18/rc2/medium/v538546_2023011811541049M_7.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/1/18/rc2/medium/v538546_2023011811541049M_7.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/1/18/rc2/medium/v538546_2023011811541049M_7.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/1/18/rc2/medium/v538546_2023011811541253M_8.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/1/18/rc2/medium/v538546_2023011811541253M_8.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/1/18/rc2/medium/v538546_2023011811541253M_8.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/1/18/rc2/large/v538546_2023011811541049M_7.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/1/18/rc2/large/v538546_2023011811541253M_8.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "1978-crack-campeonato-mundial-diego-maradona-rookie-24-bvg-3-vg",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": false,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "BVG Population 1 of 1 - Just One Graded Higher",
+        "title": "1978 Crack Campeonato Mundial Diego Maradona ROOKIE #24 BVG 3 VG"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 2790000,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 6,
+        "id": "d786d3f7-eb39-4caf-a72c-5d4504741e39",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2022/12/3/lj1/medium/v503964_2022120309142070M_1.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2022/12/3/lj1/medium/v503964_2022120309142070M_1.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2022/12/3/lj1/medium/v503964_2022120309142070M_1.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2022/12/3/lj1/medium/v503964_2022120309142395M_2.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2022/12/3/lj1/medium/v503964_2022120309142395M_2.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2022/12/3/lj1/medium/v503964_2022120309142395M_2.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2022/12/3/lj1/large/v503964_2022120309142070M_1.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2022/12/3/lj1/large/v503964_2022120309142395M_2.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "1978-crack-campeonato-mundial-diego-maradona-rookie-ar10-bvg-6-exmt",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": false,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "BVG Population 1 of 1 - Just Two Graded Higher",
+        "title": "1978 Crack Campeonato Mundial Diego Maradona ROOKIE #AR10 BVG 6 EXMT"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 75000,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 7,
+        "id": "aea2de8a-4afd-4bf1-8853-04fa5047980a",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009544977R_35.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009544977R_35.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009544977R_35.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009545106R_36.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009545106R_36.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009545106R_36.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/1/10/rc1/large/v535574_2023011009544977R_35.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/1/10/rc1/large/v535574_2023011009545106R_36.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 98000,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "2021-immaculate-collection-dandre-swift-nfl-shield-patch-auto-11-bgs-85",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": false,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "BGS Population 1 of 1 - None Graded Higher",
+        "title": "2021 Immaculate Collection D'Andre Swift NFL SHIELD PATCH AUTO 1/1 BGS 8.5"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 5900000,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 4,
+        "id": "ec7b46bb-e31a-4425-bb4e-889f451f598a",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/1/18/rc2/medium/v538546_2023011811540499M_5.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/1/18/rc2/medium/v538546_2023011811540499M_5.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/1/18/rc2/medium/v538546_2023011811540499M_5.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/1/18/rc2/medium/v538546_2023011811540682M_6.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/1/18/rc2/medium/v538546_2023011811540682M_6.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/1/18/rc2/medium/v538546_2023011811540682M_6.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/1/18/rc2/large/v538546_2023011811540499M_5.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/1/18/rc2/large/v538546_2023011811540682M_6.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "1978-crack-campeonato-mundial-diego-maradona-rookie-bvg-65-exmt",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": false,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "BVG Population 1 of 1 - Just One Graded Higher",
+        "title": "1978 Crack Campeonato Mundial Diego Maradona ROOKIE BVG 6.5 EXMT+"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 32900,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 5,
+        "id": "534ca0d4-2a09-46be-9c4f-4c520ffa8908",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/2/9/rm5/medium/v554392_2023020914440195R_15.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/2/9/rm5/medium/v554392_2023020914440195R_15.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/2/9/rm5/medium/v554392_2023020914440195R_15.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/2/9/rm5/medium/v554392_2023020914440326R_16.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/2/9/rm5/medium/v554392_2023020914440326R_16.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/2/9/rm5/medium/v554392_2023020914440326R_16.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/2/9/rm5/large/v554392_2023020914440195R_15.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/2/9/rm5/large/v554392_2023020914440326R_16.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 37900,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "2022-panini-fifa-world-cup-extra-stickers-legends-gold-cristiano-ronaldo-psa-9",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": true,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "PSA Population 1 of 11 - Four Graded Higher",
+        "title": "2022 Panini FIFA World Cup Extra Stickers Legends Gold Cristiano Ronaldo PSA 9"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 79000,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 4,
+        "id": "9845cd2e-2bd6-403b-ace0-4ad967ce53fe",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2021/7/28/4/medium/v203091_2021072814461359R_27.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2021/7/28/4/medium/v203091_2021072814461359R_27.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2021/7/28/4/medium/v203091_2021072814461359R_27.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2021/7/28/4/medium/v203091_2021072814461486R_28.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2021/7/28/4/medium/v203091_2021072814461486R_28.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2021/7/28/4/medium/v203091_2021072814461486R_28.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2021/7/28/4/large/v203091_2021072814461359R_27.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2021/7/28/4/large/v203091_2021072814461486R_28.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 55000,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "2009-upper-deck-basketball-stephen-curry-sp-rookie-rc-234-bgs-95-gem-mint",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": false,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "",
+        "title": "2009 Upper Deck Basketball Stephen Curry SP ROOKIE RC #234 BGS 9.5 GEM MINT"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 54000,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 1,
+        "id": "72a16bff-f34d-4c6b-a9bf-700c43390a13",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009542357R_29.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009542357R_29.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009542357R_29.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009542485R_30.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009542485R_30.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/1/10/rc1/medium/v535574_2023011009542485R_30.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/1/10/rc1/large/v535574_2023011009542357R_29.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/1/10/rc1/large/v535574_2023011009542485R_30.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 48000,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "2007-futera-world-football-foil-lionel-messi-165-bgs-9-mint",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": true,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "BGS Population 1 of 8 - Just Two Graded Higher",
+        "title": "2007 Futera World Football Foil Lionel Messi #165 BGS 9 MINT"
+      },
+      {
+        "__typename": "CollectListing",
+        "allowOffers": true,
+        "buyNowPrice": {
+          "__typename": "Money",
+          "amountInCents": 29000,
+          "currency": "USD"
+        },
+        "certifiedSeller": "Fanatics Collect",
+        "favoritedCount": 2,
+        "id": "7a7a9f37-1a4a-49aa-8cff-55054bb39fd0",
+        "imageSets": [
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/2/9/rm5/medium/v554392_2023020914433479R_9.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/2/9/rm5/medium/v554392_2023020914433479R_9.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/2/9/rm5/medium/v554392_2023020914433479R_9.jpg"
+          },
+          {
+            "__typename": "CollectImageSet",
+            "medium": "https://cdn-vault.fanaticscollect.com/2023/2/9/rm5/medium/v554392_2023020914433615R_10.jpg",
+            "small": "https://cdn-vault.fanaticscollect.com/2023/2/9/rm5/medium/v554392_2023020914433615R_10.jpg",
+            "thumbnail": "https://cdn-vault.fanaticscollect.com/2023/2/9/rm5/medium/v554392_2023020914433615R_10.jpg"
+          }
+        ],
+        "images": [
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/2/9/rm5/large/v554392_2023020914433479R_9.jpg",
+          "https://s3-us-west-2.amazonaws.com/pwcc-vault/2023/2/9/rm5/large/v554392_2023020914433615R_10.jpg"
+        ],
+        "incomingOffers": null,
+        "integerId": 0,
+        "isOwner": false,
+        "isSingleQuantityListing": true,
+        "listingType": "BO",
+        "marketplaceEyeAppeal": null,
+        "myOffer": null,
+        "pendingOffer": {
+          "__typename": "CollectListingPendingOffer",
+          "message": "Or best offer"
+        },
+        "previousAskingPrice": {
+          "__typename": "Money",
+          "amountInCents": 24000,
+          "currency": "USD"
+        },
+        "quantityAvailable": 1,
+        "quantityInCart": 0,
+        "slug": "2007-topps-gold-kevin-durant-rookie-2007-112-psa-6-exmt",
+        "startingPrice": {
+          "__typename": "Money",
+          "amountInCents": 0,
+          "currency": "USD"
+        },
+        "states": {
+          "__typename": "CollectListingStates",
+          "isClosed": false,
+          "isFanaticsAuthentic": false,
+          "isGreatPrice": true,
+          "isWatching": false,
+          "lastWindowWhenBidWasReceived": null,
+          "userBidStatus": "NO_BIDS",
+          "userCanBuy": true,
+          "userMaxBid": null
+        },
+        "status": "BO_STATUS_LISTED",
+        "subtitle": "",
+        "title": "2007 Topps Gold Kevin Durant ROOKIE /2007 #112 PSA 6 EXMT"
+      }
+    ]
+  }
+}
