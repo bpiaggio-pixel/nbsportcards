@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Link } from "@/navigation";
 import { prisma } from "@/lib/prisma";
 import { getTranslations } from "next-intl/server";
+import CategoryTabs from "@/components/blog/CategoryTabs";
+import BlogPagination from "@/components/blog/BlogPagination";
 
 export const dynamic = "force-dynamic";
 
@@ -33,37 +35,45 @@ export default async function BlogPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; page?: string }>;
 }) {
   const { locale } = await params;
-  const { q } = await searchParams;
+  const { q, page } = await searchParams;
+const query = String(q ?? "").trim();
+const currentPage = Math.max(1, Number(page ?? "1") || 1);
+const pageSize = 12;
+const skip = (currentPage - 1) * pageSize;
 const t = await getTranslations({ locale, namespace: "BlogPage" });
-  const query = String(q ?? "").trim();
+const where = {
+  published: true,
+  locale,
+  ...(query
+    ? {
+        OR: [
+          { title: { contains: query, mode: "insensitive" as const } },
+          { excerpt: { contains: query, mode: "insensitive" as const } },
+        ],
+      }
+    : {}),
+};
+const totalPosts = await prisma.post.count({ where });
+const totalPages = Math.max(1, Math.ceil(totalPosts / pageSize));
 
   const posts = await prisma.post.findMany({
-    where: {
-      published: true,
-      locale,
-      ...(query
-        ? {
-            OR: [
-              { title: { contains: query, mode: "insensitive" } },
-              { excerpt: { contains: query, mode: "insensitive" } },
-            ],
-          }
-        : {}),
-    },
-    orderBy: { publishedAt: "desc" },
-    take: 50,
-    select: {
-      id: true,
-      slug: true,
-      title: true,
-      excerpt: true,
-      coverImage: true,
-      publishedAt: true,
-      tags: { select: { tag: { select: { name: true, slug: true } } } },
-    },
+    where,
+orderBy: { publishedAt: "desc" },
+skip,
+take: pageSize,
+select: {
+  id: true,
+  slug: true,
+  category: true,
+  title: true,
+  excerpt: true,
+  coverImage: true,
+  publishedAt: true,
+  tags: { select: { tag: { select: { name: true, slug: true } } } },
+},
   });
 
   return (
@@ -72,6 +82,7 @@ const t = await getTranslations({ locale, namespace: "BlogPage" });
         <h1 className="text-3xl font-extrabold tracking-tight">{t("title")}</h1>
 <p className="mt-2 text-gray-600">{t("description")}</p>
 <form method="GET" className="mt-6">
+
 <input
   type="text"
   name="q"
@@ -80,6 +91,7 @@ const t = await getTranslations({ locale, namespace: "BlogPage" });
   className="w-full rounded-2xl border border-gray-300 px-4 py-3 outline-none focus:border-gray-500"
 />
 </form>
+<CategoryTabs locale={locale} />
 {query ? (
   <p className="mt-4 text-sm text-gray-500">
     {t("resultsFor")} <span className="font-semibold text-gray-900">{query}</span>
@@ -94,7 +106,7 @@ const t = await getTranslations({ locale, namespace: "BlogPage" });
             return (
 <Link
   key={p.id}
-  href={`/blog/${slug}`}
+  href={`/blog/${p.category}/${slug}`}
   locale={locale}
   className="group rounded-3xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-[1px] hover:shadow-md"
 >
@@ -107,6 +119,9 @@ const t = await getTranslations({ locale, namespace: "BlogPage" });
                 <div className="text-xs text-gray-500">
                   {p.publishedAt ? new Date(p.publishedAt).toLocaleDateString("en-US") : ""}
                 </div>
+<div className="mt-2 text-xs font-semibold uppercase tracking-wide text-sky-500">
+  {p.category}
+</div>
 
                 <div className="mt-1 text-lg font-semibold group-hover:underline">{p.title}</div>
 
@@ -126,6 +141,13 @@ const t = await getTranslations({ locale, namespace: "BlogPage" });
             );
           })}
         </div>
+<BlogPagination
+  locale={locale}
+  basePath="/blog"
+  currentPage={currentPage}
+  totalPages={totalPages}
+  query={query}
+/>
       </div>
     </div>
   );

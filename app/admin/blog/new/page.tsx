@@ -15,6 +15,7 @@ export default function AdminNewPostPage() {
   const [title, setTitle] = React.useState("");
   const [slug, setSlug] = React.useState("");
   const [locale, setLocale] = React.useState("en");
+  const [category, setCategory] = React.useState("pokemon");
   const [excerpt, setExcerpt] = React.useState("");
   const [coverImage, setCoverImage] = React.useState("");
   const [contentHtml, setContentHtml] = React.useState("");
@@ -32,7 +33,7 @@ export default function AdminNewPostPage() {
         "Content-Type": "application/json",
         "x-admin-secret": secret,
       },
-      body: JSON.stringify({ title, slug, locale, excerpt, coverImage, contentHtml }),
+      body: JSON.stringify({ title, slug, locale, category, excerpt, coverImage, contentHtml }),
     });
 
     const data = await res.json().catch(() => ({}));
@@ -93,6 +94,19 @@ export default function AdminNewPostPage() {
   </select>
 </div>
 
+<div>
+  <div className="text-sm font-semibold mb-2">Category</div>
+  <select
+    className="w-full border p-3 rounded"
+    value={category}
+    onChange={(e) => setCategory(e.target.value)}
+  >
+    <option value="pokemon">Pokemon</option>
+    <option value="soccer">Soccer</option>
+    <option value="basketball">Basketball</option>
+    <option value="nfl">NFL</option>
+  </select>
+</div>
 
           <div>
             <div className="text-sm font-semibold mb-2">Excerpt (optional)</div>

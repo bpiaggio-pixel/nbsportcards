@@ -23,18 +23,19 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
     const post = await prisma.post.findUnique({
       where: { id: postId },
       select: {
-        id: true,
-        slug: true,
-        locale: true,
-        title: true,
-        excerpt: true,
-        coverImage: true,
-        contentHtml: true,
-        published: true,
-        publishedAt: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+  id: true,
+  slug: true,
+  locale: true,
+  category: true,
+  title: true,
+  excerpt: true,
+  coverImage: true,
+  contentHtml: true,
+  published: true,
+  publishedAt: true,
+  createdAt: true,
+  updatedAt: true,
+},
     });
 
     if (!post) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -74,6 +75,14 @@ if (body.locale !== undefined) {
   }
   data.locale = locale;
 }
+if (body.category !== undefined) {
+  const category = String(body.category ?? "").trim().toLowerCase();
+  if (!["pokemon", "soccer", "basketball", "nfl"].includes(category)) {
+    return NextResponse.json({ error: "Invalid category" }, { status: 400 });
+  }
+  data.category = category;
+}
+
     if (body.excerpt !== undefined) data.excerpt = String(body.excerpt ?? "").trim() || null;
     if (body.coverImage !== undefined) data.coverImage = String(body.coverImage ?? "").trim() || null;
     if (body.contentHtml !== undefined) data.contentHtml = String(body.contentHtml ?? "").trim();

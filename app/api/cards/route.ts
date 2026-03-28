@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-type Sport = "basketball" | "soccer" | "nfl" | "pokemon";
+type Sport = "basketball" | "soccer" | "nfl" | "pokemon" | "other";
 function normalizeYes(v: unknown) {
   return String(v ?? "")
     .trim()

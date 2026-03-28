@@ -29,13 +29,14 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     const original = await prisma.post.findUnique({
       where: { id: postId },
       select: {
-        title: true,
-        slug: true,
-        locale: true,
-        excerpt: true,
-        coverImage: true,
-        contentHtml: true,
-        tags: {
+  title: true,
+  slug: true,
+  locale: true,
+  category: true,
+  excerpt: true,
+  coverImage: true,
+  contentHtml: true,
+  tags: {
           select: {
             tagId: true,
           },
@@ -53,9 +54,10 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     while (
       await prisma.post.findFirst({
         where: {
-          slug: nextSlug,
-          locale: original.locale,
-        },
+  slug: nextSlug,
+  locale: original.locale,
+  category: original.category,
+},
         select: { id: true },
       })
     ) {
@@ -65,12 +67,13 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
 
     const created = await prisma.post.create({
       data: {
-        title: `${original.title} (Copy)`,
-        slug: nextSlug,
-        locale: original.locale,
-        excerpt: original.excerpt,
-        coverImage: original.coverImage,
-        contentHtml: original.contentHtml,
+  title: `${original.title} (Copy)`,
+  slug: nextSlug,
+  locale: original.locale,
+  category: original.category,
+  excerpt: original.excerpt,
+  coverImage: original.coverImage,
+  contentHtml: original.contentHtml,
         published: false,
         publishedAt: null,
         tags: {

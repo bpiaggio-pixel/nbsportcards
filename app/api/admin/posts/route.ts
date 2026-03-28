@@ -20,17 +20,18 @@ export async function GET(req: Request) {
       orderBy: { updatedAt: "desc" },
       take: 200,
       select: {
-        id: true,
-        slug: true,
-        locale: true,
-        title: true,
-        excerpt: true,
-        coverImage: true,
-        published: true,
-        publishedAt: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+  id: true,
+  slug: true,
+  locale: true,
+  category: true,
+  title: true,
+  excerpt: true,
+  coverImage: true,
+  published: true,
+  publishedAt: true,
+  createdAt: true,
+  updatedAt: true,
+},
     });
 
     return NextResponse.json({ posts });
@@ -52,11 +53,12 @@ export async function POST(req: Request) {
 
     const body = await req.json().catch(() => ({}));
     const title = String(body?.title ?? "").trim();
-    const slug = String(body?.slug ?? "").trim();
-    const locale = String(body?.locale ?? "en").trim().toLowerCase();
-    const excerpt = String(body?.excerpt ?? "").trim() || null;
-    const coverImage = String(body?.coverImage ?? "").trim() || null;
-    const contentHtml = String(body?.contentHtml ?? "").trim();
+const slug = String(body?.slug ?? "").trim();
+const locale = String(body?.locale ?? "en").trim().toLowerCase();
+const category = String(body?.category ?? "pokemon").trim().toLowerCase();
+const excerpt = String(body?.excerpt ?? "").trim() || null;
+const coverImage = String(body?.coverImage ?? "").trim() || null;
+const contentHtml = String(body?.contentHtml ?? "").trim();
 
     if (!title) return NextResponse.json({ error: "Missing title" }, { status: 400 });
     if (!slug) return NextResponse.json({ error: "Missing slug" }, { status: 400 });
@@ -64,20 +66,24 @@ export async function POST(req: Request) {
 if (!["en", "es"].includes(locale)) {
   return NextResponse.json({ error: "Invalid locale" }, { status: 400 });
 }
+if (!["pokemon", "soccer", "basketball", "nfl"].includes(category)) {
+  return NextResponse.json({ error: "Invalid category" }, { status: 400 });
+}
 
-    const created = await prisma.post.create({
-      data: {
-        title,
-        slug,
-        locale,
-        excerpt,
-        coverImage,
-        contentHtml,
-        published: false,
-        publishedAt: null,
-      },
-      select: { id: true },
-    });
+const created = await prisma.post.create({
+  data: {
+    title,
+    slug,
+    locale,
+    category,
+    excerpt,
+    coverImage,
+    contentHtml,
+    published: false,
+    publishedAt: null,
+  },
+  select: { id: true },
+});
 
     return NextResponse.json({ id: created.id });
   } catch (e: any) {

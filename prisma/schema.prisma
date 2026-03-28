@@ -41,6 +41,7 @@ model Post {
   id          String    @id @default(cuid())
   slug        String
   locale      String    @default("en")   // ← idioma
+  category String @default("pokemon")
   title       String
   excerpt     String?
   contentHtml String
@@ -51,7 +52,7 @@ model Post {
   updatedAt   DateTime  @updatedAt
   tags        PostTag[]
 
-  @@unique([slug, locale])
+  @@unique([slug, locale, category])
 }
 
 model Tag {
