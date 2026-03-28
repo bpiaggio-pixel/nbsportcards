@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 
 export default function CategoryTabs({ locale }: { locale: string }) {
   const pathname = usePathname();
+  const safePathname = pathname ?? "";
 
   const categories = [
     { name: "All", href: "/blog" },
@@ -18,8 +19,9 @@ export default function CategoryTabs({ locale }: { locale: string }) {
     <div className="mt-6 mb-6 flex flex-wrap gap-3">
       {categories.map((cat) => {
         const isActive =
-          pathname === `/${locale}${cat.href}` ||
-          (cat.href !== "/blog" && pathname.startsWith(`/${locale}${cat.href}`));
+          safePathname === `/${locale}${cat.href}` ||
+          (cat.href !== "/blog" &&
+            safePathname.startsWith(`/${locale}${cat.href}`));
 
         return (
           <Link
