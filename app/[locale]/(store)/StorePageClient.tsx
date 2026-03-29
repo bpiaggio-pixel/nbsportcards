@@ -1930,7 +1930,7 @@ const inventoryBadge = getInventoryBadge(card);
             e.stopPropagation();
             onToggleWish();
           }}
-          className="absolute right-4 top-4 z-20 rounded-full border border-gray-200 bg-white/90 p-2 shadow-sm backdrop-blur hover:bg-gray-50"
+          className="absolute left-[92px] top-3 z-20 rounded-full border border-gray-200 bg-white/95 p-2 shadow-sm hover:bg-gray-50 md:right-4 md:left-auto md:top-4"
           aria-label="Save"
         >
           <Heart
@@ -1950,11 +1950,11 @@ const inventoryBadge = getInventoryBadge(card);
   className="block w-full text-left"
 >
   <div className="flex flex-row md:flex-col">
-    <div className="relative h-[140px] w-[130px] shrink-0 overflow-hidden border-r border-gray-200 bg-[#f3f4f6] md:h-[280px] md:w-full md:border-r-0 md:border-b">
+    <div className="relative self-stretch w-[132px] shrink-0 overflow-hidden border-r border-gray-200 bg-[#f3f4f6] md:h-[280px] md:w-full md:border-r-0 md:border-b">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(255,255,255,0.95),rgba(255,255,255,0)_58%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_55%,rgba(0,0,0,0.10),rgba(0,0,0,0)_65%)] opacity-40" />
 
-      <div className="relative z-10 flex h-full items-center justify-center">
+      <div className="relative z-10 flex h-full min-h-[170px] items-center justify-center md:min-h-0">
         <Image
           src={gridImg}
           alt={card.title}
@@ -1962,12 +1962,12 @@ const inventoryBadge = getInventoryBadge(card);
           priority={index < 2}
           sizes="(max-width: 768px) 130px, (max-width: 1024px) 46vw, 260px"
           quality={70}
-          className="object-contain p-4 md:p-6 transition duration-300 group-hover:scale-[1.03]"
+          className="object-contain p-3 md:p-6 transition duration-300 group-hover:scale-[1.03]"
         />
       </div>
     </div>
 
-<div className="flex min-h-[140px] flex-1 flex-col justify-between p-3 md:h-[260px] md:p-5">
+<div className="flex min-h-[170px] flex-1 flex-col justify-between p-3 md:h-[260px] md:p-5">
   <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-gray-900 md:h-[40px]">{card.title}</h3>
   <p className="text-sm text-gray-500">{card.player}</p>
 
@@ -2018,7 +2018,7 @@ const inventoryBadge = getInventoryBadge(card);
     }}
     disabled={outOfStock}
     className={[
-      "w-full rounded-full py-2.5 text-sm font-semibold md:py-3 transition-all duration-300 flex items-center justify-center gap-2",
+      "w-full rounded-full py-1.5 text-[13px] font-semibold md:py-3 md:text-sm transition-all duration-300 flex items-center justify-center gap-2",
       outOfStock
         ? "bg-gray-200 text-gray-500 cursor-not-allowed"
         : maxStock
