@@ -226,7 +226,7 @@ export default function Header() {
   const glow = "from-sky-500/60 via-cyan-400/45 to-blue-600/60";
 
   return (
-    <header className="sticky top-0 z-[9999] border-b border-white/10 bg-[#0b0b12]/96 backdrop-blur">
+    <header className="sticky top-0 z-[9999] bg-black">
       <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 sm:py-4">
         {/* ✅ DESKTOP (sm+): como antes, en una fila */}
         <div className="hidden sm:flex items-center gap-6">

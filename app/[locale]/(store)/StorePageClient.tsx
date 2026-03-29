@@ -502,7 +502,7 @@ function clearFilters() {
 }
 
   // pagination
-  const pageSize = 9;
+  const pageSize = 12;
   const [page, setPage] = React.useState(1);
 
 React.useEffect(() => {
@@ -952,10 +952,48 @@ const topShowcaseItems = React.useMemo(() => {
   const favCount = React.useMemo(() => Object.values(wishlist).filter(Boolean).length, [wishlist]);
 
   return (
-<div className="min-h-screen bg-gradient-to-b from-black from-0% via-gray-800 via-35% to-white to-65% text-white">
-
+<div className="min-h-screen text-white bg-[linear-gradient(to_bottom,#000_0px,#000_520px,#d1d5db_700px,#ffffff_900px)]">
 {/* MAIN */}
-<div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 py-6 lg:grid-cols-[280px_1fr] lg:px-6 lg:py-10">
+{/* BANNER SOLO EN COLUMNA DE TARJETAS */}
+<div className="pointer-events-none absolute top-0 left-0 w-full h-16 bg-gradient-to-b from-black/90 to-transparent z-30" />
+<div className="-mt-10 mb-0 overflow-hidden">
+  <div className="relative h-[200px] sm:h-[260px] md:h-[340px] w-full bg-gradient-to-b from-black via-[#05070c] to-transparent">
+
+    {/* FX atrás */}
+    <div className="pointer-events-none absolute inset-0 z-[7] hidden md:block">
+      <BannerFX density={240} />
+    </div>
+
+    <div className="pointer-events-none absolute top-0 left-0 h-full w-80 bg-gradient-to-r from-black via-gray/90 to-transparent z-20" />
+    <div className="pointer-events-none absolute top-0 right-0 h-full w-80 bg-gradient-to-l from-black via-gray/0 to-transparent z-20" />
+    <div className="pointer-events-none absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-black via-gray/95 to-transparent z-20" />
+<div className="pointer-events-none absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-black via-black/80 to-transparent z-20" />
+    {/* PNG jugadores */}
+    <div className="relative h-[200px] sm:h-[260px] md:h-[340px] w-full bg-gradient-to-b from-[#020617] via-[#041a2b] to-transparent">
+      <Image
+        src={getBannerSrc(sport)}
+        alt="Category banner"
+        fill
+        priority
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 900px"
+className="relative z-10 object-contain object-bottom translate-y-6 md:translate-y-10 select-none p-6 md:p-10 scale-100 md:scale-107 md:animate-[bannerZoom_10s_ease-in-out_infinite_alternate]"      />
+    </div>
+
+
+    <style jsx>{`
+      @keyframes bannerZoom {
+        from {
+          transform: scale(1);
+        }
+        to {
+          transform: scale(1.09);
+        }
+      }
+    `}</style>
+  </div>
+</div>
+
+<div className="mx-auto -mt-6 grid max-w-7xl grid-cols-1 gap-8 px-4 py-6 lg:grid-cols-[280px_1fr] lg:px-6 lg:py-10">
         {/* SIDEBAR */}
 <aside className="hidden lg:block space-y-6 rounded-3xl border border-white/30 bg-gradient-to-b from-white/90 via-white/82 to-white/72 p-4 shadow-[0_20px_60px_rgba(0,0,0,0.14)] backdrop-blur-md lg:p-6">          <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">{t("filters")}</h2>
@@ -1263,53 +1301,7 @@ const topShowcaseItems = React.useMemo(() => {
 
 {/* GRID */}
         <main>
-          {/* BANNER SOLO EN COLUMNA DE TARJETAS */}
-          <div className="-mt-10 mb-6 overflow-hidden">
-  <div className="relative h-[180px] sm:h-[230px] md:h-[300px] w-full bg-gradient-to-b from-black via-gray-900 to-transparent">
 
-
-    {/* FX atrás */}
-
-<div className="pointer-events-none absolute inset-0 z-[7] hidden md:block">
-  <BannerFX density={240} />
-</div>
-
-
-
-{/* Glow azul detrás de los jugadores */}
-
-
-
-<div className="pointer-events-none absolute top-0 left-0 h-full w-16 bg-gradient-to-r from-black via-gray/90 to-transparent z-20" />
-<div className="pointer-events-none absolute top-0 right-0 h-full w-16 bg-gradient-to-l from-black via-gray/0 to-transparent z-20" />
-<div className="pointer-events-none absolute bottom-0 left-0 w-full h-18 bg-gradient-to-t from-black via-gray/95 to-transparent z-20" />
-
-
-    {/* PNG jugadores */}
-    <div className="relative h-[180px] sm:h-[230px] md:h-[300px] w-full bg-gradient-to-b from-black via-gray-900 to-transparent">
-<Image
-  src={getBannerSrc(sport)}
-  alt="Category banner"
-  fill
-  priority
-  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 900px"
-  className="relative z-10 object-contain select-none md:animate-[bannerZoom_10s_ease-in-out_infinite_alternate]"
-/>
-</div>
-
-<style jsx>{`
-  @keyframes bannerZoom {
-    from {
-      transform: scale(1);
-    }
-    to {
-      transform: scale(1.09);
-    }
-  }
-`}</style>
-
-  </div>
-</div>
 
 
 
@@ -1340,7 +1332,7 @@ const topShowcaseItems = React.useMemo(() => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 items-start gap-x-4 gap-y-1 sm:gap-x-4 sm:gap-y-3 lg:gap-x-6 lg:gap-y-6 min-h-[2200px] sm:min-h-[1800px] lg:grid-cols-3 lg:min-h-[980px]">
+          <div className="grid grid-cols-1 items-start gap-x-4 gap-y-3 sm:grid-cols-2 sm:gap-x-4 sm:gap-y-3 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-6 min-h-[2200px] sm:min-h-[1800px] lg:min-h-[980px]">
   {cardsLoading
   ? Array.from({ length: 9 }).map((_, i) => <CardTileSkeleton key={i} />)
   : paged.map((card, index) => (
@@ -1948,33 +1940,35 @@ const inventoryBadge = getInventoryBadge(card);
           />
         </button>
 
-        <div
-          role="button"
-          tabIndex={0}
-          onClick={onOpen}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") onOpen();
-          }}
-          className="block w-full text-left"
-        >
-          <div className="relative h-[160px] sm:h-[280px] overflow-hidden border-b border-gray-200 bg-[#f3f4f6]">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(255,255,255,0.95),rgba(255,255,255,0)_58%)]" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_55%,rgba(0,0,0,0.10),rgba(0,0,0,0)_65%)] opacity-40" />
-            <div className="relative z-10 flex h-full items-center justify-center">
- 		 <Image
-  src={gridImg}
-  alt={card.title}
-  fill
-  priority={index < 2}
-  sizes="(max-width: 640px) 46vw, (max-width: 1024px) 46vw, 260px"
-  quality={70}
-  className="object-contain p-6 transition duration-300 group-hover:scale-[1.03]"
-/>
-		</div>
-          </div>
+<div
+  role="button"
+  tabIndex={0}
+  onClick={onOpen}
+  onKeyDown={(e) => {
+    if (e.key === "Enter" || e.key === " ") onOpen();
+  }}
+  className="block w-full text-left"
+>
+  <div className="flex flex-row md:flex-col">
+    <div className="relative h-[140px] w-[130px] shrink-0 overflow-hidden border-r border-gray-200 bg-[#f3f4f6] md:h-[280px] md:w-full md:border-r-0 md:border-b">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(255,255,255,0.95),rgba(255,255,255,0)_58%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_55%,rgba(0,0,0,0.10),rgba(0,0,0,0)_65%)] opacity-40" />
 
-<div className="flex flex-col justify-between h-[230px] sm:h-[260px] p-3 sm:p-5">
-  <h3 className="h-[40px] line-clamp-2 text-sm font-semibold leading-snug text-gray-900">{card.title}</h3>
+      <div className="relative z-10 flex h-full items-center justify-center">
+        <Image
+          src={gridImg}
+          alt={card.title}
+          fill
+          priority={index < 2}
+          sizes="(max-width: 768px) 130px, (max-width: 1024px) 46vw, 260px"
+          quality={70}
+          className="object-contain p-4 md:p-6 transition duration-300 group-hover:scale-[1.03]"
+        />
+      </div>
+    </div>
+
+<div className="flex min-h-[140px] flex-1 flex-col justify-between p-3 md:h-[260px] md:p-5">
+  <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-gray-900 md:h-[40px]">{card.title}</h3>
   <p className="text-sm text-gray-500">{card.player}</p>
 
   <div className="flex items-center gap-2">
@@ -2024,7 +2018,7 @@ const inventoryBadge = getInventoryBadge(card);
     }}
     disabled={outOfStock}
     className={[
-      "w-full rounded-full py-3 text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2",
+      "w-full rounded-full py-2.5 text-sm font-semibold md:py-3 transition-all duration-300 flex items-center justify-center gap-2",
       outOfStock
         ? "bg-gray-200 text-gray-500 cursor-not-allowed"
         : maxStock
@@ -2054,6 +2048,7 @@ const inventoryBadge = getInventoryBadge(card);
       </div>
       </div>
     </div>
+ </div>
   );
 }
 
