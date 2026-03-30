@@ -162,7 +162,7 @@ function getBannerSrc(s: "all" | Sport) {
   if (s === "nfl") return "/banners/nfl.webp";
   if (s === "pokemon") return "/banners/pokemon.webp";
   if (s === "other") return "/banners/others.webp";
-  return "/banners/all9d.webp";
+  return "/banners/all9d1.webp";
 }
 
 /* -------------------------
