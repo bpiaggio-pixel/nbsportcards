@@ -3,7 +3,7 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { Heart, X, ShoppingCart, Check } from "lucide-react";
+import { Heart, X, ShoppingCart, Check, SlidersHorizontal } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
 import BannerFX from "@/components/BannerFX";
@@ -486,7 +486,8 @@ React.useEffect(() => {
   const [autoFilter, setAutoFilter] = React.useState<"all" | "yes" | "no">("all");
   const [inventoryLocationFilter, setInventoryLocationFilter] = React.useState<"all" | "comc" | "fanatics" | "argentina">("all");
   const [sort, setSort] = React.useState<"recommended" | "price_desc" | "price_asc">("recommended");
-  const playerFilterLabel = sport === "pokemon" ? "Product Type" : "Player";
+  const playerFilterLabel =
+  sport === "pokemon" || sport === "other" ? "Product Type" : "Player";
 const [playerOptions, setPlayerOptions] = React.useState<string[]>([]);
 
   // ✅ mobile filters drawer
@@ -995,17 +996,21 @@ className="relative z-10 object-contain object-bottom translate-y-6 md:translate
 
 <div className="mx-auto -mt-6 grid max-w-7xl grid-cols-1 gap-8 px-4 py-6 lg:grid-cols-[280px_1fr] lg:px-6 lg:py-10">
         {/* SIDEBAR */}
-<aside className="hidden lg:block space-y-6 rounded-3xl border border-white/30 bg-gradient-to-b from-white/90 via-white/82 to-white/72 p-4 shadow-[0_20px_60px_rgba(0,0,0,0.14)] backdrop-blur-md lg:p-6">          <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">{t("filters")}</h2>
+<aside className="hidden lg:block space-y-6 rounded-3xl bg-[linear-gradient(to_bottom,#2c3446_0px,#1d2331_65px,#d1d5db_65px,#ffffff_320px)] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.14)] backdrop-blur-md lg:p-6">         
+        <div className="flex items-center justify-between mb-9">
+          <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-gray-200">
+  <SlidersHorizontal size={16} className="opacity-80" />
+  {t("filters")}
+</h2>
           <button
             type="button"
             onClick={clearFilters}
             className=" text-xs
   px-3 py-1
   rounded-md
-  border border-gray-300
-  bg-white
-  text-gray-700
+  border border-gray-700
+  bg-[#798295]
+  text-gray-200
   hover:bg-sky-500
   hover:text-white
   hover:border-sky-500
@@ -1332,26 +1337,28 @@ className="relative z-10 object-contain object-bottom translate-y-6 md:translate
             </div>
           </div>
 
-          <div className="grid grid-cols-1 items-start gap-x-4 gap-y-3 sm:grid-cols-2 sm:gap-x-4 sm:gap-y-3 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-6 min-h-[2200px] sm:min-h-[1800px] lg:min-h-[980px]">
-  {cardsLoading
-  ? Array.from({ length: 9 }).map((_, i) => <CardTileSkeleton key={i} />)
-  : paged.map((card, index) => (
-      <CardTile
-        key={card.id}
-        card={card}
-        index={index}
-        wished={!!wishlist[normId(card.id)]}
-        added={addedToCartId === normId(card.id)}
-        maxStock={maxStockId === normId(card.id)}
-        onToggleWish={() => toggleWish(card.id)}
-        onOpen={() => {
-          openCard(card.id);
-          fetch(`/api/cards/${encodeURIComponent(card.id)}/view`, { method: "POST" }).catch(() => {});
-        }}
-        onAddToCart={() => handleAddToCart(card.id)}
-        t={t}
-      />
-    ))}
+          <div className="min-h-[2200px] sm:min-h-[1800px] lg:min-h-[980px]">
+  <div className="grid grid-cols-1 items-start gap-x-4 gap-y-3 sm:grid-cols-2 sm:items-stretch sm:gap-x-4 sm:gap-y-3 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-6">
+    {cardsLoading
+      ? Array.from({ length: 9 }).map((_, i) => <CardTileSkeleton key={i} />)
+      : paged.map((card, index) => (
+          <CardTile
+            key={card.id}
+            card={card}
+            index={index}
+            wished={!!wishlist[normId(card.id)]}
+            added={addedToCartId === normId(card.id)}
+            maxStock={maxStockId === normId(card.id)}
+            onToggleWish={() => toggleWish(card.id)}
+            onOpen={() => {
+              openCard(card.id);
+              fetch(`/api/cards/${encodeURIComponent(card.id)}/view`, { method: "POST" }).catch(() => {});
+            }}
+            onAddToCart={() => handleAddToCart(card.id)}
+            t={t}
+          />
+        ))}
+  </div>
 </div>
 
           <div className="mt-10 flex flex-col items-center justify-between gap-3 sm:flex-row">
@@ -1907,16 +1914,16 @@ const onSale = SALE_ACTIVE && percent > 0;
 const inventoryBadge = getInventoryBadge(card);
 
   return (
-    <div className="group relative rounded-[22px] p-[2px] transition">
+    <div className="group relative h-full rounded-[22px] p-[2px] transition">
       <div className="absolute inset-0 rounded-[22px] bg-gradient-to-r from-sky-500 via-cyan-400 to-blue-400 opacity-0 blur-lg transition group-hover:opacity-100" />
 
       {/* ✅ STOCK: gris cuando no hay stock */}
       <div
-        className={[
-          "relative overflow-hidden rounded-[20px] border border-gray-200 bg-white shadow-sm transition group-hover:shadow-lg",
-          outOfStock ? "opacity-60" : "",
-        ].join(" ")}
-      >
+  className={[
+    "relative overflow-hidden rounded-[20px] border border-gray-200 bg-white shadow-sm transition group-hover:shadow-lg h-full flex flex-col",
+    outOfStock ? "opacity-60" : "",
+  ].join(" ")}
+>
         {/* ✅ STOCK: badge */}
         {outOfStock && (
           <div className="absolute left-4 top-4 z-20 rounded-full bg-gray-900 px-3 py-1 text-xs font-semibold text-white">
@@ -1947,9 +1954,9 @@ const inventoryBadge = getInventoryBadge(card);
   onKeyDown={(e) => {
     if (e.key === "Enter" || e.key === " ") onOpen();
   }}
-  className="block w-full text-left"
+  className="flex h-full w-full flex-col text-left"
 >
-  <div className="flex flex-row md:flex-col">
+  <div className="flex flex-1 flex-row md:flex-col">
     <div className="relative self-stretch w-[132px] shrink-0 overflow-hidden border-r border-gray-200 bg-[#f3f4f6] md:h-[280px] md:w-full md:border-r-0 md:border-b">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(255,255,255,0.95),rgba(255,255,255,0)_58%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_55%,rgba(0,0,0,0.10),rgba(0,0,0,0)_65%)] opacity-40" />
@@ -1967,44 +1974,48 @@ const inventoryBadge = getInventoryBadge(card);
       </div>
     </div>
 
-<div className="flex min-h-[170px] flex-1 flex-col justify-between p-3 md:h-[260px] md:p-5">
-  <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-gray-900 md:h-[40px]">{card.title}</h3>
-  <p className="text-sm text-gray-500">{card.player}</p>
+<div className="flex flex-1 flex-col p-3 md:p-5">
 
-  <div className="flex items-center gap-2">
-    <div className="flex flex-col gap-1">
-      <div className="flex flex-wrap items-center gap-2 min-h-[26px]">
-        {onSale && (
-          <span className="shrink-0 whitespace-nowrap rounded-full bg-gray-200 text-gray-800 px-2 py-1 text-xs font-bold">
-            -{percent}%
+  <div className="flex flex-col gap-2">
+    <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-gray-900 md:h-[40px]">
+      {card.title}
+    </h3>
+
+    <p className="text-sm text-gray-500">{card.player}</p>
+
+    <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-1">
+        <div className="flex flex-wrap items-center gap-2 min-h-[26px]">
+          {onSale && (
+            <span className="shrink-0 whitespace-nowrap rounded-full bg-gray-200 text-gray-800 px-2 py-1 text-xs font-bold">
+              -{percent}%
+            </span>
+          )}
+
+          {isGreatDeal(card) && (
+            <span className="shrink-0 whitespace-nowrap rounded-full bg-green-200 px-2 py-1 text-xs font-semibold text-green-700">
+              Great Deal
+            </span>
+          )}
+
+          {inventoryBadge && (
+            <span className={`shrink-0 whitespace-nowrap rounded-full px-2 py-1 text-[10px] font-semibold ${inventoryBadge.className}`}>
+              {inventoryBadge.label}
+            </span>
+          )}
+        </div>
+
+        <div className="flex flex-wrap items-end gap-2">
+          {onSale && (
+            <span className="text-sm text-gray-400 line-through whitespace-nowrap">
+              {formatUSD(baseCents / 100)}
+            </span>
+          )}
+
+          <span className={`text-lg font-bold whitespace-nowrap ${onSale ? "text-sky-600" : "text-gray-900"}`}>
+            {formatUSD(discountedCents / 100)}
           </span>
-        )}
-
-        {isGreatDeal(card) && (
-          <span className="shrink-0 whitespace-nowrap rounded-full bg-green-200 px-2 py-1 text-xs font-semibold text-green-700">
-            Great Deal
-          </span>
-        )}
-
-        {inventoryBadge && (
-          <span
-            className={`shrink-0 whitespace-nowrap rounded-full px-2 py-1 text-xs font-semibold ${inventoryBadge.className}`}
-          >
-            {inventoryBadge.label}
-          </span>
-        )}
-      </div>
-
-      <div className="flex flex-wrap items-end gap-2">
-        {onSale && (
-          <span className="text-sm text-gray-400 line-through whitespace-nowrap">
-            {formatUSD(baseCents / 100)}
-          </span>
-        )}
-
-        <span className={`text-lg font-bold whitespace-nowrap ${onSale ? "text-sky-600" : "text-gray-900"}`}>
-          {formatUSD(discountedCents / 100)}
-        </span>
+        </div>
       </div>
     </div>
   </div>
@@ -2018,7 +2029,7 @@ const inventoryBadge = getInventoryBadge(card);
     }}
     disabled={outOfStock}
     className={[
-      "self-start w-auto min-w-[170px] px-4 rounded-full py-1.5 text-[13px] font-semibold md:w-full md:px-0 md:py-3 md:text-sm transition-all duration-300 flex items-center justify-center gap-2",
+      "mt-auto w-full rounded-full py-1.5 text-[13px] font-semibold md:py-3 md:text-sm transition-all duration-300 flex items-center justify-center gap-2",
       outOfStock
         ? "bg-gray-200 text-gray-500 cursor-not-allowed"
         : maxStock
@@ -2044,7 +2055,8 @@ const inventoryBadge = getInventoryBadge(card);
       </>
     )}
   </button>
-</div>       
+
+</div>    
       </div>
       </div>
     </div>
