@@ -980,20 +980,6 @@ function getBannerDiscount(sport: string) {
   }
 }
 
-function getBannerDiscount(sport: string) {
-  switch (sport) {
-    case "soccer":
-      return "10% OFF";
-    case "basketball":
-      return "5% OFF";
-    case "nfl":
-      return "8% OFF";
-    case "pokemon":
-      return "HOT DEALS";
-    default:
-      return "TOP DEALS";
-  }
-}
 
 function getBannerSubtitle(sport: string) {
   switch (sport) {
