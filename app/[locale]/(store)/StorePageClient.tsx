@@ -955,19 +955,19 @@ const topShowcaseItems = React.useMemo(() => {
 <div className="min-h-screen text-white bg-[linear-gradient(to_bottom,#000_0px,#000_520px,#d1d5db_700px,#ffffff_900px)]">
 {/* MAIN */}
 {/* BANNER SOLO EN COLUMNA DE TARJETAS */}
-<div className="pointer-events-none absolute top-0 left-0 w-full h-16 bg-gradient-to-b from-black/90 to-transparent z-30" />
-<div className="-mt-10 mb-0 overflow-hidden">
-  <div className="relative h-[200px] sm:h-[260px] md:h-[340px] w-full bg-gradient-to-b from-black via-[#05070c] to-transparent">
+<div className="pointer-events-none absolute top-0 left-0 hidden w-full h-16 bg-gradient-to-b from-black/90 to-transparent z-30 md:block" />
+<div className="mb-0 overflow-hidden">
+  <div className="relative h-[200px] sm:h-[260px] md:h-[340px] w-full bg-gradient-to-b from-[#020617] via-[#041a2b] to-transparent">
 
     {/* FX atrás */}
     <div className="pointer-events-none absolute inset-0 z-[7] hidden md:block">
       <BannerFX density={240} />
     </div>
 
-    <div className="pointer-events-none absolute top-0 left-0 h-full w-80 bg-gradient-to-r from-black via-gray/90 to-transparent z-20" />
-    <div className="pointer-events-none absolute top-0 right-0 h-full w-80 bg-gradient-to-l from-black via-gray/0 to-transparent z-20" />
-    <div className="pointer-events-none absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-black via-gray/95 to-transparent z-20" />
-<div className="pointer-events-none absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-black via-black/80 to-transparent z-20" />
+    <div className="pointer-events-none absolute top-0 left-0 h-full w-24 md:w-80 bg-gradient-to-r from-black/30 md:from-black via-transparent to-transparent z-20" />
+<div className="pointer-events-none absolute top-0 right-0 h-full w-24 md:w-80 bg-gradient-to-l from-black/30 md:from-black via-transparent to-transparent z-20" />
+<div className="pointer-events-none absolute bottom-0 left-0 w-full h-16 md:h-24 bg-gradient-to-t from-black/50 md:from-black via-transparent to-transparent z-20" />
+<div className="pointer-events-none absolute top-0 left-0 w-full h-8 md:h-24 bg-gradient-to-b from-black/15 md:from-black via-transparent to-transparent z-20" />
     {/* PNG jugadores */}
     <div className="relative h-[200px] sm:h-[260px] md:h-[340px] w-full bg-gradient-to-b from-[#020617] via-[#041a2b] to-transparent">
       <Image
@@ -2018,7 +2018,7 @@ const inventoryBadge = getInventoryBadge(card);
     }}
     disabled={outOfStock}
     className={[
-      "w-full rounded-full py-1.5 text-[13px] font-semibold md:py-3 md:text-sm transition-all duration-300 flex items-center justify-center gap-2",
+      "self-start w-auto min-w-[170px] px-4 rounded-full py-1.5 text-[13px] font-semibold md:w-full md:px-0 md:py-3 md:text-sm transition-all duration-300 flex items-center justify-center gap-2",
       outOfStock
         ? "bg-gray-200 text-gray-500 cursor-not-allowed"
         : maxStock
