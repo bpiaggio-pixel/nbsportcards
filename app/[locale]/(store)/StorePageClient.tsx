@@ -3,7 +3,7 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { Heart, X, ShoppingCart, Check, SlidersHorizontal } from "lucide-react";
+import { Heart, X, ShoppingCart, Check, SlidersHorizontal, Sparkles, BadgePercent, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
 import BannerFX from "@/components/BannerFX";
@@ -312,6 +312,8 @@ export default function StorePageClient() {
   const [topShowcaseCards, setTopShowcaseCards] = React.useState<Card[]>([]);
   const [cardsLoading, setCardsLoading] = React.useState(true);
 
+
+
  // ✅ NUEVO STATE PARA LOS HIGHLIGHTS
 const [highlights, setHighlights] = React.useState<{
   mostViewed: Card | null;
@@ -486,6 +488,18 @@ React.useEffect(() => {
   const [autoFilter, setAutoFilter] = React.useState<"all" | "yes" | "no">("all");
   const [inventoryLocationFilter, setInventoryLocationFilter] = React.useState<"all" | "comc" | "fanatics" | "argentina">("all");
   const [sort, setSort] = React.useState<"recommended" | "price_desc" | "price_asc">("recommended");
+const [sortOpen, setSortOpen] = React.useState(false);
+
+const sortOptions = [
+  { value: "recommended", label: t("sortRecommended") },
+  { value: "price_desc", label: t("priceHighToLow") },
+  { value: "price_asc", label: t("priceLowToHigh") },
+] as const;
+
+const selectedSortLabel =
+  sortOptions.find((opt) => opt.value === sort)?.label ?? t("sortRecommended");
+
+
   const playerFilterLabel =
   sport === "pokemon" || sport === "other" ? "Product Type" : "Player";
 const [playerOptions, setPlayerOptions] = React.useState<string[]>([]);
@@ -951,14 +965,58 @@ const topShowcaseItems = React.useMemo(() => {
 }, [topShowcaseCards]);
 
   const favCount = React.useMemo(() => Object.values(wishlist).filter(Boolean).length, [wishlist]);
+function getBannerDiscount(sport: string) {
+  switch (sport) {
+    case "soccer":
+      return "10% OFF";
+    case "basketball":
+      return "5% OFF";
+    case "nfl":
+      return "8% OFF";
+    case "pokemon":
+      return "HOT DEALS";
+    default:
+      return "TOP DEALS";
+  }
+}
+
+function getBannerDiscount(sport: string) {
+  switch (sport) {
+    case "soccer":
+      return "10% OFF";
+    case "basketball":
+      return "5% OFF";
+    case "nfl":
+      return "8% OFF";
+    case "pokemon":
+      return "HOT DEALS";
+    default:
+      return "TOP DEALS";
+  }
+}
+
+function getBannerSubtitle(sport: string) {
+  switch (sport) {
+    case "soccer":
+      return "Top cards available";
+    case "basketball":
+      return "Rookies & legends";
+    case "nfl":
+      return "Limited editions";
+    case "pokemon":
+      return "TCG & sealed packs";
+    default:
+      return "Cards & collectibles";
+  }
+}
 
   return (
 <div className="min-h-screen text-white bg-[linear-gradient(to_bottom,#000_0px,#000_520px,#d1d5db_700px,#ffffff_900px)]">
 {/* MAIN */}
 {/* BANNER SOLO EN COLUMNA DE TARJETAS */}
 <div className="pointer-events-none absolute top-0 left-0 hidden w-full h-16 bg-gradient-to-b from-black/90 to-transparent z-30 md:block" />
-<div className="mb-0 overflow-hidden">
-  <div className="relative h-[200px] sm:h-[260px] md:h-[340px] w-full bg-gradient-to-b from-[#020617] via-[#041a2b] to-transparent">
+<div className="mb-9 overflow-hidden">
+  <div className="relative h-[160px] sm:h-[220px] md:h-[280px] w-full bg-gradient-to-b from-[#020617] via-[#041a2b] to-transparent">
 
     {/* FX atrás */}
     <div className="pointer-events-none absolute inset-0 z-[7] hidden md:block">
@@ -970,14 +1028,44 @@ const topShowcaseItems = React.useMemo(() => {
 <div className="pointer-events-none absolute bottom-0 left-0 w-full h-16 md:h-24 bg-gradient-to-t from-black/50 md:from-black via-transparent to-transparent z-20" />
 <div className="pointer-events-none absolute top-0 left-0 w-full h-8 md:h-24 bg-gradient-to-b from-black/15 md:from-black via-transparent to-transparent z-20" />
     {/* PNG jugadores */}
-    <div className="relative h-[200px] sm:h-[260px] md:h-[340px] w-full bg-gradient-to-b from-[#020617] via-[#041a2b] to-transparent">
-      <Image
+    <div className="relative h-[160px] sm:h-[220px] md:h-[280px] w-full bg-gradient-to-b from-[#020617] via-[#041a2b] to-transparent">
+<div className="pointer-events-none absolute inset-0 z-30">
+  <div className="mx-auto flex h-full max-w-7xl items-start px-4 lg:px-6">
+    
+    <div className="pt-6 md:pt-10 ml-2 md:ml-8 lg:ml-12 text-white">
+      <div className="flex max-w-[320px] flex-col leading-tight">
+        
+        {/* CATEGORÍA */}
+        <span className="text-xs md:text-sm font-semibold tracking-[0.22em] text-sky-300/90 uppercase">
+          {sport?.toUpperCase()}
+        </span>
+
+        {/* DESCUENTO */}
+        <span className="mt-1 text-4xl md:text-6xl font-extrabold tracking-tight text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.55)]">
+          {getBannerDiscount(sport)}
+        </span>
+
+        {/* SUBTEXTO CON BADGE */}
+        <div className="mt-3 inline-flex w-fit items-center gap-2 rounded-full border border-sky-300/20 bg-sky-400/10 px-3 py-1.5 backdrop-blur-sm">
+          <span className="h-2 w-2 rounded-full bg-sky-300 shadow-[0_0_12px_rgba(56,189,248,0.9)]" />
+          <span className="text-xs md:text-sm font-medium text-white/85">
+            {getBannerSubtitle(sport)}
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>  
+
+<Image
         src={getBannerSrc(sport)}
         alt="Category banner"
         fill
         priority
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 900px"
-className="relative z-10 object-contain object-bottom translate-y-6 md:translate-y-10 select-none p-6 md:p-10 scale-100 md:scale-107 md:animate-[bannerZoom_10s_ease-in-out_infinite_alternate]"      />
+className="relative z-10 object-contain object-bottom translate-y-2 md:translate-y-4 md:translate-x-40 select-none p-6 md:p-10 scale-110 md:scale-120 md:animate-[bannerZoom_10s_ease-in-out_infinite_alternate]"      />
     </div>
 
 
@@ -1009,7 +1097,7 @@ className="relative z-10 object-contain object-bottom translate-y-6 md:translate
   px-3 py-1
   rounded-md
   border border-gray-700
-  bg-[#798295]
+  bg-[#525b71]
   text-gray-200
   hover:bg-sky-500
   hover:text-white
@@ -1325,15 +1413,34 @@ className="relative z-10 object-contain object-bottom translate-y-6 md:translate
   {t("filters")}
 </button>
 
-      <select
-                value={sort}
-                onChange={(e) => setSort(e.target.value as any)}
-                className="rounded-xl border border-gray-300 bg-gradient-to-b from-white via-gray-200 to-gray-300 shadow-sm px-3 py-2 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-black/10"
-              >
-                <option value="recommended">{t("sortRecommended")}</option>
-                <option value="price_desc">{t("priceHighToLow")}</option>
-                <option value="price_asc">{t("priceLowToHigh")}</option>
-              </select>
+      <div className="relative">
+  <button
+    type="button"
+    onClick={() => setSortOpen((prev) => !prev)}
+    className="rounded-xl border border-gray-700 bg-[linear-gradient(to_bottom,#2c3446,#1d2331)] px-3 py-2 text-sm text-gray-200 shadow-sm outline-none transition hover:brightness-110 focus:ring-2 focus:ring-white/10 flex items-center gap-2"
+  >
+    <span>{selectedSortLabel}</span>
+    <span className="text-xs opacity-80">▾</span>
+  </button>
+
+  {sortOpen && (
+    <div className="absolute right-0 z-50 mt-2 min-w-full overflow-hidden rounded-xl border border-gray-700 bg-gray-800 shadow-lg">
+      {sortOptions.map((opt) => (
+        <button
+          key={opt.value}
+          type="button"
+          onClick={() => {
+            setSort(opt.value);
+            setSortOpen(false);
+          }}
+          className="block w-full px-4 py-2 text-left text-sm text-gray-200 transition hover:bg-gray-700"
+        >
+          {opt.label}
+        </button>
+      ))}
+    </div>
+  )}
+</div>
             </div>
           </div>
 
@@ -1808,8 +1915,8 @@ function SidebarCard({
   const badge = getInventoryBadge(card);
 
   return (
-    <button type="button" onClick={onOpen} className="group relative w-full rounded-2xl p-[2px] text-left transition">
-      <div className="pointer-events-none absolute -inset-0 rounded-2xl bg-gradient-to-r from-sky-400 via-cyan-300 to-blue-500 opacity-0 blur-lg transition duration-300 group-hover:opacity-80" />
+    <button type="button" onClick={onOpen} className="group relative w-full overflow-hiddenrounded-2xl p-[2px] text-left transition">
+      <div className="pointer-events-none absolute -inset-0 rounded-2xl bg-gradient-to-r from-sky-400 via-cyan-300 to-blue-500 opacity-0 blur-md transition duration-300 group-hover:opacity-50" />
       <div className="relative rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition group-hover:shadow-md">
         <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{title}</p>
 
@@ -1915,7 +2022,7 @@ const inventoryBadge = getInventoryBadge(card);
 
   return (
     <div className="group relative h-full rounded-[22px] p-[2px] transition">
-      <div className="absolute inset-0 rounded-[22px] bg-gradient-to-r from-sky-500 via-cyan-400 to-blue-400 opacity-0 blur-lg transition group-hover:opacity-100" />
+      <div className="absolute inset-0 rounded-[22px] bg-gradient-to-r from-sky-500 via-cyan-400 to-blue-400 opacity-0 blur-md transition group-hover:opacity-60" />
 
       {/* ✅ STOCK: gris cuando no hay stock */}
       <div
