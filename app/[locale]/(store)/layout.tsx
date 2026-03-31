@@ -28,37 +28,37 @@ export default async function StoreLayout({
       <Header />
       <main className="flex-1">{children}</main>
 
-      <footer className="border-t border-gray-200 bg-gray-100 min-h-[320px]">
-  <div className="mx-auto max-w-7xl px-6 py-10">
-    <div className="flex flex-col gap-16 lg:min-h-[200px] lg:flex-row lg:items-start lg:justify-between">
+<footer className="border-t border-gray-200 bg-gray-100">
+  <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
+    <div className="flex flex-col gap-10 lg:min-h-[200px] lg:flex-row lg:items-start lg:justify-between lg:gap-16">
       
       {/* izquierda */}
       <div className="max-w-md">
         <div className="flex items-center gap-3">
           <Image
-            src="/nb-logo.png"
-            alt="NB SportCards"
-            width={42}
-            height={42}
-            className="h-10 w-10 object-contain"
-          />
+      src="/nb-logo.png"
+      alt="NB SportCards"
+      width={42}
+      height={42}
+      className="h-10 w-10 object-contain"
+    />
 
-          <div>
-            <p className="text-sm font-semibold">Cards & Collectibles</p>
-            <p className="mt-1 text-sm text-gray-500">{t("tagline")}</p>
-          </div>
-        </div>
+    <div>
+      <p className="text-sm font-semibold">Cards & Collectibles</p>
+      <p className="mt-1 text-sm text-gray-500">{t("tagline")}</p>
+    </div>
+  </div>
 
-        <div className="mt-4 space-y-1 text-xs text-gray-500">
-          <p>{t("currencyNotice")}</p>
-          <p>{t("shippingNotice")}</p>
-        </div>
+  <div className="space-y-1 text-[13px] leading-5 text-gray-500">
+    <p>{t("currencyNotice")}</p>
+    <p>{t("shippingNotice")}</p>
+  </div>
 
         {/* payment methods */}
         <div className="mt-7">
           <p className="text-sm font-semibold text-gray-900">{t("paymentMethods")}</p>
 
-         <div className="mt-3 flex flex-wrap items-center gap-2">
+         <div className="mt-3 grid grid-cols-4 gap-2 sm:flex sm:flex-wrap sm:items-center">
   <div className="flex h-[34px] w-[72px] items-center justify-center rounded-md border border-gray-200 bg-white px-2.5 py-1.5 shadow-sm">
     <Image
       src="/payments/visa.svg"
@@ -99,7 +99,7 @@ export default async function StoreLayout({
     />
   </div>
 
-  <div className="flex h-[34px] w-[88px] items-center justify-center rounded-md border border-gray-200 bg-white px-2.5 py-1.5 shadow-sm">
+  <div className="col-span-2 flex h-[34px] w-full items-center justify-center rounded-md border border-gray-200 bg-white px-2.5 py-1.5 shadow-sm sm:w-[88px]">
     <Image
       src="/payments/mercadopago.svg"
       alt="Mercado Pago"
@@ -116,7 +116,7 @@ export default async function StoreLayout({
       <div className="flex-1">
         <p className="text-sm font-semibold text-gray-900">{t("explore")}</p>
 
-        <div className="mt-3 flex flex-wrap gap-x-6 gap-y-5 text-sm">
+        <div className="mt-3 grid grid-cols-3 gap-x-4 gap-y-4 text-sm sm:flex sm:flex-wrap sm:gap-x-6 sm:gap-y-5">
           <Link href="/" className="text-gray-600 transition-all hover:text-sky-600 hover:font-semibold">
   Home
 </Link>
@@ -143,7 +143,7 @@ export default async function StoreLayout({
 
         </div>
 
-<div className="mt-6 flex flex-wrap gap-4 text-xs">
+<div className="mt-5 flex flex-col gap-3 text-xs sm:mt-6 sm:flex-row sm:flex-wrap sm:gap-4">
  <Link href="/privacy"
     className="text-gray-500 transition-colors hover:text-sky-600 hover:font-semibold"
   >
@@ -174,7 +174,7 @@ export default async function StoreLayout({
       </div>
 
      {/* derecha - newsletter */}
-<div className="w-full max-w-sm min-h-[190px]">
+<div className="w-full max-w-sm min-h-0">
   <p className="text-sm font-semibold text-gray-900">{t("stayUpdated")}</p>
   <p className="mt-1 text-sm text-gray-500">{t("newsletterText")}</p>
 
@@ -183,8 +183,8 @@ export default async function StoreLayout({
 
     </div>
 
-    <div className="mt-8 border-t border-gray-200 pt-7">
-      <p className="text-xs text-gray-500">
+    <div className="mt-6 border-t border-gray-200 pt-5 sm:mt-8 sm:pt-7">
+      <p className="text-center text-xs text-gray-500 sm:text-left">
         © {new Date().getFullYear()} NB Cards & Collectibles. {t("rights")}
       </p>
     </div>

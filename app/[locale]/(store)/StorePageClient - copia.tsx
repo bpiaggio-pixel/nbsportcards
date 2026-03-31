@@ -997,38 +997,7 @@ function getBannerSubtitle(sport: string) {
 }
 
   return (
-<div className="relative min-h-screen text-white bg-[linear-gradient(to_bottom,#000_0px,#000_520px,#09111f_520px,#ffffff_1000px)]">
-{/* FLOOR ELEMENTS */}
-<div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-
-  {/* ⚽ Soccer ball */}
-  <img
-    src="/floor/soccer.png"
-    className="absolute top-[520px] left-[2%] w-[125px] saturate-50 [0.3px] "
-  />
-
-  {/* 🏀 Basketball */}
-  <img
-    src="/floor/basketball.png"
-    className="absolute top-[530px] right-[2%] w-[125px] saturate-50 lur-[0.3px]"
-  />
-
-  {/* 🏈 NFL */}
-  <img
-    src="/floor/nfl.png"
-    className="absolute top-[440px] right-[8%] w-[125px] saturate-50 brightness-90 blur-[0.7px]
-            
-           "
-  />
-
-  {/* 🃏 Pokemon cards */}
-  <img
-    src="/floor/pokemon.png"
-    className="absolute top-[450px] left-[7%] w-[125px] saturate-50 brightness-70 blur-[0.7px]"
-  />
-
-</div>
-
+<div className="min-h-screen text-white bg-[linear-gradient(to_bottom,#000_0px,#000_520px,#09111f_520px,#ffffff_1000px)]">
 {/* MAIN */}
 {/* BANNER SOLO EN COLUMNA DE TARJETAS */}
 <div className="pointer-events-none absolute top-0 left-0 hidden w-full h-16 bg-gradient-to-b from-black/90 to-transparent z-30 md:block" />
@@ -1039,9 +1008,6 @@ function getBannerSubtitle(sport: string) {
     <div className="pointer-events-none absolute inset-0 z-[7] hidden md:block">
       <BannerFX density={240} />
     </div>
-
-
-
 
     <div className="pointer-events-none absolute top-0 left-0 h-full w-24 md:w-80 bg-gradient-to-r from-black/30 md:from-black via-transparent to-transparent z-20" />
 <div className="pointer-events-none absolute top-0 right-0 h-full w-24 md:w-80 bg-gradient-to-l from-black/30 md:from-black via-transparent to-transparent z-20" />
@@ -1085,7 +1051,7 @@ function getBannerSubtitle(sport: string) {
         fill
         priority
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 900px"
-className="relative z-10 object-contain object-bottom translate-y-2 translate-x-14 md:translate-y-4 md:translate-x-40 select-none p-6 md:p-10 scale-110 md:scale-120 md:animate-[bannerZoom_10s_ease-in-out_infinite_alternate]"      />
+className="relative z-10 object-contain object-bottom translate-y-2 md:translate-y-4 md:translate-x-40 select-none p-6 md:p-10 scale-110 md:scale-120 md:animate-[bannerZoom_10s_ease-in-out_infinite_alternate]"      />
     </div>
 
 
@@ -1303,7 +1269,7 @@ className="relative z-10 object-contain object-bottom translate-y-2 translate-x-
         <div className="flex items-center gap-2"><button type="button" onClick={clearFilters} className="rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-sky-600 hover:bg-gray-50">Limpiar</button><button
           type="button"
           onClick={() => setFiltersOpen(false)}
-          className="rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-50 active:scale-[0.98]"
+          className="rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold hover:bg-gray-50"
         >
           Close
         </button>
