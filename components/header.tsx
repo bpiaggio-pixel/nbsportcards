@@ -223,10 +223,38 @@ export default function Header() {
 
   const favCount = Object.values(wishlist).filter(Boolean).length;
 
-  const glow = "from-sky-500/60 via-cyan-400/45 to-blue-600/60";
+  const glow = "from-sky-400/35 via-cyan-300/25 to-blue-500/35";
+
+const headerBg =
+  "bg-gradient-to-r from-[#061120] via-[#0a1b33] to-[#0b1730]";
+
+const surface =
+  "bg-[#0f223d]/88 backdrop-blur-md";
+
+const surfaceSoft =
+  "bg-[#112746]/72 backdrop-blur-md";
+
+const border =
+  "border border-[#9ecbff]/12";
+
+const textMain = "text-[#eef6ff]";
+const textSoft = "text-[#c4d9f7]";
+const textMuted = "text-[#8ea8cb]";
+
+const hoverSurface =
+  "hover:bg-[#18365f]/92";
+
+const ring =
+  "focus:ring-2 focus:ring-sky-300/25";
+
+const primaryBtn =
+  "bg-gradient-to-r from-[#3b82f6] to-[#2563eb] text-white hover:from-[#60a5fa] hover:to-[#3b82f6]";
+
+const dropdownBg =
+  "bg-[#10233f]/96 backdrop-blur-xl";
 
   return (
-    <header className="sticky top-0 z-[9999] bg-black">
+    <header className={`sticky top-0 z-[9999] ${headerBg} border-b border-[#9ecbff]/10 shadow-[0_10px_40px_rgba(3,10,24,0.35)]`}>
       <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 sm:py-4">
         {/* ✅ DESKTOP (sm+): como antes, en una fila */}
         <div className="hidden sm:flex items-center gap-6">
@@ -244,8 +272,8 @@ export default function Header() {
   />
 
   <span>
-    <span className="text-xl text-white">Cards</span>
-    <span className="text-xs text-white/55">   & collectibles</span>
+<span className="text-xl text-[#eef6ff]">Cards</span>
+<span className="text-xs text-[#9fb7d6]">   & collectibles</span>
   </span>
 </Link>
 
@@ -254,7 +282,7 @@ export default function Header() {
   <div className="relative w-full group">
 <Search
   size={18}
-  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/45 transition group-hover:text-gray-600 group-focus-within:text-gray-600"
+  className="pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-[#8ea8cb] transition group-hover:text-[#b7d4f8] group-focus-within:text-[#5f7593]"
 />
     <input
       placeholder={t("searchPlaceholder")}
@@ -272,7 +300,7 @@ export default function Header() {
         const safePath = pathname ?? "/";
         router.replace(qs ? `${safePath}?${qs}` : safePath);
       }}
-className="peer w-full rounded-full border border-white/10 bg-white/[0.04] py-2 pl-11 pr-5 text-sm text-white/90 placeholder:text-white/40 outline-none transition hover:bg-white hover:text-gray-900 hover:placeholder:text-gray-500 hover:border-sky-400/40 focus:bg-white focus:text-gray-900 focus:placeholder:text-gray-500 focus:ring-2 focus:ring-sky-500/30"
+className={`peer w-full rounded-full ${border} ${surfaceSoft} py-2 pl-11 pr-5 text-sm ${textMain} placeholder:${textMuted} outline-none transition ${hoverSurface} hover:border-sky-300/25 focus:bg-[#f8fbff] focus:text-[#1b2a41] focus:placeholder:text-[#6b7f99] ${ring}`}
     />
   </div>
 ) : (
@@ -294,7 +322,7 @@ className="peer w-full rounded-full border border-white/10 bg-white/[0.04] py-2 
               <>
                 <Link
                   href="/blog"
-                  className="group flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.57] transition relative"
+                  className="group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-[#c4d9f7] hover:bg-[#0971cf]/60 transition relative"
                 >
                   <span
                     className={`absolute inset-2 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
@@ -305,7 +333,7 @@ className="peer w-full rounded-full border border-white/10 bg-white/[0.04] py-2 
 
 <Link
   href="/guide"
-  className="group flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.57] transition relative"
+  className="group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-[#c4d9f7] hover:bg-[#0971cf]/60 transition relative"
 >
   <span
     className={`absolute inset-2 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
@@ -316,7 +344,7 @@ className="peer w-full rounded-full border border-white/10 bg-white/[0.04] py-2 
 
                 <Link
                   href="/favorites"
-                  className="group flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.57] transition relative"
+                  className="group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-[#c4d9f7] hover:bg-[#0971cf]/60 transition relative"
                 >
                   <span
                     className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
@@ -334,7 +362,7 @@ className="peer w-full rounded-full border border-white/10 bg-white/[0.04] py-2 
 
                 <Link
                   href="/orders"
-                  className="group flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.57] transition relative"
+                 className="group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-[#c4d9f7] hover:bg-[#0971cf]/60 transition relative"
                 >
                   <span
                     className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
@@ -345,7 +373,7 @@ className="peer w-full rounded-full border border-white/10 bg-white/[0.04] py-2 
 
                 <Link
                   href="/cart"
-                  className="group flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.57] transition relative"
+                  className="group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-[#c4d9f7] hover:bg-[#0971cf]/60 transition relative"
                 >
                   <span
                     className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
@@ -365,29 +393,29 @@ className="peer w-full rounded-full border border-white/10 bg-white/[0.04] py-2 
   type="button"
   onClick={logout}
   aria-label={t("logout")}
-  className="group relative h-9 w-9 flex items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/85 hover:bg-white/[0.57] transition cursor-pointer"
+  className="group relative rounded-full p-2 text-[#c4d9f7] hover:bg-[#0971cf]/60 transition"
 >
   <span
     className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
   />
-  <LogOut
-    size={18}
-    className="transition-transform duration-200 ease-out group-hover:translate-x-1 group-hover:rotate-6"
-  />
+<LogOut
+  size={18}
+  className="transition-transform duration-200 ease-out group-hover:translate-x-1 group-hover:rotate-6"
+/>
 </button>
               </>
             ) : (
               <>
                 <Link
                   href="/blog"
-                  className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.57] flex items-center gap-2 transition"
+                  className={`group flex items-center gap-2 rounded-full ${border} ${surfaceSoft} px-4 py-2 text-sm font-semibold ${textSoft} ${hoverSurface} transition relative`}
                 >
                   <FileText size={16} className="text-white/70" />
                   {t("blog")}
                 </Link>
 <Link
   href="/guide"
-  className="group relative rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.57] flex items-center gap-2 transition"
+  className={`group flex items-center gap-2 rounded-full ${border} ${surfaceSoft} px-4 py-2 text-sm font-semibold ${textSoft} ${hoverSurface} transition relative`}
 >
   <span
     className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
@@ -397,7 +425,7 @@ className="peer w-full rounded-full border border-white/10 bg-white/[0.04] py-2 
 </Link>
                 <Link
                   href="/login"
-                  className="group relative rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.57] transition"
+                  className={`group flex items-center gap-2 rounded-full ${border} ${surfaceSoft} px-4 py-2 text-sm font-semibold ${textSoft} ${hoverSurface} transition relative`}
                 >
                   <span
                     className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
@@ -421,7 +449,7 @@ className="peer w-full rounded-full border border-white/10 bg-white/[0.04] py-2 
               href="/help"
               aria-label={activeLocale === "es" ? "Ayuda" : "Help"}
               title={activeLocale === "es" ? "Ayuda" : "Help"}
-              className="group relative rounded-full border border-white/10 bg-white/[0.12] p-2 hover:bg-white/[0.57] transition"
+              className="group relative rounded-full p-2 text-[#c4d9f7] hover:bg-[#0971cf]/60 transition"
             >
               <span
                 className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
@@ -433,7 +461,7 @@ className="peer w-full rounded-full border border-white/10 bg-white/[0.04] py-2 
               <button
                 type="button"
                 onClick={() => setLangOpen((v) => !v)}
-                className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.27] transition"
+                className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-semibold text-white/85 hover:bg-[#0971cf]/60 transition"
               >
                 <img
                   src={activeLocale === "es" ? "/flags/es.png" : "/flags/us.png"}
@@ -448,11 +476,11 @@ className="peer w-full rounded-full border border-white/10 bg-white/[0.04] py-2 
               </button>
 
               {langOpen && (
-                <div className="absolute right-0 mt-2 w-40 rounded-xl border border-white/10 bg-[#0f0f18]/95 shadow-2xl backdrop-blur">
+                <div className={`absolute right-0 mt-2 w-40 rounded-xl ${border} ${dropdownBg} shadow-[0_20px_60px_rgba(2,8,20,0.45)]`}>
                   <button
                     type="button"
                     onClick={() => switchLocale("en")}
-                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-white/80 hover:bg-white/[0.06]"
+                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[#d7e8fb] hover:bg-[#18365f]/85"
                   >
                     <Image src="/flags/us1.png" alt="English" width={18} height={18} className="rounded-sm" />
                     <span>English</span>
@@ -461,7 +489,7 @@ className="peer w-full rounded-full border border-white/10 bg-white/[0.04] py-2 
                   <button
                     type="button"
                     onClick={() => switchLocale("es")}
-                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-white/80 hover:bg-white/[0.06]"
+                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[#d7e8fb] hover:bg-[#18365f]/85"
                   >
                     <Image src="/flags/es.png" alt="Español" width={18} height={18} className="rounded-sm" />
                     <span>Español</span>
@@ -489,7 +517,7 @@ className="peer w-full rounded-full border border-white/10 bg-white/[0.04] py-2 
 <div className="relative w-full group">
 <Search
   size={17}
-  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/45 transition group-hover:text-gray-600 group-focus-within:text-gray-600"
+  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#8ea8cb] transition group-hover:text-[#b7d4f8] group-focus-within:text-[#5f7593]"
 />
     <input
       placeholder={t("searchPlaceholder")}
@@ -513,7 +541,7 @@ className="peer w-full rounded-full border border-white/10 bg-white/[0.04] py-2 
 ) : (
         <Link
           href="/"
-          className="flex w-full items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.57] transition relative"
+          className={`group flex items-center gap-2 rounded-full ${border} ${surfaceSoft} px-4 py-2 text-sm font-semibold ${textSoft} ${hoverSurface} transition relative`}
         >
           {t("cards")}
         </Link>
@@ -544,7 +572,7 @@ className="peer w-full rounded-full border border-white/10 bg-white/[0.04] py-2 
             <button
               type="button"
               onClick={() => switchLocale("en")}
-              className="flex w-full items-center gap-2 px-3 py-2 text-sm text-white/80 hover:bg-white/[0.06]"
+              className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[#d7e8fb] hover:bg-[#18365f]/85"
             >
               <Image src="/flags/us.png" alt="English" width={18} height={18} className="rounded-sm" />
               <span>English</span>
@@ -553,7 +581,7 @@ className="peer w-full rounded-full border border-white/10 bg-white/[0.04] py-2 
             <button
               type="button"
               onClick={() => switchLocale("es")}
-              className="flex w-full items-center gap-2 px-3 py-2 text-sm text-white/80 hover:bg-white/[0.06]"
+              className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[#d7e8fb] hover:bg-[#18365f]/85"
             >
               <Image src="/flags/es.png" alt="Español" width={18} height={18} className="rounded-sm" />
               <span>Español</span>
@@ -588,7 +616,7 @@ className="peer w-full rounded-full border border-white/10 bg-white/[0.04] py-2 
         <ShoppingCart size={18} className="relative z-10 text-white/80" />
 
         {cartCount > 0 && (
-          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-sky-500/80 text-white text-[11px] leading-[18px] font-bold text-center">
+          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#3b82f6] text-white text-[11px] leading-[18px] font-bold text-center">
             {cartCount > 99 ? "99+" : cartCount}
           </span>
         )}
@@ -613,9 +641,9 @@ className="peer w-full rounded-full border border-white/10 bg-white/[0.04] py-2 
           createPortal(
             <div className="fixed inset-0 z-[9999] sm:hidden">
               <div className="absolute inset-0 bg-black/60" onClick={() => setMobileMenuOpen(false)} />
-              <div className="absolute right-0 top-0 h-full w-[86%] max-w-sm bg-[#0f0f18] border-l border-white/10 shadow-2xl">
-                <div className="flex items-center justify-between border-b border-white/10 px-4 py-4">
-                  <div className="text-sm font-bold text-white/90">Menu</div>
+              <div className="absolute right-0 top-0 h-full w-[86%] max-w-sm bg-[#0b1a31] border-l border-[#9ecbff]/12 shadow-[0_25px_80px_rgba(0,0,0,0.45)]">
+                <div className="flex items-center justify-between border-b border-[#9ecbff]/10 px-4 py-4">
+                  <div className="text-sm font-bold text-[#eef6ff]">Menu</div>
                   <button
                     type="button"
                     onClick={() => setMobileMenuOpen(false)}

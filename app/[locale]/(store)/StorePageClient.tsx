@@ -997,43 +997,20 @@ function getBannerSubtitle(sport: string) {
 }
 
   return (
-<div className="relative min-h-screen text-white bg-[linear-gradient(to_bottom,#000_0px,#000_520px,#09111f_520px,#ffffff_1000px)]">
-{/* FLOOR ELEMENTS */}
-<div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-
-  {/* ⚽ Soccer ball */}
+<div className="relative min-h-screen text-white bg-[linear-gradient(to_bottom,#071120_0px,#163d70_340px,#c5c5c5_340px,#ffffff_450px)]">
+<div className="pointer-events-none absolute left-0 top-[340px] w-full h-[410px] z-0">
   <img
-    src="/floor/soccer.png"
-    className="absolute top-[520px] left-[2%] w-[125px] saturate-50 [0.3px] "
+    src="/fondo-gris.webp"
+    alt=""
+    className="w-full h-full object-cover "
   />
-
-  {/* 🏀 Basketball */}
-  <img
-    src="/floor/basketball.png"
-    className="absolute top-[530px] right-[2%] w-[125px] saturate-50 lur-[0.3px]"
-  />
-
-  {/* 🏈 NFL */}
-  <img
-    src="/floor/nfl.png"
-    className="absolute top-[440px] right-[8%] w-[125px] saturate-50 brightness-90 blur-[0.7px]
-            
-           "
-  />
-
-  {/* 🃏 Pokemon cards */}
-  <img
-    src="/floor/pokemon.png"
-    className="absolute top-[450px] left-[7%] w-[125px] saturate-50 brightness-70 blur-[0.7px]"
-  />
-
 </div>
+
 
 {/* MAIN */}
 {/* BANNER SOLO EN COLUMNA DE TARJETAS */}
-<div className="pointer-events-none absolute top-0 left-0 hidden w-full h-16 bg-gradient-to-b from-black/90 to-transparent z-30 md:block" />
 <div className="mb-9 overflow-hidden">
-  <div className="relative h-[160px] sm:h-[220px] md:h-[280px] w-full bg-gradient-to-b from-[#020617] via-[#041a2b] to-transparent">
+  <div className="relative h-[160px] sm:h-[220px] md:h-[340px] w-full ">
 
     {/* FX atrás */}
     <div className="pointer-events-none absolute inset-0 z-[7] hidden md:block">
@@ -1043,12 +1020,12 @@ function getBannerSubtitle(sport: string) {
 
 
 
-    <div className="pointer-events-none absolute top-0 left-0 h-full w-24 md:w-80 bg-gradient-to-r from-black/30 md:from-black via-transparent to-transparent z-20" />
-<div className="pointer-events-none absolute top-0 right-0 h-full w-24 md:w-80 bg-gradient-to-l from-black/30 md:from-black via-transparent to-transparent z-20" />
-<div className="pointer-events-none absolute bottom-0 left-0 w-full h-16 md:h-24 bg-gradient-to-t from-black/50 md:from-black via-transparent to-transparent z-20" />
-<div className="pointer-events-none absolute top-0 left-0 w-full h-8 md:h-24 bg-gradient-to-b from-black/15 md:from-black via-transparent to-transparent z-20" />
+
+<div className="pointer-events-none absolute bottom-0 left-0 w-full h-24 md:h-32 bg-gradient-to-t from-[#071a33]/75 md:from-[#071a33] via-transparent to-transparent z-20" />
+
+
     {/* PNG jugadores */}
-    <div className="relative h-[160px] sm:h-[220px] md:h-[280px] w-full bg-gradient-to-b from-[#020617] via-[#041a2b] to-transparent">
+    <div className="relative h-[160px] sm:h-[220px] md:h-[300px] w-full bg-gradient-to-b from-[#020617] via-[#041a2b] to-transparent">
 <div className="pointer-events-none absolute inset-0 z-30">
   <div className="mx-auto flex h-full max-w-7xl items-start px-4 lg:px-6">
     
@@ -1085,7 +1062,10 @@ function getBannerSubtitle(sport: string) {
         fill
         priority
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 900px"
-className="relative z-10 object-contain object-bottom translate-y-2 translate-x-14 md:translate-y-4 md:translate-x-40 select-none p-6 md:p-10 scale-110 md:scale-120 md:animate-[bannerZoom_10s_ease-in-out_infinite_alternate]"      />
+className="relative z-10 object-contain object-bottom 
+translate-y-4 md:translate-y-12 
+translate-x-14 md:translate-x-40 
+select-none p-6 md:p-10 scale-115 md:scale-125 md:animate-[bannerZoom_10s_ease-in-out_infinite_alternate]"      />
     </div>
 
 
@@ -1102,11 +1082,11 @@ className="relative z-10 object-contain object-bottom translate-y-2 translate-x-
   </div>
 </div>
 
-<div className="mx-auto -mt-6 grid max-w-7xl grid-cols-1 gap-8 px-4 py-6 lg:grid-cols-[280px_1fr] lg:px-6 lg:py-10">
+<div className="relative z-20 mx-auto -mt-30 md:-mt-36 grid max-w-7xl grid-cols-1 gap-8 px-4 py-6 lg:grid-cols-[280px_1fr] lg:px-6 lg:py-10">
         {/* SIDEBAR */}
-<aside className="hidden lg:block space-y-6 rounded-3xl bg-[linear-gradient(to_bottom,#2c3446_0px,#1d2331_65px,#d1d5db_65px,#ffffff_320px)] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.14)] backdrop-blur-md lg:p-6">         
+<aside className="hidden lg:block space-y-6 rounded-3xl bg-[linear-gradient(to_bottom,#d1d5db_0px,#ffffff_320px)] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.14)] backdrop-blur-md lg:p-6">         
         <div className="flex items-center justify-between mb-9">
-          <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-gray-200">
+          <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-gray-700">
   <SlidersHorizontal size={16} className="opacity-80" />
   {t("filters")}
 </h2>
@@ -1437,14 +1417,14 @@ className="relative z-10 object-contain object-bottom translate-y-2 translate-x-
   <button
     type="button"
     onClick={() => setSortOpen((prev) => !prev)}
-    className="rounded-xl border border-gray-700 bg-[linear-gradient(to_bottom,#2c3446,#1d2331)] px-3 py-2 text-sm text-gray-200 shadow-sm outline-none transition hover:brightness-110 focus:ring-2 focus:ring-white/10 flex items-center gap-2"
+   className="rounded-xl border border-[#2b4b72] bg-[#163153] px-3 py-2 text-sm text-[#dbeafe] shadow-sm outline-none transition hover:bg-[#1f4068] focus:ring-2 focus:ring-sky-300/20 flex items-center gap-2 whitespace-nowrap"
   >
     <span>{selectedSortLabel}</span>
     <span className="text-xs opacity-80">▾</span>
   </button>
 
   {sortOpen && (
-    <div className="absolute right-0 z-50 mt-2 min-w-full overflow-hidden rounded-xl border border-gray-700 bg-gray-800 shadow-lg">
+    <div className="absolute right-0 z-50 mt-2 min-w-full overflow-hidden rounded-xl border border-[#2b4b72] bg-[#10233d]/95 backdrop-blur-md shadow-[0_20px_60px_rgba(2,8,20,0.45)]">
       {sortOptions.map((opt) => (
         <button
           key={opt.value}
@@ -1453,7 +1433,7 @@ className="relative z-10 object-contain object-bottom translate-y-2 translate-x-
             setSort(opt.value);
             setSortOpen(false);
           }}
-          className="block w-full px-4 py-2 text-left text-sm text-gray-200 transition hover:bg-gray-700"
+          className="block w-full px-4 py-2 text-left text-sm text-[#dbeafe] transition hover:bg-[#186ba1] hover:text-white"
         >
           {opt.label}
         </button>
