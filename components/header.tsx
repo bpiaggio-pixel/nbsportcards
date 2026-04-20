@@ -324,9 +324,6 @@ className={`peer w-full rounded-full ${border} ${surfaceSoft} py-2 pl-11 pr-5 te
                   href="/blog"
                   className="group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-[#c4d9f7] hover:bg-[#0971cf]/60 transition relative"
                 >
-                  <span
-                    className={`absolute inset-2 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
-                  />
                   <FileText size={16} className="relative z-10 text-white/70" />
                   <span className="relative z-10">{t("blog")}</span>
                 </Link>
@@ -335,9 +332,6 @@ className={`peer w-full rounded-full ${border} ${surfaceSoft} py-2 pl-11 pr-5 te
   href="/guide"
   className="group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-[#c4d9f7] hover:bg-[#0971cf]/60 transition relative"
 >
-  <span
-    className={`absolute inset-2 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
-  />
   <BookOpen size={16} className="relative z-10 text-white/70" />
   <span className="relative z-10">{t("guide")}</span>
 </Link>
@@ -346,9 +340,6 @@ className={`peer w-full rounded-full ${border} ${surfaceSoft} py-2 pl-11 pr-5 te
                   href="/favorites"
                   className="group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-[#c4d9f7] hover:bg-[#0971cf]/60 transition relative"
                 >
-                  <span
-                    className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
-                  />
                   <Heart
                     size={16}
                     className={`relative z-10 ${favCount > 0 ? "text-red-500" : "text-white/60"}`}
@@ -364,9 +355,7 @@ className={`peer w-full rounded-full ${border} ${surfaceSoft} py-2 pl-11 pr-5 te
                   href="/orders"
                  className="group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-[#c4d9f7] hover:bg-[#0971cf]/60 transition relative"
                 >
-                  <span
-                    className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
-                  />
+
                   <ClipboardList size={16} className="relative z-10 text-white/70" />
                   <span className="relative z-10">{t("orders")}</span>
                 </Link>
@@ -375,9 +364,6 @@ className={`peer w-full rounded-full ${border} ${surfaceSoft} py-2 pl-11 pr-5 te
                   href="/cart"
                   className="group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-[#c4d9f7] hover:bg-[#0971cf]/60 transition relative"
                 >
-                  <span
-                    className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
-                  />
                   <ShoppingCart size={16} className="relative z-10 text-white/85" />
                   <span className="relative z-10">
                     {t("cart")}{" "}
@@ -395,9 +381,6 @@ className={`peer w-full rounded-full ${border} ${surfaceSoft} py-2 pl-11 pr-5 te
   aria-label={t("logout")}
   className="group relative rounded-full p-2 text-[#c4d9f7] hover:bg-[#0971cf]/60 transition"
 >
-  <span
-    className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
-  />
 <LogOut
   size={18}
   className="transition-transform duration-200 ease-out group-hover:translate-x-1 group-hover:rotate-6"
@@ -417,9 +400,6 @@ className={`peer w-full rounded-full ${border} ${surfaceSoft} py-2 pl-11 pr-5 te
   href="/guide"
   className={`group flex items-center gap-2 rounded-full ${border} ${surfaceSoft} px-4 py-2 text-sm font-semibold ${textSoft} ${hoverSurface} transition relative`}
 >
-  <span
-    className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
-  />
   <BookOpen size={16} className="relative z-10 text-white/70" />
   <span className="relative z-10">{t("guide")}</span>
 </Link>
@@ -427,9 +407,6 @@ className={`peer w-full rounded-full ${border} ${surfaceSoft} py-2 pl-11 pr-5 te
                   href="/login"
                   className={`group flex items-center gap-2 rounded-full ${border} ${surfaceSoft} px-4 py-2 text-sm font-semibold ${textSoft} ${hoverSurface} transition relative`}
                 >
-                  <span
-                    className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
-                  />
                   <span className="relative z-10">{t("login")}</span>
                 </Link>
 
