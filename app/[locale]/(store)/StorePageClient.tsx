@@ -719,15 +719,22 @@ const [activeSide, setActiveSide] = React.useState<"front" | "back">("front");
 
   // ✅ bloquear scroll del body cuando el modal está abierto
   React.useEffect(() => {
-    if (!selectedCard) return;
+  if (!selectedCard) return;
 
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+  const prevOverflow = document.body.style.overflow;
+  const prevPaddingRight = document.body.style.paddingRight;
 
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [selectedCard]);
+  // ancho de la scrollbar
+  const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+  document.body.style.overflow = "hidden";
+  document.body.style.paddingRight = `${scrollbarWidth}px`;
+
+  return () => {
+    document.body.style.overflow = prevOverflow;
+    document.body.style.paddingRight = prevPaddingRight;
+  };
+}, [selectedCard]);
 
   // ✅ reset del zoom al abrir/cerrar modal
   React.useEffect(() => {
@@ -1521,7 +1528,7 @@ select-none p-6 md:p-10 scale-115 md:scale-125 md:animate-[bannerZoom_10s_ease-i
 {/* MODAL */}
 {portalRoot && selectedCard && createPortal(
         <div
-                  className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4 md:p-10"
+                  className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-[1px] p-4 md:p-10"
 
                   onPointerDown={closeCard}
                 >
@@ -2136,7 +2143,7 @@ const inventoryBadge = getInventoryBadge(card);
     }}
     disabled={outOfStock}
     className={[
-      "mt-auto w-full rounded-full py-1.5 text-[13px] font-semibold md:py-3 md:text-sm transition-all duration-300 flex items-center justify-center gap-2",
+  "mt-auto mx-auto w-auto px-4 rounded-full py-1.5 text-[13px] font-semibold md:py-2.5 md:text-sm transition-all duration-300 flex items-center justify-center gap-2",
       outOfStock
         ? "bg-gray-200 text-gray-500 cursor-not-allowed"
         : maxStock

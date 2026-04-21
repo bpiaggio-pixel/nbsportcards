@@ -231,8 +231,7 @@ const headerBg =
 const surface =
   "bg-[#0f223d]/88 backdrop-blur-md";
 
-const surfaceSoft =
-  "bg-[#112746]/72 backdrop-blur-md";
+const surfaceSoft = "bg-[#112746]/72";
 
 const border =
   "border border-[#9ecbff]/12";
@@ -305,15 +304,12 @@ className={`peer w-full rounded-full ${border} ${surfaceSoft} py-2 pl-11 pr-5 te
   </div>
 ) : (
               <Link
-                href="/"
-                className="group flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.07] transition relative"
-              >
-                <span
-                  className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:bg-white/[0.27] transition relative -z-10`}
-                />
-                <LayoutGrid size={16} className="relative z-10 text-white/70" />
-                <span className="relative z-10">{t("cards")}</span>
-              </Link>
+  href="/"
+  className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white hover:bg-[#1062ad]"
+>
+  <LayoutGrid size={16} className="text-white" />
+  <span>{t("cards")}</span>
+</Link>
             )}
           </div>
 
@@ -322,7 +318,7 @@ className={`peer w-full rounded-full ${border} ${surfaceSoft} py-2 pl-11 pr-5 te
               <>
                 <Link
                   href="/blog"
-                  className="group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-[#c4d9f7] hover:bg-[#0971cf]/60 transition relative"
+                  className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white hover:bg-[#1062ad]"
                 >
                   <FileText size={16} className="relative z-10 text-white/70" />
                   <span className="relative z-10">{t("blog")}</span>
@@ -330,30 +326,30 @@ className={`peer w-full rounded-full ${border} ${surfaceSoft} py-2 pl-11 pr-5 te
 
 <Link
   href="/guide"
-  className="group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-[#c4d9f7] hover:bg-[#0971cf]/60 transition relative"
+  className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white hover:bg-[#1062ad]"
 >
   <BookOpen size={16} className="relative z-10 text-white/70" />
-  <span className="relative z-10">{t("guide")}</span>
+  <span>{t("guide")}</span>
 </Link>
 
                 <Link
                   href="/favorites"
-                  className="group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-[#c4d9f7] hover:bg-[#0971cf]/60 transition relative"
+                  className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white hover:bg-[#1062ad]"
                 >
                   <Heart
                     size={16}
-                    className={`relative z-10 ${favCount > 0 ? "text-red-500" : "text-white/60"}`}
+                    className={`relative z-10 ${favCount > 0 ? "text-red-500" : "text-white"}`}
                     fill={favCount > 0 ? "currentColor" : "none"}
                   />
                   <span className="relative z-10">
                     {t("favorites")}
-                    {favCount > 0 && <span className="ml-1 text-xs font-bold text-white/80">({favCount})</span>}
+                    {favCount > 0 && <span className="ml-1 text-xs font-bold text-white">({favCount})</span>}
                   </span>
                 </Link>
 
                 <Link
                   href="/orders"
-                 className="group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-[#c4d9f7] hover:bg-[#0971cf]/60 transition relative"
+                 className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white hover:bg-[#1062ad]"
                 >
 
                   <ClipboardList size={16} className="relative z-10 text-white/70" />
@@ -362,7 +358,7 @@ className={`peer w-full rounded-full ${border} ${surfaceSoft} py-2 pl-11 pr-5 te
 
                 <Link
                   href="/cart"
-                  className="group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-[#c4d9f7] hover:bg-[#0971cf]/60 transition relative"
+                  className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white hover:bg-[#1062ad]"
                 >
                   <ShoppingCart size={16} className="relative z-10 text-white/85" />
                   <span className="relative z-10">
@@ -371,15 +367,15 @@ className={`peer w-full rounded-full ${border} ${surfaceSoft} py-2 pl-11 pr-5 te
                   </span>
                 </Link>
 
-                <span title={user.email} className="hidden lg:block text-sm font-semibold text-white/75 max-w-[140px] truncate">
-                  <UserCircle2 size={20} className="text-white/60 inline align-middle mr-1" />{" "}
+                <span title={user.email} className="hidden lg:block text-sm font-semibold text-[#2999f1] max-w-[140px] truncate">
+                  <UserCircle2 size={20} className="text-[#2999f1] inline align-middle mr-1" />{" "}
                   {user.email.length > 8 ? `${user.email.slice(0, 5)}…` : user.email}
                 </span>
 <button
   type="button"
   onClick={logout}
   aria-label={t("logout")}
-  className="group relative rounded-full p-2 text-[#c4d9f7] hover:bg-[#0971cf]/60 transition"
+  className="group relative rounded-full p-2 text-white hover:bg-[#1062ad] transition"
 >
 <LogOut
   size={18}
@@ -390,22 +386,22 @@ className={`peer w-full rounded-full ${border} ${surfaceSoft} py-2 pl-11 pr-5 te
             ) : (
               <>
                 <Link
-                  href="/blog"
-                  className={`group flex items-center gap-2 rounded-full ${border} ${surfaceSoft} px-4 py-2 text-sm font-semibold ${textSoft} ${hoverSurface} transition relative`}
-                >
-                  <FileText size={16} className="text-white/70" />
-                  {t("blog")}
-                </Link>
+  href="/blog"
+  className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white hover:bg-[#1062ad]"
+>
+  <FileText size={16} className="text-white" />
+  <span>{t("blog")}</span>
+</Link>
 <Link
   href="/guide"
-  className={`group flex items-center gap-2 rounded-full ${border} ${surfaceSoft} px-4 py-2 text-sm font-semibold ${textSoft} ${hoverSurface} transition relative`}
+  className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white hover:bg-[#1062ad]"
 >
   <BookOpen size={16} className="relative z-10 text-white/70" />
   <span className="relative z-10">{t("guide")}</span>
 </Link>
                 <Link
                   href="/login"
-                  className={`group flex items-center gap-2 rounded-full ${border} ${surfaceSoft} px-4 py-2 text-sm font-semibold ${textSoft} ${hoverSurface} transition relative`}
+                  className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white hover:bg-[#1062ad]"
                 >
                   <span className="relative z-10">{t("login")}</span>
                 </Link>
@@ -426,20 +422,17 @@ className={`peer w-full rounded-full ${border} ${surfaceSoft} py-2 pl-11 pr-5 te
               href="/help"
               aria-label={activeLocale === "es" ? "Ayuda" : "Help"}
               title={activeLocale === "es" ? "Ayuda" : "Help"}
-              className="group relative rounded-full p-2 text-[#c4d9f7] hover:bg-[#0971cf]/60 transition"
+              className="rounded-full p-2 text-white hover:bg-[#1062ad]"
             >
-              <span
-                className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
-              />
-              <HelpCircle size={18} className="relative z-10 text-white/80" />
+                            <HelpCircle size={18} className="relative z-10 text-white/80" />
             </Link>
 {/* ✅ LANGUAGE SWITCHER (desktop) */}
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setLangOpen((v) => !v)}
-                className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-semibold text-white/85 hover:bg-[#0971cf]/60 transition"
-              >
+                className="flex items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold text-white hover:bg-[#1062ad]"
+>
                 <img
                   src={activeLocale === "es" ? "/flags/es.png" : "/flags/us.png"}
                   alt="flag"
@@ -517,11 +510,11 @@ className={`peer w-full rounded-full ${border} ${surfaceSoft} py-2 pl-11 pr-5 te
   </div>
 ) : (
         <Link
-          href="/"
-          className={`group flex items-center gap-2 rounded-full ${border} ${surfaceSoft} px-4 py-2 text-sm font-semibold ${textSoft} ${hoverSurface} transition relative`}
-        >
-          {t("cards")}
-        </Link>
+  href="/"
+  className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white hover:bg-sky-500"
+>
+  {t("cards")}
+</Link>
       )}
     </div>
 
@@ -529,10 +522,10 @@ className={`peer w-full rounded-full ${border} ${surfaceSoft} py-2 pl-11 pr-5 te
       {/* idioma */}
       <div className="relative">
         <button
-          type="button"
-          onClick={() => setLangOpen((v) => !v)}
-          className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-semibold text-white/85 hover:bg-white/[0.07] transition"
-        >
+  type="button"
+  onClick={() => setLangOpen((v) => !v)}
+  className="flex items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold text-white hover:bg-sky-500"
+>
           <img
             src={activeLocale === "es" ? "/flags/es.png" : "/flags/us.png"}
             alt="flag"
@@ -569,28 +562,22 @@ className={`peer w-full rounded-full ${border} ${surfaceSoft} py-2 pl-11 pr-5 te
 
       {/* ✅ HELP BUTTON (mobile top bar) */}
       <Link
-        href="/help"
-        aria-label={activeLocale === "es" ? "Ayuda" : "Help"}
-        title={activeLocale === "es" ? "Ayuda" : "Help"}
-        className="group relative rounded-full border border-white/10 bg-white/[0.04] p-2 hover:bg-white/[0.07] transition"
-      >
-        <span
-          className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
-        />
-        <HelpCircle size={18} className="relative z-10 text-white/80" />
-      </Link>
+  href="/help"
+  aria-label={activeLocale === "es" ? "Ayuda" : "Help"}
+  title={activeLocale === "es" ? "Ayuda" : "Help"}
+  className="rounded-full p-2 text-white hover:bg-sky-500"
+>
+  <HelpCircle size={18} className="text-white" />
+</Link>
 
       {/* ✅ CART ICON BUTTON (mobile top bar) */}
       <Link
-        href="/cart"
-        aria-label={activeLocale === "es" ? "Carrito" : "Cart"}
-        title={activeLocale === "es" ? "Carrito" : "Cart"}
-        className="group relative rounded-full border border-white/10 bg-white/[0.04] p-2 hover:bg-white/[0.07] transition"
-      >
-        <span
-          className={`absolute inset-0 rounded-full bg-gradient-to-r ${glow} opacity-0 blur-lg transition group-hover:opacity-60 -z-10`}
-        />
-        <ShoppingCart size={18} className="relative z-10 text-white/80" />
+  href="/cart"
+  aria-label={activeLocale === "es" ? "Carrito" : "Cart"}
+  title={activeLocale === "es" ? "Carrito" : "Cart"}
+  className="relative rounded-full p-2 text-white hover:bg-sky-500"
+>
+  <ShoppingCart size={18} className="text-white" />
 
         {cartCount > 0 && (
           <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#3b82f6] text-white text-[11px] leading-[18px] font-bold text-center">
@@ -601,13 +588,13 @@ className={`peer w-full rounded-full ${border} ${surfaceSoft} py-2 pl-11 pr-5 te
 
       {/* menú */}
       <button
-        type="button"
-        onClick={() => setMobileMenuOpen(true)}
-        className="rounded-full border border-white/10 bg-white/[0.04] p-2 hover:bg-white/[0.07]"
-        aria-label="Open menu"
-      >
-        <Menu size={18} className="text-white/80" />
-      </button>
+  type="button"
+  onClick={() => setMobileMenuOpen(true)}
+  className="rounded-full p-2 text-white hover:bg-sky-500"
+  aria-label="Open menu"
+>
+  <Menu size={18} className="text-white" />
+</button>
     </div>
   </div>
 </div>
@@ -621,14 +608,14 @@ className={`peer w-full rounded-full ${border} ${surfaceSoft} py-2 pl-11 pr-5 te
               <div className="absolute right-0 top-0 h-full w-[86%] max-w-sm bg-[#0b1a31] border-l border-[#9ecbff]/12 shadow-[0_25px_80px_rgba(0,0,0,0.45)]">
                 <div className="flex items-center justify-between border-b border-[#9ecbff]/10 px-4 py-4">
                   <div className="text-sm font-bold text-[#eef6ff]">Menu</div>
-                  <button
-                    type="button"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="rounded-full border border-white/10 bg-white/[0.04] p-2 hover:bg-white/[0.07]"
-                    aria-label="Close menu"
-                  >
-                    <X size={18} className="text-white/80" />
-                  </button>
+                 <button
+  type="button"
+  onClick={() => setMobileMenuOpen(false)}
+  className="rounded-full p-2 text-white hover:bg-sky-500"
+  aria-label="Close menu"
+>
+  <X size={18} className="text-white" />
+</button>
                 </div>
 
                 <div className="space-y-2 px-4 py-4">
