@@ -28,6 +28,8 @@ export default async function StoreLayout({
       <Header />
       <main className="flex-1">{children}</main>
 
+
+
 <footer className="border-t border-gray-200 bg-gray-100">
   <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
     <div className="flex flex-col gap-10 lg:min-h-[200px] lg:flex-row lg:items-start lg:justify-between lg:gap-16">
@@ -54,63 +56,72 @@ export default async function StoreLayout({
     <p>{t("shippingNotice")}</p>
   </div>
 
-        {/* payment methods */}
-        <div className="mt-7">
-          <p className="text-sm font-semibold text-gray-900">{t("paymentMethods")}</p>
+{/* payment methods */}
+<div className="mt-8">
+  <p className="text-sm font-semibold text-gray-900">{t("paymentMethods")}</p>
 
-         <div className="mt-3 grid grid-cols-4 gap-2 sm:flex sm:flex-wrap sm:items-center">
-  <div className="flex h-[34px] w-[72px] items-center justify-center rounded-md border border-gray-200 bg-white px-2.5 py-1.5 shadow-sm">
-    <Image
-      src="/payments/visa.svg"
-      alt="Visa"
-      width={42}
-      height={18}
-      className="h-[24px] w-[56px] object-contain"
-    />
-  </div>
+  <div className="mt-4 flex flex-wrap items-center gap-2.5">
+    <PaymentBadge label="PayPal">
+      <svg viewBox="0 0 64 20" className="h-[20px] w-[60px]" aria-hidden="true">
+        <text
+          x="32"
+          y="15"
+          textAnchor="middle"
+          fontSize="14"
+          fontWeight="700"
+          fontFamily="Arial, Helvetica, sans-serif"
+        >
+          <tspan fill="#003087">Pay</tspan>
+          <tspan fill="#00AEEF">Pal</tspan>
+        </text>
+      </svg>
+    </PaymentBadge>
 
-  <div className="flex h-[34px] w-[72px] items-center justify-center rounded-md border border-gray-200 bg-white px-2.5 py-1.5 shadow-sm">
-    <Image
-      src="/payments/mastercard.svg"
-      alt="Mastercard"
-      width={42}
-      height={18}
-      className="h-[24px] w-[56px] object-contain"
-    />
-  </div>
+    <PaymentBadge label="Visa">
+      <svg viewBox="0 0 54 20" className="h-[20px] w-[52px]" aria-hidden="true">
+        <text
+          x="27"
+          y="15"
+          textAnchor="middle"
+          fontSize="14"
+          fontWeight="800"
+          fill="#1A1F71"
+          fontFamily="Arial, Helvetica, sans-serif"
+        >
+          VISA
+        </text>
+      </svg>
+    </PaymentBadge>
 
-  <div className="flex h-[34px] w-[72px] items-center justify-center rounded-md border border-gray-200 bg-white px-2.5 py-1.5 shadow-sm">
-    <Image
-      src="/payments/amex.svg"
-      alt="Amex"
-      width={42}
-      height={18}
-      className="h-[24px] w-[56px] object-contain"
-    />
-  </div>
+    <PaymentBadge label="Mastercard">
+      <svg viewBox="0 0 34 20" className="h-[20px] w-[34px]" aria-hidden="true">
+        <circle cx="13" cy="10" r="5.5" fill="#EB001B" />
+        <circle cx="21" cy="10" r="5.5" fill="#F79E1B" fillOpacity="0.95" />
+      </svg>
+    </PaymentBadge>
 
-  <div className="flex h-[34px] w-[72px] items-center justify-center rounded-md border border-gray-200 bg-white px-2.5 py-1.5 shadow-sm">
-    <Image
-      src="/payments/paypal.svg"
-      alt="PayPal"
-      width={42}
-      height={18}
-      className="h-[24px] w-[56px] object-contain"
-    />
-  </div>
+    <PaymentBadge label="American Express">
+      <Image
+        src="/payments/amex-real3.png"
+        alt="Amex"
+        width={48}
+        height={22}
+        className="h-[22px] w-auto object-contain"
+      />
+    </PaymentBadge>
 
-  <div className="col-span-2 flex h-[34px] w-full items-center justify-center rounded-md border border-gray-200 bg-white px-2.5 py-1.5 shadow-sm sm:w-[88px]">
-    <Image
-      src="/payments/mercadopago.svg"
-      alt="Mercado Pago"
-      width={58}
-      height={18}
-      className="h-[24px] w-[85px] object-contain"
-    />
+    <PaymentBadge label="Mercado Pago">
+      <Image
+        src="/payments/mercadopago-real.png"
+        alt="Mercado Pago"
+        width={62}
+        height={24}
+        className="h-[24px] w-auto object-contain"
+      />
+    </PaymentBadge>
   </div>
+</div>     
 </div>
-        </div>
-      </div>
 
       {/* centro - navegación */}
 <div className="flex-1 lg:max-w-[360px]">
@@ -182,6 +193,23 @@ export default async function StoreLayout({
 </footer>
       {/* ✅ Slot para el modal interceptado */}
       {modal}
+    </div>
+  );
+}
+
+function PaymentBadge({
+  children,
+  label,
+}: {
+  children: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <div
+      aria-label={label}
+      className="flex h-[32px] w-[78px] items-center justify-center rounded-[2px] border border-gray-300 bg-white px-[4px]"
+    >
+      {children}
     </div>
   );
 }
