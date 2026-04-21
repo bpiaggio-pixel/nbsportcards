@@ -49,7 +49,7 @@ export default async function StoreLayout({
     </div>
   </div>
 
-  <div className="space-y-1 text-[13px] leading-5 text-gray-500">
+  <div className="mt-6 space-y-1 text-[13px] leading-5 text-gray-500">
     <p>{t("currencyNotice")}</p>
     <p>{t("shippingNotice")}</p>
   </div>
@@ -65,7 +65,7 @@ export default async function StoreLayout({
       alt="Visa"
       width={42}
       height={18}
-      className="h-[18px] w-[42px] object-contain"
+      className="h-[24px] w-[56px] object-contain"
     />
   </div>
 
@@ -75,7 +75,7 @@ export default async function StoreLayout({
       alt="Mastercard"
       width={42}
       height={18}
-      className="h-[18px] w-[42px] object-contain"
+      className="h-[24px] w-[56px] object-contain"
     />
   </div>
 
@@ -85,7 +85,7 @@ export default async function StoreLayout({
       alt="Amex"
       width={42}
       height={18}
-      className="h-[18px] w-[42px] object-contain"
+      className="h-[24px] w-[56px] object-contain"
     />
   </div>
 
@@ -95,7 +95,7 @@ export default async function StoreLayout({
       alt="PayPal"
       width={42}
       height={18}
-      className="h-[18px] w-[42px] object-contain"
+      className="h-[24px] w-[56px] object-contain"
     />
   </div>
 
@@ -105,7 +105,7 @@ export default async function StoreLayout({
       alt="Mercado Pago"
       width={58}
       height={18}
-      className="h-[18px] w-[58px] object-contain"
+      className="h-[24px] w-[85px] object-contain"
     />
   </div>
 </div>
@@ -113,65 +113,55 @@ export default async function StoreLayout({
       </div>
 
       {/* centro - navegación */}
-      <div className="flex-1">
-        <p className="text-sm font-semibold text-gray-900">{t("explore")}</p>
+<div className="flex-1 lg:max-w-[360px]">
+  <p className="text-sm font-semibold text-gray-900">{t("explore")}</p>
 
-        <div className="mt-3 grid grid-cols-3 gap-x-4 gap-y-4 text-sm sm:flex sm:flex-wrap sm:gap-x-6 sm:gap-y-5">
-          <Link href="/" className="text-gray-600 transition-all hover:text-sky-600 hover:font-semibold">
-  Home
-</Link>
+  <div className="mt-4 grid grid-cols-2 gap-x-10 gap-y-6">
+    <div className="space-y-3 text-sm">
+      <Link href="/" className="block text-gray-600 hover:text-sky-600 hover:font-semibold">
+        Home
+      </Link>
 
-<Link href="/blog" className="text-gray-600 transition-all hover:text-sky-600 hover:font-semibold">
-  {t("blog")}
-</Link>
+      <Link href="/blog" className="block text-gray-600 hover:text-sky-600 hover:font-semibold">
+        {t("blog")}
+      </Link>
 
-<Link href="/guide" className="text-gray-600 transition-all hover:text-sky-600 hover:font-semibold">
-  {t("guide")}
-</Link>
+      <Link href="/guide" className="block text-gray-600 hover:text-sky-600 hover:font-semibold">
+        {t("guide")}
+      </Link>
 
-<Link href="/favorites" className="text-gray-600 transition-all hover:text-sky-600 hover:font-semibold">
-  {t("favorites")}
-</Link>
+      <Link href="/favorites" className="block text-gray-600 hover:text-sky-600 hover:font-semibold">
+        {t("favorites")}
+      </Link>
 
-<Link href="/orders" className="text-gray-600 transition-all hover:text-sky-600 hover:font-semibold">
-  {t("orders")}
-</Link>
+      <Link href="/orders" className="block text-gray-600 hover:text-sky-600 hover:font-semibold">
+        {t("orders")}
+      </Link>
 
-<Link href="/cart" className="text-gray-600 transition-all hover:text-sky-600 hover:font-semibold">
-  {t("cart")}
-</Link>
+      <Link href="/cart" className="block text-gray-600 hover:text-sky-600 hover:font-semibold">
+        {t("cart")}
+      </Link>
+    </div>
 
-        </div>
+    <div className="space-y-3 text-sm">
+      <Link href="/privacy" className="block text-gray-500 hover:text-sky-600 hover:font-semibold">
+        {t("privacy")}
+      </Link>
 
-<div className="mt-5 flex flex-col gap-3 text-xs sm:mt-6 sm:flex-row sm:flex-wrap sm:gap-4">
- <Link href="/privacy"
-    className="text-gray-500 transition-colors hover:text-sky-600 hover:font-semibold"
-  >
-    {t("privacy")}
-</Link>
+      <Link href="/terms" className="block text-gray-500 hover:text-sky-600 hover:font-semibold">
+        {t("terms")}
+      </Link>
 
-  <Link
-    href="/terms"
-    className="text-gray-500 transition-colors hover:text-sky-600 hover:font-semibold"
->
-    {t("terms")}
-  </Link>
+      <Link href="/help" className="block text-gray-500 hover:text-sky-600 hover:font-semibold">
+        {t("support")}
+      </Link>
 
-  <Link
-    href="/help"
-    className="text-gray-500 transition-colors hover:text-sky-600 hover:font-semibold"
-  >
-    {t("support")}
-  </Link>
-
-  <Link href="/shipping"
-    className="text-gray-500 transition-colors hover:text-sky-600 hover:font-semibold"
-  >
-    {t("shippingpol")}
-  </Link>
-
+      <Link href="/shipping" className="block text-gray-500 hover:text-sky-600 hover:font-semibold">
+        {t("shippingpol")}
+      </Link>
+    </div>
+  </div>
 </div>
-      </div>
 
      {/* derecha - newsletter */}
 <div className="w-full max-w-sm min-h-0">
