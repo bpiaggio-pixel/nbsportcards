@@ -10,6 +10,10 @@ import BannerFX from "@/components/BannerFX";
 import Image from "next/image";
 
 type Sport = "basketball" | "soccer" | "nfl" | "pokemon" | "other";
+type ProductType = "sealed" | "single"; 
+type StorePageClientProps = {
+  initialSport?: "all" | Sport;
+};
 
 type Card = {
   id: string;
@@ -29,6 +33,7 @@ type Card = {
 
   // ✅ AUTÓGRAFO
   auto?: boolean;
+  product_type?: ProductType;
 
   great_deal?: string;
   greatDeal?: string;
@@ -300,7 +305,7 @@ React.useEffect(() => {
 }
 
 /* STORE PAGE CLIENT (REAL) */
-export default function StorePageClient() {
+export default function StorePageClient({ initialSport = "all" }: StorePageClientProps) {
   const t = useTranslations("Store");
   const locale = useLocale();
   const router = useRouter();
@@ -483,11 +488,20 @@ React.useEffect(() => {
   }
 
   // filters
-  const [sport, setSport] = React.useState<"all" | Sport>("all");
+  const [sport, setSport] = React.useState<"all" | Sport>(initialSport);
   const [player, setPlayer] = React.useState<"all" | string>("all");
   const [autoFilter, setAutoFilter] = React.useState<"all" | "yes" | "no">("all");
   const [inventoryLocationFilter, setInventoryLocationFilter] = React.useState<"all" | "comc" | "fanatics" | "argentina">("all");
   const [sort, setSort] = React.useState<"recommended" | "price_desc" | "price_asc">("recommended");
+const productTypeFromUrl = searchParams?.get("product_type");
+
+const initialProductType =
+  productTypeFromUrl === "sealed" || productTypeFromUrl === "single"
+    ? productTypeFromUrl
+    : "all";
+
+const [productTypeFilter, setProductTypeFilter] =
+  React.useState<"all" | "sealed" | "single">(initialProductType);
 const [sortOpen, setSortOpen] = React.useState(false);
 
 const sortOptions = [
@@ -500,8 +514,12 @@ const selectedSortLabel =
   sortOptions.find((opt) => opt.value === sort)?.label ?? t("sortRecommended");
 
 
-  const playerFilterLabel =
-  sport === "pokemon" || sport === "other" ? "Product Type" : "Player";
+const playerFilterLabel =
+  sport === "pokemon"
+    ? t("productType")
+    : sport === "other"
+    ? t("category")
+    : t("player");
 const [playerOptions, setPlayerOptions] = React.useState<string[]>([]);
 
   // ✅ mobile filters drawer
@@ -512,8 +530,24 @@ function clearFilters() {
   setPlayer("all");
   setAutoFilter("all");
   setInventoryLocationFilter("all");
+  setProductTypeFilter("all");
   setSort("recommended");
   setPage(1);
+  router.push(`/${locale}`, { scroll: false });
+}
+function updateProductTypeFilter(next: "all" | "sealed" | "single") {
+  setProductTypeFilter(next);
+
+  const params = new URLSearchParams(searchParams?.toString() ?? "");
+
+  if (next === "all") {
+    params.delete("product_type");
+  } else {
+    params.set("product_type", next);
+  }
+
+  const qs = params.toString();
+  router.push(`${pathname ?? `/${locale}`}${qs ? `?${qs}` : ""}`, { scroll: false });
 }
 
   // pagination
@@ -522,7 +556,7 @@ function clearFilters() {
 
 React.useEffect(() => {
   setPage(1);
-}, [search, sport, player, autoFilter, inventoryLocationFilter, sort]);
+}, [search, sport, player, autoFilter, inventoryLocationFilter, productTypeFilter, sort]);
 
 React.useEffect(() => {
   let cancelled = false;
@@ -573,6 +607,7 @@ React.useEffect(() => {
         player,
         auto: autoFilter,
         inventory_location: inventoryLocationFilter,
+        product_type: productTypeFilter,
         sort,
         page: String(page),
         pageSize: String(pageSize),
@@ -602,7 +637,7 @@ const res = await fetch(`/api/cards?${params.toString()}`, {
   return () => {
     cancelled = true;
   };
-}, [search, sport, player, autoFilter, inventoryLocationFilter, sort, page]);
+}, [search, sport, player, autoFilter, inventoryLocationFilter, productTypeFilter, sort, page]);
 React.useEffect(() => {
   async function loadHighlights() {
     try {
@@ -612,6 +647,7 @@ React.useEffect(() => {
         player,
         auto: autoFilter,
   inventory_location: inventoryLocationFilter,
+product_type: productTypeFilter,
       });
 
       const res = await fetch(`/api/cards/highlights?${params.toString()}`, {
@@ -635,7 +671,7 @@ React.useEffect(() => {
   }
 
   loadHighlights();
-}, [search, sport, player, autoFilter, inventoryLocationFilter]);
+}, [search, sport, player, autoFilter, inventoryLocationFilter, productTypeFilter]);
 
 React.useEffect(() => {
   async function loadTopShowcase() {
@@ -1121,33 +1157,66 @@ select-none p-6 md:p-10 scale-115 md:scale-125 md:animate-[bannerZoom_10s_ease-i
             <p className="mb-3 text-sm font-semibold text-gray-800">{t("category")}</p>
             <div className="space-y-2 text-sm text-gray-700">
               <label className="flex items-center gap-2">
-                <input type="radio" checked={sport === "all"} onChange={() => setSport("all")} />
+                <input type="radio" checked={sport === "all"}onChange={() => {
+  setSport("all");
+  router.push(`/${locale}`);
+}} />
                 {t("all")}
               </label>
               <label className="flex items-center gap-2">
-                <input type="radio" checked={sport === "basketball"} onChange={() => setSport("basketball")} />
+                <input type="radio" checked={sport === "basketball"} onChange={() => {
+  setSport("basketball");
+  router.push(`/${locale}/basketball`);
+}} />
                 Basketball
               </label>
               <label className="flex items-center gap-2">
-                <input type="radio" checked={sport === "soccer"} onChange={() => setSport("soccer")} />
+                <input type="radio" checked={sport === "soccer"} onChange={() => {
+  setSport("soccer");
+  router.push(`/${locale}/soccer`);
+}} />
                 Soccer
               </label>
               <label className="flex items-center gap-2">
-                <input type="radio" checked={sport === "nfl"} onChange={() => setSport("nfl")} />
+                <input type="radio" checked={sport === "nfl"} onChange={() => {
+  setSport("nfl");
+  router.push(`/${locale}/nfl`);
+}} />
                 NFL
               </label>
 	<label className="flex items-center gap-2">
-  		<input type="radio" checked={sport === "pokemon"} onChange={() => setSport("pokemon")} />
+  		<input type="radio" checked={sport === "pokemon"} onChange={() => {
+  setSport("pokemon");
+  router.push(`/${locale}/pokemon`);
+}} />
   		Pokemon
 		</label>
               <label className="flex items-center gap-2">
-  		<input type="radio" checked={sport === "other"} onChange={() => setSport("other")} />
+  		<input type="radio" checked={sport === "other"} onChange={() => {
+  setSport("other");
+  router.push(`/${locale}/other`);
+}} />
  		 Otros
 		</label>
             </div>
           </div>
 
+
+{/* ✅ PRODUCT TYPE FILTER */}
+<div>
+  <p className="mb-3 text-sm font-semibold text-gray-800">Tipo de producto</p>
+  <select
+    value={productTypeFilter}
+    onChange={(e) => updateProductTypeFilter(e.target.value as "all" | "sealed" | "single")}
+    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-black/10"
+  >
+    <option value="all">{t("all")}</option>
+    <option value="sealed">Sealed</option>
+    <option value="single">Singles</option>
+  </select>
+</div>
           <div>
+
   <p className="mb-3 text-sm font-semibold text-gray-800">{playerFilterLabel}</p>
   <select
     value={player}
@@ -1302,31 +1371,49 @@ select-none p-6 md:p-10 scale-115 md:scale-125 md:animate-[bannerZoom_10s_ease-i
           <p className="mb-3 text-sm font-semibold text-gray-800">{t("category")}</p>
           <div className="space-y-2 text-sm text-gray-700">
             <label className="flex items-center gap-2">
-              <input type="radio" checked={sport === "all"} onChange={() => setSport("all")} />
+              <input type="radio" checked={sport === "all"} onChange={() => {
+  setSport("all");
+  router.push(`/${locale}`);
+}} />
               {t("all")}
             </label>
             <label className="flex items-center gap-2">
               <input
                 type="radio"
                 checked={sport === "basketball"}
-                onChange={() => setSport("basketball")}
+                onChange={() => {
+  setSport("basketball");
+  router.push(`/${locale}/basketball`);
+}}
               />
               Basketball
             </label>
             <label className="flex items-center gap-2">
-              <input type="radio" checked={sport === "soccer"} onChange={() => setSport("soccer")} />
+              <input type="radio" checked={sport === "soccer"} onChange={() => {
+  setSport("soccer");
+  router.push(`/${locale}/soccer`);
+}} />
               Soccer
             </label>
             <label className="flex items-center gap-2">
-              <input type="radio" checked={sport === "nfl"} onChange={() => setSport("nfl")} />
+              <input type="radio" checked={sport === "nfl"} onChange={() => {
+  setSport("nfl");
+  router.push(`/${locale}/nfl`);
+}} />
               NFL
             </label>
 		<label className="flex items-center gap-2">
-  		<input type="radio" checked={sport === "pokemon"} onChange={() => setSport("pokemon")} />
+  		<input type="radio" checked={sport === "pokemon"} onChange={() => {
+  setSport("pokemon");
+  router.push(`/${locale}/pokemon`);
+}} />
   		Pokemon
 		</label>
 	<label className="flex items-center gap-2">
-  		<input type="radio" checked={sport === "other"} onChange={() => setSport("other")} />
+  		<input type="radio" checked={sport === "other"} onChange={() => {
+  setSport("other");
+  router.push(`/${locale}/other`);
+}} />
   		Others
 	</label>
           </div>

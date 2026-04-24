@@ -103,6 +103,9 @@
     "argentina": "Almacenado en Argentina"
      },
     "storedAt": "Almacenado en",
+"productType": "Tipo de producto",
+  "category": "Categoría",
+  "player": "Jugador",
     "loading": "Cargando…"
   },
   "Footer": {

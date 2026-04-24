@@ -22,6 +22,7 @@ export async function GET(req: NextRequest) {
     const auto = (searchParams.get("auto") ?? "all").trim();
     const inventoryLocation = (searchParams.get("inventory_location") ?? "all").trim().toLowerCase();
     const sort = (searchParams.get("sort") ?? "recommended").trim();
+const productType = (searchParams.get("product_type") ?? "all").trim();
 
     const page = Math.max(1, Number(searchParams.get("page") ?? 1));
     const pageSize = Math.max(1, Math.min(100, Number(searchParams.get("pageSize") ?? 9)));
@@ -32,6 +33,9 @@ export async function GET(req: NextRequest) {
     if (sport !== "all") {
       where.sport = sport;
     }
+if (productType !== "all") {
+  where.product_type = productType;
+}
 
     if (player !== "all") {
       where.player = player;
@@ -104,6 +108,11 @@ if (inventoryLocation !== "all") {
   values.push(inventoryLocation);
   conditions.push(`inventory_location = $${values.length}`);
 }
+if (productType !== "all") {
+  values.push(productType);
+  conditions.push(`product_type = $${values.length}`);
+}
+
 
   if (q) {
     values.push(`%${q}%`);
@@ -137,6 +146,7 @@ if (inventoryLocation !== "all") {
       views,
       "createdAt",
       "updatedAt",
+"product_type",
   "inventory_location",
   "ships_from"
     FROM "Card"
@@ -171,6 +181,7 @@ if (inventoryLocation !== "all") {
       image2: true,
       greatDeal: true,
       stock: true,
+product_type: true,
       auto: true,
       views: true,
       createdAt: true,
@@ -192,6 +203,7 @@ if (inventoryLocation !== "all") {
       image2: c.image2 ?? undefined,
       greatDeal: normalizeYes(c.greatDeal),
       stock: c.stock,
+product_type: c.product_type ?? null,
       auto: c.auto,
       views: c.views,
       createdAt: c.createdAt,

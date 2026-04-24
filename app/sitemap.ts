@@ -16,6 +16,15 @@ export default async function sitemap() {
 
   const locales = ["en", "es"] as const;
 
+const sports = ["pokemon", "soccer", "basketball", "nfl", "other"] as const;
+
+const categoryUrls = locales.flatMap((l) =>
+  sports.map((s) => ({
+    url: `${baseUrl}/${l}/${s}`,
+    lastModified: new Date(),
+  }))
+);
+
   const staticUrls = locales.flatMap((l) => [
     { url: `${baseUrl}/${l}`, lastModified: new Date() },
     { url: `${baseUrl}/${l}/blog`, lastModified: new Date() },
@@ -35,5 +44,5 @@ export default async function sitemap() {
     }))
   );
 
-  return [...staticUrls, ...postUrls, ...cardUrls];
+  return [...staticUrls, ...categoryUrls, ...postUrls, ...cardUrls];
 }

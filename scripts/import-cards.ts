@@ -35,6 +35,15 @@ function normalizeYes(v: unknown) {
     .replace(/[\u0300-\u036f]/g, "");
 }
 
+function normalizeProductType(v: unknown) {
+  const s = String(v ?? "").trim().toLowerCase();
+
+  if (s === "sealed") return "sealed";
+  if (s === "single") return "single";
+
+  return "single";
+}
+
 async function main() {
   console.log("📦 Iniciando importación de cards...");
 
@@ -88,6 +97,7 @@ process.stdout.write(
       String(r.inventory_location ?? "").trim().toLowerCase() || null;
     const ships_from =
       String(r.ships_from ?? "").trim().toLowerCase() || null;
+const product_type = normalizeProductType(r.product_type);
 
     const greatDeal = normalizeYes(r.greatDeal ?? r.great_deal);
     const auto = ["si", "yes", "true", "1"].includes(
@@ -111,6 +121,7 @@ process.stdout.write(
           auto,
           inventory_location,
           ships_from,
+          product_type,
         },
       });
 
@@ -131,6 +142,7 @@ process.stdout.write(
           auto,
           inventory_location,
           ships_from,
+          product_type,
         },
         create: {
           id,
@@ -145,6 +157,7 @@ process.stdout.write(
           auto,
           inventory_location,
           ships_from,
+          product_type,
         },
       });
 

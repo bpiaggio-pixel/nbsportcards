@@ -100,6 +100,9 @@
     "argentina": "Stored in Argentina"
      },
     "storedAt": "Stored at",
+"productType": "Product Type",
+  "category": "Category",
+  "player": "Player",
     "loading": "Loading…"
   },
 "Footer": {

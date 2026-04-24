@@ -22,6 +22,7 @@ export async function GET(req: Request) {
     const sport = String(searchParams.get("sport") ?? "all").trim().toLowerCase();
     const player = String(searchParams.get("player") ?? "all").trim();
     const auto = String(searchParams.get("auto") ?? "all").trim().toLowerCase();
+const productType = String(searchParams.get("product_type") ?? "all").trim().toLowerCase();
 
     const cards = await prisma.card.findMany({
       where: {
@@ -32,6 +33,7 @@ export async function GET(req: Request) {
           : auto === "no"
           ? { auto: false }
           : {}),
+  ...(productType !== "all" ? { product_type: productType } : {}),
         ...(q
           ? {
               OR: [
