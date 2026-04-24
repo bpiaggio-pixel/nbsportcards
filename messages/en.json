@@ -101,8 +101,21 @@
      },
     "storedAt": "Stored at",
 "productType": "Product Type",
-  "category": "Category",
-  "player": "Player",
+"banner": {
+  "soccer": "Buy soccer cards online · rookies, stars & collectibles",
+  "basketball": "Buy basketball cards · NBA rookies, autos & legends",
+  "nfl": "Buy NFL cards online · football rookies & rare cards",
+  "pokemon": "Buy Pokemon cards · singles, booster boxes & sealed packs",
+  "all": "Buy trading cards online · singles & sealed products"
+},
+"bannerTitle": {
+  "pokemon": "POKEMON CARDS",
+  "soccer": "SOCCER CARDS",
+  "basketball": "BASKETBALL CARDS",
+  "nfl": "NFL CARDS",
+  "other": "COLLECTIBLE CARDS",
+  "all": "TRADING CARDS"
+},
     "loading": "Loading…"
   },
 "Footer": {

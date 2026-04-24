@@ -104,8 +104,21 @@
      },
     "storedAt": "Almacenado en",
 "productType": "Tipo de producto",
-  "category": "Categoría",
-  "player": "Jugador",
+"banner": {
+  "soccer": "Compra cartas de fútbol · rookies, estrellas y coleccionables",
+  "basketball": "Compra cartas de básquet · rookies NBA, autógrafos y leyendas",
+  "nfl": "Compra cartas NFL · rookies y cartas raras",
+  "pokemon": "Compra cartas Pokémon · singles, boosters y productos sellados",
+  "all": "Compra cartas coleccionables · singles y productos sellados"
+},
+"bannerTitle": {
+  "pokemon": "CARTAS POKÉMON",
+  "soccer": "CARTAS DE FÚTBOL",
+  "basketball": "CARTAS DE BÁSQUET",
+  "nfl": "CARTAS NFL",
+  "other": "CARTAS COLECCIONABLES",
+  "all": "CARTAS COLECCIONABLES"
+},
     "loading": "Cargando…"
   },
   "Footer": {
