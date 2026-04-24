@@ -1024,18 +1024,18 @@ function getBannerDiscount(sport: string) {
 }
 
 
-function getBannerSubtitle(sport: string) {
+function getBannerSubtitle(sport: string, t: any) {
   switch (sport) {
     case "soccer":
-      return "Buy soccer cards online · rookies, stars & collectibles";
+      return t("banner.soccer");
     case "basketball":
-      return "Buy basketball cards · NBA rookies, autos & legends";
+      return t("banner.basketball");
     case "nfl":
-      return "Buy NFL cards online · football rookies & rare cards";
+      return t("banner.nfl");
     case "pokemon":
-      return "Buy Pokemon cards · singles, booster boxes & sealed packs";
+      return t("banner.pokemon");
     default:
-      return "Buy trading cards online · singles & sealed products";
+      return t("banner.all");
   }
 }
 
@@ -1093,7 +1093,7 @@ function getBannerSubtitle(sport: string) {
         <div className="mt-3 inline-flex w-fit items-center gap-2 rounded-full border border-sky-300/20 bg-sky-400/10 px-3 py-1.5 backdrop-blur-sm">
           <span className="h-2 w-2 rounded-full bg-sky-300 shadow-[0_0_12px_rgba(56,189,248,0.9)]" />
           <span className="text-xs md:text-sm font-medium text-white/85">
-            {getBannerSubtitle(sport)}
+            {getBannerSubtitle(sport, t)}
           </span>
         </div>
 
