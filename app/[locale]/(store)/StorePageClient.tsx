@@ -1629,11 +1629,11 @@ select-none p-6 md:p-10 scale-115 md:scale-125 md:animate-[bannerZoom_10s_ease-i
 
  <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
     {[
-      { href: "pokemon", label: "Pokemon", img: "/banners/pokemon.webp" },
-      { href: "soccer", label: locale === "es" ? "Fútbol" : "Soccer", img: "/banners/soccer.webp" },
-      { href: "basketball", label: "Basketball", img: "/banners/basketball1.webp" },
-      { href: "nfl", label: "NFL", img: "/banners/nfl.webp" },
-      { href: "other", label: locale === "es" ? "Otros" : "Other", img: "/banners/others.webp" },
+      { href: "pokemon", label: "Pokemon", img: "/banners/pokemon2.webp" },
+      { href: "soccer", label: locale === "es" ? "Fútbol" : "Soccer", img: "/banners/soccer2.webp" },
+      { href: "basketball", label: "Basketball", img: "/banners/basketball2.webp" },
+      { href: "nfl", label: "NFL", img: "/banners/nfl2.webp" },
+      { href: "other", label: locale === "es" ? "Otros" : "Other", img: "/banners/others2.webp" },
     ].map((cat) => (
       <a
         key={cat.href}
