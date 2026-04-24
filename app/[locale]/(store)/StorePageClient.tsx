@@ -166,8 +166,17 @@ function getBannerSrc(s: "all" | Sport) {
   if (s === "soccer") return "/banners/soccer.webp";
   if (s === "nfl") return "/banners/nfl.webp";
   if (s === "pokemon") return "/banners/pokemon.webp";
-  if (s === "other") return "/banners/others.webp";
+  if (s === "other") return "/banners/others5.webp";
   return "/banners/all9d1.webp";
+}
+
+function getBannerIconSrc(s: "all" | Sport) {
+  if (s === "basketball") return "/icons/cards-basketball.png";
+  if (s === "soccer") return "/icons/cards-soccer.png";
+  if (s === "nfl") return "/icons/cards-nfl.png";
+  if (s === "pokemon") return "/icons/cards-pokemon.png";
+  if (s === "other") return "/icons/cards-other.png";
+  return "/icons/cards-all.png";
 }
 
 /* -------------------------
@@ -293,11 +302,7 @@ React.useEffect(() => {
             })}
           </div>
 
-          <div className="relative flex justify-center pt-2 pb-1">
-            <div className="text-center">
-              <div className="text-lg font-extrabold tracking-tight text-gray-800">TOP CARDS</div>
-            </div>
-          </div>
+     
         </div>
       </div>
     </section>
@@ -1090,18 +1095,28 @@ function getBannerSubtitle(sport: string, t: any) {
         </span>
 
         {/* SUBTEXTO CON BADGE */}
-        <div className="mt-3 inline-flex w-fit items-center gap-2 rounded-full border border-sky-300/20 bg-sky-400/10 px-3 py-1.5 backdrop-blur-sm">
-          <span className="h-2 w-2 rounded-full bg-sky-300 shadow-[0_0_12px_rgba(56,189,248,0.9)]" />
-          <span className="text-xs md:text-sm font-medium text-white/85">
-            {getBannerSubtitle(sport, t)}
-          </span>
-        </div>
+        <div className="mt-4 flex max-w-[440px] items-center gap-4">
+  <img
+    src={getBannerIconSrc(sport)}
+    alt=""
+    className="h-12 w-12 shrink-0 object-contain opacity-95 drop-shadow-[0_8px_18px_rgba(0,0,0,0.35)]"
+  />
+
+  <div className="flex items-start gap-3">
+    <span className="mt-1.5 h-8 w-1 rounded-full bg-sky-300 shadow-[0_0_16px_rgba(56,189,248,0.7)]" />
+    <p className="text-sm md:text-base font-medium leading-snug text-white/85 drop-shadow">
+      {getBannerSubtitle(sport, t)}
+    </p>
+  </div>
+</div>
 
       </div>
     </div>
 
   </div>
 </div>  
+
+
 
 <Image
         src={getBannerSrc(sport)}
@@ -1623,7 +1638,7 @@ select-none p-6 md:p-10 scale-115 md:scale-125 md:animate-[bannerZoom_10s_ease-i
 
 {/* SHOP BY CATEGORY */}
 <section className="mx-auto max-w-7xl px-4 pb-10">
-  <h2 className="mb-5 text-center text-lg font-extrabold tracking-tight text-gray-900">
+  <h2 className="mt-5 mb-5 text-center text-lg font-bold tracking-tight text-sky-500">
     {locale === "es" ? "Comprar por categoría" : "Shop by Category"}
   </h2>
 
@@ -1638,12 +1653,30 @@ select-none p-6 md:p-10 scale-115 md:scale-125 md:animate-[bannerZoom_10s_ease-i
       <a
         key={cat.href}
         href={`/${locale}/${cat.href}`}
-        className="group relative h-28 overflow-hidden rounded-2xl border border-gray-300 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+        className={[
+  "group relative h-28 overflow-hidden rounded-2xl border border-sky-200 shadow-sm transition hover:-translate-y-1 hover:shadow-md",
+
+  // Pokemon (lo dejamos igual, funciona bien)
+  cat.href === "pokemon" && "bg-gradient-to-br from-sky-50 via-cyan-50 to-blue-100",
+
+  // Soccer (más azul, menos celeste)
+  cat.href === "soccer" && "bg-gradient-to-br from-blue-100 via-blue-200 to-indigo-200",
+
+  // Basketball (más contraste hacia azul)
+  cat.href === "basketball" && "bg-gradient-to-br from-indigo-100 to-blue-100",
+
+  // NFL (más profundo, más “serio”)
+  cat.href === "nfl" && "bg-gradient-to-br from-blue-100 via-indigo-200 to-blue-400",
+
+  // Other (más violeta/azulado, menos celeste)
+  cat.href === "other" && "bg-gradient-to-br from-indigo-100 via-blue-200 to-cyan-200",
+
+].filter(Boolean).join(" ")}
       >
         <img
           src={cat.img}
           alt={cat.label}
-          className="absolute inset-0 h-full w-full object-cover opacity-70 transition duration-300 group-hover:scale-105"
+          className="absolute inset-0 h-full w-full object-cover opacity-90 transition duration-300 group-hover:scale-115 group-hover:opacity-100"
         />
 
         <div className="absolute bottom-3 left-3 right-3">
@@ -1657,6 +1690,7 @@ select-none p-6 md:p-10 scale-115 md:scale-125 md:animate-[bannerZoom_10s_ease-i
       </a>
     ))}
   </div>
+
 </section>
 
 
