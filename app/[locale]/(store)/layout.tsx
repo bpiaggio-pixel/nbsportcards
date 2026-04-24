@@ -127,7 +127,7 @@ export default async function StoreLayout({
 <div className="flex-1 lg:max-w-[360px]">
   <p className="text-sm font-semibold text-gray-900">{t("explore")}</p>
 
-  <div className="mt-4 grid grid-cols-2 gap-x-10 gap-y-6">
+  <div className="mt-4 grid grid-cols-3 gap-x-10 gap-y-6">
     <div className="space-y-3 text-sm">
       <Link href="/" className="block text-gray-600 hover:text-sky-600 hover:font-semibold">
         Home
@@ -153,7 +153,25 @@ export default async function StoreLayout({
         {t("cart")}
       </Link>
     </div>
+<div className="space-y-3 text-sm">
+  <p className="font-semibold text-gray-900">Categorías</p>
 
+  <Link href={`/${locale}/pokemon`} className="block text-gray-600 hover:text-sky-600 hover:font-semibold">
+    Pokemon
+  </Link>
+
+  <Link href={`/${locale}/soccer`} className="block text-gray-600 hover:text-sky-600 hover:font-semibold">
+    Soccer
+  </Link>
+
+  <Link href={`/${locale}/basketball`} className="block text-gray-600 hover:text-sky-600 hover:font-semibold">
+    Basketball
+  </Link>
+
+  <Link href={`/${locale}/nfl`} className="block text-gray-600 hover:text-sky-600 hover:font-semibold">
+    NFL
+  </Link>
+</div>
     <div className="space-y-3 text-sm">
       <Link href="/privacy" className="block text-gray-500 hover:text-sky-600 hover:font-semibold">
         {t("privacy")}
