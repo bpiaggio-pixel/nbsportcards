@@ -1489,7 +1489,12 @@ select-none p-6 md:p-10 scale-115 md:scale-125 md:animate-[bannerZoom_10s_ease-i
     </div>
   </div>
 )}
-
+<nav aria-label="Shop by category" className="sr-only">
+  <a href={`/${locale}/pokemon`}>Pokemon Cards</a>
+  <a href={`/${locale}/soccer`}>Soccer Cards</a>
+  <a href={`/${locale}/basketball`}>Basketball Cards</a>
+  <a href={`/${locale}/nfl`}>NFL Cards</a>
+</nav>
 {/* GRID */}
         <main>
 
