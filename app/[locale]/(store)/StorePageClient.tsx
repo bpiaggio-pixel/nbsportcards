@@ -1289,7 +1289,7 @@ select-none p-6 md:p-10 scale-115 md:scale-125 md:animate-[bannerZoom_10s_ease-i
             </div>
           </div>
 
-          <div className="my-8 border-t border-gray-200" />
+          <div className="my-2 border-t border-gray-200" />
 
           <div className="pt-2">
             <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-gray-500 text-center">
@@ -1638,10 +1638,10 @@ select-none p-6 md:p-10 scale-115 md:scale-125 md:animate-[bannerZoom_10s_ease-i
 
 {/* SHOP BY CATEGORY */}
 <section className="mx-auto max-w-7xl px-4 pb-10">
-  <h2 className="mt-5 mb-5 text-center text-lg font-bold tracking-tight text-sky-500">
+  <h2 className="mt-5 mb-3 text-center text-lg font-bold tracking-tight text-sky-500">
     {locale === "es" ? "Comprar por categoría" : "Shop by Category"}
   </h2>
-
+<div className="mx-auto mt-1 mb-8 h-px w-150 bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
  <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
     {[
       { href: "pokemon", label: "Pokemon", img: "/banners/pokemon2.webp" },
