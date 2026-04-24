@@ -1017,9 +1017,9 @@ function getBannerDiscount(sport: string) {
     case "nfl":
       return "8% OFF";
     case "pokemon":
-      return "HOT DEALS";
+      return "BEST DEALS";
     default:
-      return "TOP DEALS";
+      return "BEST DEALS";
   }
 }
 
@@ -1027,15 +1027,15 @@ function getBannerDiscount(sport: string) {
 function getBannerSubtitle(sport: string) {
   switch (sport) {
     case "soccer":
-      return "Top cards available";
+      return "Buy soccer cards online · rookies, stars & collectibles";
     case "basketball":
-      return "Rookies & legends";
+      return "Buy basketball cards · NBA rookies, autos & legends";
     case "nfl":
-      return "Limited editions";
+      return "Buy NFL cards online · football rookies & rare cards";
     case "pokemon":
-      return "TCG & sealed packs";
+      return "Buy Pokemon cards · singles, booster boxes & sealed packs";
     default:
-      return "Cards & collectibles";
+      return "Buy trading cards online · singles & sealed products";
   }
 }
 
@@ -1076,9 +1076,13 @@ function getBannerSubtitle(sport: string) {
       <div className="flex max-w-[320px] flex-col leading-tight">
         
         {/* CATEGORÍA */}
-        <span className="text-xs md:text-sm font-semibold tracking-[0.22em] text-sky-300/90 uppercase">
-          {sport?.toUpperCase()}
-        </span>
+<span className="text-xs md:text-sm font-semibold tracking-[0.12em] text-sky-300/90 uppercase">
+  {sport === "pokemon" && "POKEMON CARDS"}
+  {sport === "soccer" && "SOCCER CARDS"}
+  {sport === "basketball" && "BASKETBALL CARDS"}
+  {sport === "nfl" && "NFL CARDS"}
+  {sport === "all" && "TRADING CARDS"}
+</span>
 
         {/* DESCUENTO */}
         <span className="mt-1 text-4xl md:text-6xl font-extrabold tracking-tight text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.55)]">
