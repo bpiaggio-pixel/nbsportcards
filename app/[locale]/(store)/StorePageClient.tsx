@@ -1621,6 +1621,45 @@ select-none p-6 md:p-10 scale-115 md:scale-125 md:animate-[bannerZoom_10s_ease-i
       {/* CARROUSEL ABAJO */}
       <TopCardsShowcase items={topShowcaseItems} onSelect={(id) => openCard(id)} />
 
+{/* SHOP BY CATEGORY */}
+<section className="mx-auto max-w-7xl px-4 pb-10">
+  <h2 className="mb-5 text-center text-lg font-extrabold tracking-tight text-gray-900">
+    {locale === "es" ? "Comprar por categoría" : "Shop by Category"}
+  </h2>
+
+ <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
+    {[
+      { href: "pokemon", label: "Pokemon", img: "/banners/pokemon.webp" },
+      { href: "soccer", label: locale === "es" ? "Fútbol" : "Soccer", img: "/banners/soccer.webp" },
+      { href: "basketball", label: "Basketball", img: "/banners/basketball1.webp" },
+      { href: "nfl", label: "NFL", img: "/banners/nfl.webp" },
+      { href: "other", label: locale === "es" ? "Otros" : "Other", img: "/banners/others.webp" },
+    ].map((cat) => (
+      <a
+        key={cat.href}
+        href={`/${locale}/${cat.href}`}
+        className="group relative h-28 overflow-hidden rounded-2xl border border-gray-300 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+      >
+        <img
+          src={cat.img}
+          alt={cat.label}
+          className="absolute inset-0 h-full w-full object-cover opacity-70 transition duration-300 group-hover:scale-105"
+        />
+
+        <div className="absolute bottom-3 left-3 right-3">
+          <p className="text-sm font-bold text-gray-900">
+            {cat.label}
+          </p>
+          <p className="mt-0.5 text-xs font-medium text-gray-500">
+            {locale === "es" ? "Ver categoría" : "Shop category"}
+          </p>
+        </div>
+      </a>
+    ))}
+  </div>
+</section>
+
+
 {/* MODAL */}
 {portalRoot && selectedCard && createPortal(
         <div
