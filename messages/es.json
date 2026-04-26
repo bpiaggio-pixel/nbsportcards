@@ -18,6 +18,15 @@
     "createcount": "Crear Cuenta",
     "account": "Ya tengo una Cuenta"
   },
+"topSales": {
+    "title": "Top ventas de la semana en eBay",
+    "subtitle": "Referencias de mercado para encontrar cartas similares en nuestra tienda.",
+    "all": "Todas",
+    "other": "Otros",
+    "noImage": "Sin imagen",
+    "viewSimilar": "Ver similares",
+    "usd": "USD"
+  },
 
 "cart": {
     "max": "Máximo disponible",

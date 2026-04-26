@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import TrackGuideView from "@/components/analytics/TrackGuideView";
 
 export const dynamic = "force-dynamic";
 
@@ -60,9 +61,11 @@ export default async function GuidePage({
 
   if (!guide) return notFound();
 
-  return (
-    <div className="min-h-screen bg-white text-gray-900">
-      <article className="mx-auto max-w-3xl px-6 py-12">
+ return (
+  <div className="min-h-screen bg-white text-gray-900">
+    <TrackGuideView slug={slug} title={guide.title} />
+
+    <article className="mx-auto max-w-3xl px-6 py-12">
         <div className="text-sm text-gray-500">
           {guide.publishedAt
             ? new Date(guide.publishedAt).toLocaleDateString("en-US")

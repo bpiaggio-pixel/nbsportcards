@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Link } from "@/navigation";
 import { prisma } from "@/lib/prisma";
 import BackToTopButton from "@/components/blog/BackToTopButton";
+import TrackBlogView from "@/components/analytics/TrackBlogView";
 
 const ALLOWED_CATEGORIES = ["pokemon", "soccer", "basketball", "nfl"] as const;
 
@@ -101,6 +102,8 @@ export default async function BlogPostPage({
 
 return (
   <div className="min-h-screen bg-white text-gray-900">
+    <TrackBlogView slug={slug} title={post.title} />
+
     <article className="mx-auto max-w-3xl px-6 py-12">
       <div className="mb-6">
         <Link

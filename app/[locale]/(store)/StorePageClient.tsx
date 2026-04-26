@@ -338,7 +338,28 @@ const [highlights, setHighlights] = React.useState<{
   // ✅ BUSCADOR: se lee desde la URL (?q=...)
   const searchParams = useSearchParams();
   const search = (searchParams?.get("q") ?? "").toLowerCase().trim();
+React.useEffect(() => {
+  if (!search) return;
 
+  fetch("/api/analytics/event", {
+    method: "POST",
+    keepalive: true,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      event_type: "search",
+      path: `/${locale}`,
+      query: search,
+      metadata: {
+        sport,
+        player,
+        productType: productTypeFilter,
+      },
+    }),
+  }).catch(() => {});
+}, [search]);
+const fallbackSearch = (searchParams?.get("fallback") ?? "").toLowerCase().trim();
+const activeSearch = search;
+const [usedFallbackSearch, setUsedFallbackSearch] = React.useState(false);
 const normId = React.useCallback((v: any) => String(v ?? "").trim(), []);
 
   // ✅ ZOOM + PAN (solo para el modal)
@@ -566,71 +587,52 @@ React.useEffect(() => {
 React.useEffect(() => {
   let cancelled = false;
 
-  async function loadPlayerOptions() {
-    try {
-      const params = new URLSearchParams({
-        sport,
-      });
+  async function fetchCards(q: string) {
+    const params = new URLSearchParams({
+      q,
+      sport,
+      player,
+      auto: autoFilter,
+      inventory_location: inventoryLocationFilter,
+      product_type: productTypeFilter,
+      sort,
+      page: String(page),
+      pageSize: String(pageSize),
+    });
 
-      const res = await fetch(`/api/cards/filter-options?${params.toString()}`, {
-        next: { revalidate: 120 },
-      });
+    const res = await fetch(`/api/cards?${params.toString()}`, {
+      next: { revalidate: 60 },
+    });
 
-      const data = await res.json();
-
-      if (!cancelled) {
-        setPlayerOptions(Array.isArray(data.players) ? data.players : []);
-      }
-    } catch {
-      if (!cancelled) setPlayerOptions([]);
-    }
+    return res.json();
   }
-
-  loadPlayerOptions();
-
-  return () => {
-    cancelled = true;
-  };
-}, [sport]);
-
-React.useEffect(() => {
-  if (sport === "pokemon" && autoFilter !== "all") {
-    setAutoFilter("all");
-  }
-}, [sport, autoFilter]);
-
-React.useEffect(() => {
-  let cancelled = false;
 
   async function loadCards() {
     setCardsLoading(true);
 
     try {
-      const params = new URLSearchParams({
-        q: search,
-        sport,
-        player,
-        auto: autoFilter,
-        inventory_location: inventoryLocationFilter,
-        product_type: productTypeFilter,
-        sort,
-        page: String(page),
-        pageSize: String(pageSize),
-      });
+      let data = await fetchCards(search);
+      let fallbackWasUsed = false;
 
-const res = await fetch(`/api/cards?${params.toString()}`, {
-  next: { revalidate: 60 },
-});
-      const data = await res.json();
+      if (
+        Number(data.total ?? 0) === 0 &&
+        fallbackSearch &&
+        fallbackSearch !== search
+      ) {
+        data = await fetchCards(fallbackSearch);
+        fallbackWasUsed = true;
+      }
 
       if (cancelled) return;
 
       setCards(Array.isArray(data.cards) ? data.cards : []);
       setTotal(Number(data.total ?? 0));
+      setUsedFallbackSearch(fallbackWasUsed);
     } catch {
       if (!cancelled) {
         setCards([]);
         setTotal(0);
+        setUsedFallbackSearch(false);
       }
     } finally {
       if (!cancelled) setCardsLoading(false);
@@ -642,8 +644,17 @@ const res = await fetch(`/api/cards?${params.toString()}`, {
   return () => {
     cancelled = true;
   };
-}, [search, sport, player, autoFilter, inventoryLocationFilter, productTypeFilter, sort, page]);
-React.useEffect(() => {
+}, [
+  search,
+  fallbackSearch,
+  sport,
+  player,
+  autoFilter,
+  inventoryLocationFilter,
+  productTypeFilter,
+  sort,
+  page,
+]);React.useEffect(() => {
   async function loadHighlights() {
     try {
       const params = new URLSearchParams({
@@ -991,7 +1002,24 @@ async function handleAddToCart(cardId: string) {
     }
     return;
   }
+const addedCard = uniqueCards.find((c) => normId(c.id) === safeId);
 
+fetch("/api/analytics/event", {
+  method: "POST",
+  keepalive: true,
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    event_type: "add_to_cart",
+    path: pathname ?? `/${locale}`,
+    product_id: safeId,
+    metadata: {
+      title: addedCard?.title,
+      sport: addedCard?.sport,
+      player: addedCard?.player,
+      price: addedCard?.price,
+    },
+  }),
+}).catch(() => {});
   setAddedToCartId(safeId);
 
   window.setTimeout(() => {
@@ -1520,7 +1548,11 @@ select-none p-6 md:p-10 scale-115 md:scale-125 md:animate-[bannerZoom_10s_ease-i
   <h2 className="min-h-[28px] text-lg font-semibold">
     {total} {t("results")}
   </h2>
-
+{usedFallbackSearch && (
+  <p className="text-sm text-gray-500">
+    No encontramos resultados exactos para “{search}”. Mostrando similares.
+  </p>
+)}
             <div className="flex items-center gap-2">
       {/* ✅ Mobile: abrir menú de filtros */}
       <button
@@ -1577,7 +1609,26 @@ select-none p-6 md:p-10 scale-115 md:scale-125 md:animate-[bannerZoom_10s_ease-i
             onToggleWish={() => toggleWish(card.id)}
             onOpen={() => {
               openCard(card.id);
-              fetch(`/api/cards/${encodeURIComponent(card.id)}/view`, { method: "POST" }).catch(() => {});
+              fetch(`/api/cards/${encodeURIComponent(card.id)}/view`, {
+  method: "POST",
+}).catch(() => {});
+
+fetch("/api/analytics/event", {
+  method: "POST",
+  keepalive: true,
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    event_type: "product_view",
+    path: pathname ?? `/${locale}`,
+    product_id: card.id,
+    metadata: {
+      title: card.title,
+      sport: card.sport,
+      player: card.player,
+      price: card.price,
+    },
+  }),
+}).catch(() => {});
             }}
             onAddToCart={() => handleAddToCart(card.id)}
             t={t}

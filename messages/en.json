@@ -19,6 +19,16 @@
     "account": "I already have an account"
   },
 
+  "topSales": {
+    "title": "Top sales of the week on eBay",
+    "subtitle": "Market references to find similar cards in our store.",
+    "all": "All",
+    "other": "Other",
+    "noImage": "No image",
+    "viewSimilar": "View similar",
+    "usd": "USD"
+  },
+
 "cart": {
     "max": "Maximum available",
     "datos": "This information is saved in the order for shipment",
