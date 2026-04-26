@@ -561,6 +561,23 @@ function clearFilters() {
   setPage(1);
   router.push(`/${locale}`, { scroll: false });
 }
+
+function goToSport(nextSport: "all" | Sport) {
+  setSport(nextSport);
+  setPlayer("all");
+  setPage(1);
+
+  const params = new URLSearchParams(searchParams?.toString() ?? "");
+
+  // Mantiene ?q=..., pero elimina fallback porque solo era para Top Sales
+  params.delete("fallback");
+
+  const qs = params.toString();
+  const path = nextSport === "all" ? `/${locale}` : `/${locale}/${nextSport}`;
+
+  router.push(`${path}${qs ? `?${qs}` : ""}`, { scroll: false });
+}
+
 function updateProductTypeFilter(next: "all" | "sealed" | "single") {
   setProductTypeFilter(next);
 
@@ -912,10 +929,9 @@ const webpImg = activeImg
   // ✅ resetear player si ya no existe en el sport seleccionado
 React.useEffect(() => {
   if (player === "all") return;
-  if (playerOptions.includes(player)) return;
+  if (players.includes(player)) return;
   setPlayer("all");
-}, [sport, playerOptions, player]);
-
+}, [sport, players, player]);
   // ✅ filtros
 
 
@@ -1204,45 +1220,28 @@ select-none p-6 md:p-10 scale-115 md:scale-125 md:animate-[bannerZoom_10s_ease-i
             <p className="mb-3 text-sm font-semibold text-gray-800">{t("category")}</p>
             <div className="space-y-2 text-sm text-gray-700">
               <label className="flex items-center gap-2">
-                <input type="radio" checked={sport === "all"}onChange={() => {
-  setSport("all");
-  router.push(`/${locale}`);
-}} />
+                <input type="radio" checked={sport === "all"}onChange={() => goToSport("all")} />
                 {t("all")}
               </label>
               <label className="flex items-center gap-2">
-                <input type="radio" checked={sport === "basketball"} onChange={() => {
-  setSport("basketball");
-  router.push(`/${locale}/basketball`);
-}} />
+                <input type="radio" checked={sport === "basketball"} onChange={() => goToSport("basketball")} />
                 Basketball
               </label>
               <label className="flex items-center gap-2">
-                <input type="radio" checked={sport === "soccer"} onChange={() => {
-  setSport("soccer");
-  router.push(`/${locale}/soccer`);
-}} />
+                <input type="radio" checked={sport === "soccer"} onChange={() => goToSport("soccer")} />
                 Soccer
               </label>
               <label className="flex items-center gap-2">
-                <input type="radio" checked={sport === "nfl"} onChange={() => {
-  setSport("nfl");
-  router.push(`/${locale}/nfl`);
-}} />
+                <input type="radio" checked={sport === "nfl"} onChange={() => goToSport("nfl")} />
                 NFL
               </label>
 	<label className="flex items-center gap-2">
-  		<input type="radio" checked={sport === "pokemon"} onChange={() => {
-  setSport("pokemon");
-  router.push(`/${locale}/pokemon`);
-}} />
+  		<input type="radio" checked={sport === "pokemon"} onChange={() => goToSport("pokemon")}
+ />
   		Pokemon
 		</label>
               <label className="flex items-center gap-2">
-  		<input type="radio" checked={sport === "other"} onChange={() => {
-  setSport("other");
-  router.push(`/${locale}/other`);
-}} />
+  		<input type="radio" checked={sport === "other"} onChange={() => goToSport("other")} />
  		 Otros
 		</label>
             </div>
@@ -1274,7 +1273,7 @@ select-none p-6 md:p-10 scale-115 md:scale-125 md:animate-[bannerZoom_10s_ease-i
       {t("all")}
     </option>
 
-    {playerOptions.map((p) => (
+    {players.map((p) => (
       <option key={p} value={p} className="text-gray-900">
         {p}
       </option>
@@ -1418,49 +1417,32 @@ select-none p-6 md:p-10 scale-115 md:scale-125 md:animate-[bannerZoom_10s_ease-i
           <p className="mb-3 text-sm font-semibold text-gray-800">{t("category")}</p>
           <div className="space-y-2 text-sm text-gray-700">
             <label className="flex items-center gap-2">
-              <input type="radio" checked={sport === "all"} onChange={() => {
-  setSport("all");
-  router.push(`/${locale}`);
-}} />
+              <input type="radio" checked={sport === "all"} onChange={() => goToSport("all")} />
               {t("all")}
             </label>
             <label className="flex items-center gap-2">
               <input
                 type="radio"
                 checked={sport === "basketball"}
-                onChange={() => {
-  setSport("basketball");
-  router.push(`/${locale}/basketball`);
-}}
+                onChange={() => goToSport("basketball")}
               />
               Basketball
             </label>
             <label className="flex items-center gap-2">
-              <input type="radio" checked={sport === "soccer"} onChange={() => {
-  setSport("soccer");
-  router.push(`/${locale}/soccer`);
-}} />
+              <input type="radio" checked={sport === "soccer"} onChange={() => goToSport("soccer")} />
               Soccer
             </label>
             <label className="flex items-center gap-2">
-              <input type="radio" checked={sport === "nfl"} onChange={() => {
-  setSport("nfl");
-  router.push(`/${locale}/nfl`);
-}} />
+              <input type="radio" checked={sport === "nfl"} onChange={() => goToSport("nfl")}
+ />
               NFL
             </label>
 		<label className="flex items-center gap-2">
-  		<input type="radio" checked={sport === "pokemon"} onChange={() => {
-  setSport("pokemon");
-  router.push(`/${locale}/pokemon`);
-}} />
+  		<input type="radio" checked={sport === "pokemon"} onChange={() => goToSport("pokemon")} />
   		Pokemon
 		</label>
 	<label className="flex items-center gap-2">
-  		<input type="radio" checked={sport === "other"} onChange={() => {
-  setSport("other");
-  router.push(`/${locale}/other`);
-}} />
+  		<input type="radio" checked={sport === "other"} onChange={() => goToSport("other")} />
   		Others
 	</label>
           </div>
@@ -1477,7 +1459,7 @@ select-none p-6 md:p-10 scale-115 md:scale-125 md:animate-[bannerZoom_10s_ease-i
       {t("all")}
     </option>
 
-    {playerOptions.map((p) => (
+    {players.map((p) => (
       <option key={p} value={p} className="text-gray-900">
         {p}
       </option>

@@ -43,11 +43,21 @@ export default function Header() {
 
   // ✅ Solo mostramos el buscador en Home (/{locale})
   // Nota: en este proyecto el home real es /es o /en (sin más segmentos)
-  const isHome = React.useMemo(() => {
-    if (!pathname) return false;
-    return pathname === `/${activeLocale}` || pathname === `/${activeLocale}/`;
-  }, [pathname, activeLocale]);
+const isHome = React.useMemo(() => {
+  if (!pathname) return false;
 
+  const shopPaths = [
+    `/${activeLocale}`,
+    `/${activeLocale}/`,
+    `/${activeLocale}/basketball`,
+    `/${activeLocale}/soccer`,
+    `/${activeLocale}/nfl`,
+    `/${activeLocale}/pokemon`,
+    `/${activeLocale}/other`,
+  ];
+
+  return shopPaths.includes(pathname);
+}, [pathname, activeLocale]);
   const [langOpen, setLangOpen] = React.useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [portalRoot, setPortalRoot] = React.useState<HTMLElement | null>(null);
