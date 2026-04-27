@@ -604,6 +604,36 @@ React.useEffect(() => {
 React.useEffect(() => {
   let cancelled = false;
 
+  async function loadPlayerOptions() {
+    try {
+      const params = new URLSearchParams({
+        sport,
+      });
+
+      const res = await fetch(`/api/cards/filter-options?${params.toString()}`, {
+        cache: "no-store",
+      });
+
+      const data = await res.json();
+
+      if (!cancelled) {
+        setPlayerOptions(Array.isArray(data.players) ? data.players : []);
+      }
+    } catch {
+      if (!cancelled) setPlayerOptions([]);
+    }
+  }
+
+  loadPlayerOptions();
+
+  return () => {
+    cancelled = true;
+  };
+}, [sport]);
+
+React.useEffect(() => {
+  let cancelled = false;
+
   async function fetchCards(q: string) {
     const params = new URLSearchParams({
       q,
@@ -931,7 +961,7 @@ React.useEffect(() => {
   if (player === "all") return;
   if (players.includes(player)) return;
   setPlayer("all");
-}, [sport, players, player]);
+}, [sport, playerOptions, player]);
   // ✅ filtros
 
 
@@ -1273,7 +1303,7 @@ select-none p-6 md:p-10 scale-115 md:scale-125 md:animate-[bannerZoom_10s_ease-i
       {t("all")}
     </option>
 
-    {players.map((p) => (
+    {playerOptions.map((p) => (
       <option key={p} value={p} className="text-gray-900">
         {p}
       </option>
@@ -1459,7 +1489,7 @@ select-none p-6 md:p-10 scale-115 md:scale-125 md:animate-[bannerZoom_10s_ease-i
       {t("all")}
     </option>
 
-    {players.map((p) => (
+    {playerOptions.map((p) => (
       <option key={p} value={p} className="text-gray-900">
         {p}
       </option>
