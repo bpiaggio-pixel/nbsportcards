@@ -11,7 +11,11 @@ export default async function AdminAnalyticsPage() {
       supabase.from("Order").select("*"),
       supabase.from("top_ebay_sales").select("*"),
       supabase.from("Card").select("*"),
-      supabase.from("site_events").select("*"),
+      supabase
+  .from("site_events")
+  .select("*")
+  .order("created_at", { ascending: false })
+  .limit(500),
     ]);
 
   const totalOrders = orders?.length ?? 0;
@@ -48,7 +52,7 @@ const addToCart =
   const topClickedTitles = getTopCountsFromMetadata(similarClicks, "title", 5);
 
 const latestEvents =
-  events?.slice(0, 30).map((e: any) => ({
+  events?.slice(0, 100).map((e: any) => ({
     type: e.event_type,
     query: e.query,
     product: e.metadata?.title,
@@ -127,7 +131,7 @@ const topGuides = getTopCountsFromMetadata(guideViews, "title", 8);
     {latestEvents.length === 0 ? (
       <p className="text-sm text-gray-500">Sin eventos todavía</p>
     ) : (
-      <div className="max-h-[360px] overflow-y-auto pr-2 space-y-2">
+      <div className="max-h-[500px] overflow-y-auto pr-2 space-y-2">
         {latestEvents.map((e, i) => (
           <div
             key={i}
