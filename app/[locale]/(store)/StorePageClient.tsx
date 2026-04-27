@@ -959,9 +959,11 @@ const webpImg = activeImg
   // ✅ resetear player si ya no existe en el sport seleccionado
 React.useEffect(() => {
   if (player === "all") return;
-  if (players.includes(player)) return;
+  if (playerOptions.length === 0) return;
+  if (playerOptions.includes(player)) return;
+
   setPlayer("all");
-}, [sport, playerOptions, player]);
+}, [player, playerOptions]);
   // ✅ filtros
 
 
