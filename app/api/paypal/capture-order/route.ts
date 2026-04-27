@@ -2,6 +2,12 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { paypalFetch } from "@/lib/paypal";
 export const runtime = "nodejs";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 function centsFromUSD(value: any): number {
   const n = Number(value);
@@ -51,6 +57,33 @@ async function markPaidAndFulfill(orderId: string, paypalOrderId: string, captur
   });
 }
 
+async function trackPurchase(orderId: string) {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: { items: true },
+  });
+
+  if (!order) return;
+
+  await supabase.from("site_events").insert({
+    event_type: "purchase",
+    product_id: order.id,
+    metadata: {
+      provider: "paypal",
+      orderId: order.id,
+      userId: order.userId,
+      totalCents: order.totalCents,
+      currency: order.currency,
+      items: order.items.map((item) => ({
+        cardId: item.cardId,
+        title: item.title,
+        qty: item.qty,
+        unitCents: item.unitCents,
+      })),
+    },
+  });
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
@@ -96,9 +129,10 @@ if (Math.abs(capturedCents - expectedCents) > 1) {
 }
 
     if (status === "COMPLETED") {
-      await markPaidAndFulfill(orderId, paypalOrderId, captureId, payerEmail);
-      return NextResponse.json({ ok: true });
-    }
+  await markPaidAndFulfill(orderId, paypalOrderId, captureId, payerEmail);
+  await trackPurchase(orderId);
+  return NextResponse.json({ ok: true });
+}
 
     return NextResponse.json({ ok: false, status });
   } catch (e: any) {

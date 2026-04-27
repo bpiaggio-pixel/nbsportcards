@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import MercadoPagoConfig, { Payment, MerchantOrder } from "mercadopago";
+import { createClient } from "@supabase/supabase-js";
 
 export const runtime = "nodejs";
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 const mp = new MercadoPagoConfig({
   accessToken: process.env.MP_ACCESS_TOKEN!,
@@ -74,6 +79,7 @@ async function markPaidAndFulfill(orderId: string, paymentId?: string | null, me
       }
     }
 
+
     // ✅ marcar orden como PAID + guardar ids MP
     await tx.order.update({
       where: { id: orderId },
@@ -90,6 +96,34 @@ async function markPaidAndFulfill(orderId: string, paymentId?: string | null, me
     });
   });
 }
+
+async function trackPurchase(orderId: string, provider: "mercadopago" | "paypal") {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: { items: true },
+  });
+
+  if (!order) return;
+
+  await supabase.from("site_events").insert({
+    event_type: "purchase",
+    product_id: order.id,
+    metadata: {
+      provider,
+      orderId: order.id,
+      userId: order.userId,
+      totalCents: order.totalCents,
+      currency: order.currency,
+      items: order.items.map((item) => ({
+        cardId: item.cardId,
+        title: item.title,
+        qty: item.qty,
+        unitCents: item.unitCents,
+      })),
+    },
+  });
+}
+
 
 export async function POST(req: Request) {
   try {
@@ -119,6 +153,7 @@ export async function POST(req: Request) {
 
       if (status === "approved") {
         await markPaidAndFulfill(orderId, paymentId, merchantOrderId);
+await trackPurchase(orderId, "mercadopago");
         return NextResponse.json({ ok: true });
       }
 
@@ -144,11 +179,12 @@ export async function POST(req: Request) {
       if (!orderId) return NextResponse.json({ ok: true });
 
       if (approved) {
-        await markPaidAndFulfill(
-          orderId,
-          approved.id ? String(approved.id) : null,
-          String(mo.id ?? "")
-        );
+       await markPaidAndFulfill(
+  orderId,
+  approved.id ? String(approved.id) : null,
+  String(mo.id ?? "")
+);
+await trackPurchase(orderId, "mercadopago");
         return NextResponse.json({ ok: true });
       }
 

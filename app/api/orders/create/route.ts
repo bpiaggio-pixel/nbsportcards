@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { createClient } from "@supabase/supabase-js";
 
 export const runtime = "nodejs";
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 const normId = (v: any) => String(v ?? "").trim();
 
@@ -204,6 +209,26 @@ const order = await prisma.$transaction(async (tx) => {
       shipments: true,
     },
   });
+});
+
+await supabase.from("site_events").insert({
+  event_type: "checkout_start",
+  product_id: order.id,
+  metadata: {
+    orderId: order.id,
+    userId,
+    totalCents,
+    subtotalCents,
+    shippingCents,
+    currency: "USD",
+    items: orderItems.map((it) => ({
+      cardId: it.cardId,
+      title: it.title,
+      qty: it.qty,
+      unitCents: it.unitCents,
+      inventoryLocation: it.inventoryLocation,
+    })),
+  },
 });
 
 return NextResponse.json({
