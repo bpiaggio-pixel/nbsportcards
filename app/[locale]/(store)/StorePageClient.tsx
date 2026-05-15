@@ -1124,7 +1124,7 @@ function getBannerSubtitle(sport: string, t: any) {
 <div className="relative min-h-screen text-white bg-[linear-gradient(to_bottom,#071120_0px,#163d70_340px,#c5c5c5_340px,#ffffff_450px)]">
 <div className="pointer-events-none absolute left-0 top-[340px] w-full h-[410px] z-0">
   <img
-    src="/fondo-gris.webp"
+    src="/fondo-gris5.webp"
     alt=""
     className="w-full h-full object-cover "
   />
