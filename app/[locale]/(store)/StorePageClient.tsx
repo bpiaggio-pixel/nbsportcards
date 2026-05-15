@@ -1758,6 +1758,55 @@ fetch("/api/analytics/event", {
 
 </section>
 
+{/* GUIDE / BLOG BANNERS */}
+<section className="mx-auto max-w-7xl px-4 pb-12">
+  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+    <a
+      href={`/${locale}/guide`}
+      className="group relative min-h-[190px] overflow-hidden rounded-3xl border border-gray-200 bg-white p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+    >
+      <div className="relative z-10 max-w-[50%]">
+        <p className="text-2xl font-bold text-gray-900">
+          {locale === "es" ? "Guía del Coleccionista" : "Collector Guide"}
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-gray-500">
+          {locale === "es"
+            ? "Aprendé cómo comprar, cuidar, invertir y elegir tarjetas y coleccionables para tu colección."
+            : "Learn how to buy, protect, invest in, and choose trading cards and collectibles."}
+        </p>
+      </div>
+
+      <img
+        src="/banners/guide3.webp"
+        alt=""
+        className="absolute bottom-0 right-4 h-[160px] object-contain transition duration-300 group-hover:scale-105"
+      />
+    </a>
+
+    <a
+      href={`/${locale}/blog`}
+      className="group relative min-h-[190px] overflow-hidden rounded-3xl border border-gray-200 bg-white p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+    >
+      <div className="relative z-10 max-w-[45%]">
+        <p className="text-2xl font-bold text-gray-900">
+          Blog
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-gray-500">
+          {locale === "es"
+            ? "Noticias, lanzamientos y tendencias del mundo de las tarjetas coleccionables."
+            : "News, releases, and trends from the world of trading cards and collectibles."}
+        </p>
+      </div>
+
+      <img
+        src="/banners/blog4.webp"
+        alt=""
+        className="absolute bottom-0 right-4 h-[160px] object-contain transition duration-300 group-hover:scale-105"
+      />
+    </a>
+  </div>
+</section>
+
 
 {/* MODAL */}
 {portalRoot && selectedCard && createPortal(
